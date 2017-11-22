@@ -1,0 +1,71 @@
+version: '2'
+
+networks:
+  lm:
+  ds:  # Note that this is shared between all DS
+
+services:
+  lmpostgres:
+    image: postgres
+    env_file:
+      - ./PG.environment
+    networks:
+      - lm
+    command: -c fsync=off
+
+  logicmodule:
+    image: bscdataclay/logicmodule
+    ports:
+      - "11034:1034"
+    env_file:
+      - ./LM.environment
+      - ./PG.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+      - POSTGRES_HOST=lmpostgres
+    volumes:
+      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./log4j.properties:/usr/src/app/log4j.properties:ro
+    networks:
+      - lm
+      - ds
+
+  ds1postgres:
+    image: postgres
+    env_file:
+      - ./PG.environment
+    networks:
+      - ds
+    command: -c fsync=off
+
+  ds1java:
+    image: bscdataclay/dsjava
+    ports:
+      - 2127
+    env_file:
+      - ./DS.environment
+      - ./PG.environment
+      - ./LM.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+      - POSTGRES_HOST=ds1postgres
+    volumes:
+      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./log4j.properties:/usr/src/app/log4j.properties:ro
+    networks:
+      - ds
+
+  ds1pythonee:
+    image: bscdataclay/dspython
+    ports:
+      - 6867
+    env_file:
+      - ./LM.environment
+      - ./DS.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+      - POSTGRES_HOST=ds1postgres
+    networks:
+      - ds
+
