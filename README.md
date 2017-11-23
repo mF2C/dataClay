@@ -76,6 +76,10 @@ files are provided by dataClay and are intended to be used just as they are:
 If there are some errors or you would like to adapt something, contact dataClay 
 developers.
 
+Note that for size reasons in GitHub, the `dataclayclient.jar` is not in the
+repository and instead will be automatically retrieved by the dataClay tool
+script. If everything works as expected, no special action is required.
+
 
 ### Configuration files
 

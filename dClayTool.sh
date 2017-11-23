@@ -4,6 +4,19 @@ SCRIPTPATH=`dirname "$SCRIPT"` #script path
 TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 
+errorMsg() {
+	echo "[ERROR] $1"
+	exit -1
+}
+mkdir -p lib
+CLIENTJAR=lib/dataclayclient.jar
+if [ ! -f $CLIENTJAR ]; then
+	docker cp orchestration_logicmodule_1:/usr/src/app/dataclay.jar $CLIENTJAR
+	if [ ! -f $CLIENTJAR ]; then
+		errorMsg "ERROR: dataClay containers not running or cannot copy lib from /usr/src/app/dataclay.jar"
+	fi
+fi
+
 # Base ops commands
 JAVA_OPSBASE="java -cp $SCRIPTPATH/dataClayTools.jar:$SCRIPTPATH/lib/dataclayclient.jar"
 PY_OPSBASE="python -m dataclay.tool"
@@ -24,10 +37,6 @@ PY_NEW_MODEL="$PY_OPSBASE register_model"
 JAVA_GETSTUBS="$JAVA_OPSBASE dcops.GetStubs"
 PY_GETSTUBS="$PY_OPSBASE get_stubs"
 
-errorMsg() {
-	echo "[ERROR] $1"
-	exit -1
-}
 
 usage() {
 	echo ""
