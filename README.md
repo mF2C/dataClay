@@ -6,6 +6,9 @@ a "dataClay environment". You can use it to familiarize that with
 dataClay, to start developing applications, to explore the different
 components, etc.
 
+To read the usage manual, open the pdf file. To bootstrap your environment
+and start testing and hacking, keep reading.
+
 ## Preflight check
 
 You need:
@@ -65,6 +68,9 @@ services up and running.
 Perform the registration with:
 
     $> bash register.sh
+
+Currently, plain passwords are used to ease development, debugging and testing. Of course,
+this will work differently in the production version.
 
 You can check the register.sh or adapt it to your needs. Take note that the following 
 files are provided by dataClay and are intended to be used just as they are:
