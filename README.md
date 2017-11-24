@@ -75,9 +75,9 @@ this will work differently in the production version.
 You can check the register.sh or adapt it to your needs. Take note that the following 
 files are provided by dataClay and are intended to be used just as they are:
 
-  - dataclayclient.jar
-  - dataClayTools.jar
-  - dClayTool.sh
+  - tool/lib/dataclayclient.jar
+  - tool/dataClayTools.jar
+  - tool/dClayTool.sh
 
 If there are some errors or you would like to adapt something, contact dataClay 
 developers.

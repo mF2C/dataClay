@@ -8,8 +8,8 @@ errorMsg() {
 	echo "[ERROR] $1"
 	exit -1
 }
-mkdir -p lib
-CLIENTJAR=lib/dataclayclient.jar
+mkdir -p $SCRIPTPATH/lib
+CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
 if [ ! -f $CLIENTJAR ]; then
 	docker cp orchestration_logicmodule_1:/usr/src/app/dataclay.jar $CLIENTJAR
 	if [ ! -f $CLIENTJAR ]; then
