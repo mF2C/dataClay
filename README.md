@@ -76,7 +76,7 @@ You can check the register.sh or adapt it to your needs. Take note that the foll
 files are provided by dataClay and are intended to be used just as they are:
 
   - tool/lib/dataclayclient.jar
-  - tool/dataClayTools.jar
+  - tool/lib/dataClayTools.jar
   - tool/dClayTool.sh
 
 If there are some errors or you would like to adapt something, contact dataClay 

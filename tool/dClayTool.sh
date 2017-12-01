@@ -18,7 +18,7 @@ if [ ! -f $CLIENTJAR ]; then
 fi
 
 # Base ops commands
-JAVA_OPSBASE="java -cp $SCRIPTPATH/dataClayTools.jar:$SCRIPTPATH/lib/dataclayclient.jar"
+JAVA_OPSBASE="java -cp $SCRIPTPATH/lib/dataClayTools.jar:$SCRIPTPATH/lib/dataclayclient.jar"
 PY_OPSBASE="python -m dataclay.tool"
 
 # Basic operations

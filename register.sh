@@ -38,5 +38,6 @@ StubsClasspath=$PWD/demo/stubs
 DataSets=dstest
 DataSetForStore=dstest
 DataClayClientConfig=$PWD/cfgfiles/client.properties
+LocalBackend=DS1
 EOF
 
