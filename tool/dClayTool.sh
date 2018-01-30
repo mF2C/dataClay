@@ -1,6 +1,5 @@
 #!/bin/bash
-SCRIPT=$(readlink -f "$0")
-SCRIPTPATH=`dirname "$SCRIPT"` #script path
+SCRIPTPATH=`dirname "$0"` #script path
 TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 
