@@ -46,6 +46,8 @@ class StaticInfo(StorageObject, ToDictMixin):
     @ClassField total_storage_size int
     @ClassField limited_power bool
     @ClassField graphics_card_info str
+    @ClassField CPU_info str
+    @ClassField hwloc str
     """
 
     @dclayMethod(os="str", arch="str", proc_maker="str", proc_arch="str", num_CPUs="int", CPU_speed="int", total_cores="int", RAM_size="int", storage_size="int", limited="bool", graphics_card="str")
@@ -61,6 +63,8 @@ class StaticInfo(StorageObject, ToDictMixin):
         self.total_storage_size = storage_size
         self.limited_power = limited
         self.graphics_card_info = graphics_card
+        self.CPU_info = None
+        self.hwloc = None
 
     @dclayMethod(return_="dict")
     def to_dict(self):
@@ -296,6 +300,22 @@ class Device(StorageObject):
         self.attached_components = attached_components
         self.sharing_model_info = sharing_model_info
 
+    @dclayMethod(cpu_info="str")
+    def set_CPU_info(self, cpu_info):
+        self.static_info.CPU_info = cpu_info
+
+    @dclayMethod(return_="str")
+    def get_CPU_info(self):
+        return self.static_info.CPU_info
+
+    @dclayMethod(hwloc="str")
+    def set_hwloc(self, hwloc):
+        self.static_info.hwloc = hwloc
+
+    @dclayMethod(return_="str")
+    def get_hwloc(self):
+        return self.static_info.hwloc
+
 
 class AggregatedResourceInfo(StorageObject):
     """
@@ -318,7 +338,7 @@ class AggregatedResourceInfo(StorageObject):
 class Agent(StorageObject):
     """
     @ClassField id str
-    @ClassField dev model_mf2c.classes.Device
+    @ClassField device model_mf2c.classes.Device
     @ClassField is_leader bool
     @ClassField is_cloud bool
     @ClassField multicloud_federation bool
@@ -330,7 +350,7 @@ class Agent(StorageObject):
     def __init__(self, my_device):
         self.id = my_device.device_id #For the moment I assign the same id to the device and to the agent
         self.aggregated_resource_info = AggregatedResourceInfo(self) #AggregatedResourceInfo about the associated device
-        self.dev = my_device
+        self.device = my_device
         self.children = list()
         self.is_leader = False
         self.is_cloud = False
@@ -350,7 +370,7 @@ class Agent(StorageObject):
     @dclayMethod(return_="tuple<model_mf2c.classes.User, model_mf2c.classes.StaticInfo>")
     def get_static_info(self):
         self._check_cloud("Trying to get static info on a cloud agent")
-        return self.dev.owner, self.dev.static_info
+        return self.device.owner, self.device.static_info
 
     # Dynamic Info setters and getters.
     # Insted of a single "set_dynamic_info" I created individual setters for the info that could change
@@ -359,96 +379,96 @@ class Agent(StorageObject):
     @dclayMethod(return_="tuple<model_mf2c.classes.User, str, str, model_mf2c.classes.DynamicInfo>")
     def get_dynamic_info(self):
         self._check_cloud("Trying to get dynamic info on a cloud agent")
-        return self.dev.owner, self.dev.static_info.operating_system, self.dev.static_info.system_architecture, self.dev.dynamic_info
+        return self.device.owner, self.device.static_info.operating_system, self.device.static_info.system_architecture, self.device.dynamic_info
 
     @dclayMethod(size="int")
     def set_available_RAM_size(self, size):
         self._check_cloud("Trying to set available RAM size on a cloud agent")
-        self.dev.dynamic_info.available_RAM_size = size
+        self.device.dynamic_info.available_RAM_size = size
 
     @dclayMethod(percent="int")
     def set_available_RAM_percent(self, percent):
         self._check_cloud("Trying to set available RAM percent on a cloud agent")
-        self.dev.dynamic_info.available_RAM_percent = percent
+        self.device.dynamic_info.available_RAM_percent = percent
 
     @dclayMethod(size="int")
     def set_available_storage_size(self, size):
         self._check_cloud("Trying to set available storage size on a cloud agent")
-        self.dev.dynamic_info.available_storage_size = size
+        self.device.dynamic_info.available_storage_size = size
 
     @dclayMethod(percent="int")
     def set_available_storage_percent(self, percent):
         self._check_cloud("Trying to set available storage percent on a cloud agent")
-        self.dev.dynamic_info.available_storage_percent = percent
+        self.device.dynamic_info.available_storage_percent = percent
 
     @dclayMethod(percent="int")
     def set_available_CPU_percent(self, percent):
         self._check_cloud("Trying to set available CPU percent on a cloud agent")
-        self.dev.dynamic_info.available_CPU_percent = percent
+        self.device.dynamic_info.available_CPU_percent = percent
 
     @dclayMethod(seconds="int")
     def set_remaining_power_seconds(self, seconds):
         self._check_cloud("Trying to set remaining power seconds on a cloud agent")
-        self.dev.dynamic_info.remaining_power_seconds = seconds
+        self.device.dynamic_info.remaining_power_seconds = seconds
 
     @dclayMethod(percent="int")
     def set_remaining_power_percent(self, percent):
         self._check_cloud("Trying to set remaining power percent on a cloud agent")
-        self.dev.dynamic_info.remaining_power_percent = percent
+        self.device.dynamic_info.remaining_power_percent = percent
 
     @dclayMethod(location="str")
     def set_location(self, location):
         self._check_cloud("Trying to set location on a cloud agent")
-        self.dev.dynamic_info.location = location
+        self.device.dynamic_info.location = location
 
     # Network Info setters and getters
 
     @dclayMethod(return_="model_mf2c.classes.NetworkInfo")
     def get_network_info(self):
         self._check_cloud("Trying to get network info on a cloud agent")
-        return self.dev.network_info
+        return self.device.network_info
 
     @dclayMethod(io="str")
     def set_network_io(self, io):
         self._check_cloud("Trying to set network IO on a cloud agent")
-        self.dev.network_info.network_io = io
+        self.device.network_info.network_io = io
 
     @dclayMethod(info="str")
     def set_ethernet_info(self, info):
         self._check_cloud("Trying to set ethernet info on a cloud agent")
-        self.dev.network_info.ethernet_info = info
+        self.device.network_info.ethernet_info = info
 
     @dclayMethod(address="str")
     def set_ethernet_address(self, address):
         self._check_cloud("Trying to set ethernet address on a cloud agent")
-        self.dev.network_info.ethernet_address = address
+        self.device.network_info.ethernet_address = address
 
     @dclayMethod(info="str")
     def set_wifi_info(self, info):
         self._check_cloud("Trying to set wifi info on a cloud agent")
-        self.dev.network_info.wifi_info = info
+        self.device.network_info.wifi_info = info
 
     @dclayMethod(address="str")
     def set_wifi_address(self, address):
         self._check_cloud("Trying to set wifi address on a cloud agent")
-        self.dev.network_info.wifi_address = address
+        self.device.network_info.wifi_address = address
 
     @dclayMethod(bw="int")
     def set_bandwidth_capacity(self, bw):
         self._check_cloud("Trying to set bandwidth capacity on a cloud agent")
-        self.dev.network_info.bandwidth_capacity = bw
+        self.device.network_info.bandwidth_capacity = bw
 
     @dclayMethod(info="str")
     def set_standard_info(self, info):
         self._check_cloud("Trying to set network standard info on a cloud agent")
-        self.dev.network_info.standard_info = info
+        self.device.network_info.standard_info = info
 
     # Attached Component setters and getters
 
     @dclayMethod(return_="list<model_mf2c.classes.Component>")
     def get_attached_component_info(self):
         self._check_cloud("Trying to get attached components on a cloud agent")
-        return self.dev.attached_components
+        return self.device.attached_components
 
     @dclayMethod(return_="list")
     def get_attached_component_info_as_list(self):
@@ -461,13 +481,13 @@ class Agent(StorageObject):
     @dclayMethod(component="model_mf2c.classes.Component")
     def add_attached_component(self, component):
         self._check_cloud("Trying to add an attached component to a cloud agent")
-        self.dev.attached_components.append(component)
+        self.device.attached_components.append(component)
 
     @dclayMethod(component="model_mf2c.classes.Component")
     def remove_attached_component(self, component):
         self._check_cloud("Trying to remove an attached component from a cloud agent")
         try:
-            self.dev.attached_components.remove(component)
+            self.device.attached_components.remove(component)
         except ValueError:
             pass
 
@@ -476,109 +496,109 @@ class Agent(StorageObject):
     @dclayMethod(sec_info="model_mf2c.classes.SecurityInfo")
     def set_security_info(self, sec_info):
         self._check_cloud("Trying to set security info on a cloud agent")
-        self.dev.security_info = sec_info
+        self.device.security_info = sec_info
 
     @dclayMethod(return_="model_mf2c.classes.SecurityInfo")
     def get_security_info(self):
         self._check_cloud("Trying to get security info on a cloud agent")
-        return self.dev.security_info
+        return self.device.security_info
 
     @dclayMethod(data="bool")
     def set_data_privacy(self, data):
         self._check_cloud("Trying to set data privacy on a cloud agent")
-        self.dev.security_info.data_privacy = data
+        self.device.security_info.data_privacy = data
 
     @dclayMethod(network="bool")
     def set_network_security(self, network):
         self._check_cloud("Trying to set network security on a cloud agent")
-        self.dev.security_info.network_security = network
+        self.device.security_info.network_security = network
 
     @dclayMethod(device_sec="bool")
     def set_device_security(self, device_sec):
         self._check_cloud("Trying to set device security on a cloud agent")
-        self.dev.security_info.device_security = device_sec
+        self.device.security_info.device_security = device_sec
 
     # Behaviour Info setters and getters
 
     @dclayMethod(beh_info="model_mf2c.classes.BehaviourInfo")
     def set_behaviour_info(self, beh_info):
         self._check_cloud("Trying to set behaviour info on a cloud agent")
-        self.dev.behaviour_info = beh_info
+        self.device.behaviour_info = beh_info
 
     @dclayMethod(return_="model_mf2c.classes.BehaviourInfo")
     def get_behaviour_info(self):
         self._check_cloud("Trying to get behaviour info on a cloud agent")
-        return self.dev.behaviour_info
+        return self.device.behaviour_info
 
     @dclayMethod(mobile="bool")
     def set_mobility(self, mobile):
         self._check_cloud("Trying to set mobility info on a cloud agent")
-        self.dev.behaviour_info.mobile = mobile
+        self.device.behaviour_info.mobile = mobile
 
     @dclayMethod(reliability="str")
     def set_reliability(self, reliability):
         self._check_cloud("Trying to set reliability info on a cloud agent")
-        self.dev.behaviour_info.reliability = reliability
+        self.device.behaviour_info.reliability = reliability
 
     @dclayMethod(trust="str")
     def set_trust(self, trust):
         self._check_cloud("Trying to set trust info on a cloud agent")
-        self.dev.behaviour_info.trust = trust
+        self.device.behaviour_info.trust = trust
 
     @dclayMethod(leader="bool")
     def set_leader_capability(self, leader):
         self._check_cloud("Trying to set leader capability on a cloud agent")
-        self.dev.behaviour_info.leader_capable = leader
+        self.device.behaviour_info.leader_capable = leader
 
     # Sharing Model setters and getters
 
     @dclayMethod(sharing_info="model_mf2c.classes.SharingModelInfo")
     def set_sharing_model_info(self, sharing_info):
         self._check_cloud("Trying to set sharing model info on a cloud agent")
-        self.dev.sharing_model_info = sharing_info
+        self.device.sharing_model_info = sharing_info
 
     @dclayMethod(return_="model_mf2c.classes.SharingModelInfo")
     def get_sharing_model_info(self):
         self._check_cloud("Trying to get sharing model info on a cloud agent")
-        return self.dev.sharing_model_info
+        return self.device.sharing_model_info
 
     @dclayMethod(RAM="int")
     def set_shared_RAM_size(self, RAM):
         self._check_cloud("Trying to set shared RAM size on a cloud agent")
-        self.dev.sharing_model_info.shared_RAM_size = RAM
+        self.device.sharing_model_info.shared_RAM_size = RAM
 
     @dclayMethod(storage="int")
     def set_shared_storage_size(self, storage):
         self._check_cloud("Trying to set shared storage size on a cloud agent")
-        self.dev.sharing_model_info.shared_storage_size = storage
+        self.device.sharing_model_info.shared_storage_size = storage
 
     @dclayMethod(CPU="int")
     def set_shared_CPU_percent(self, CPU):
         self._check_cloud("Trying to set shared CPU percent on a cloud agent")
-        self.dev.sharing_model_info.shared_CPU_percent = CPU
+        self.device.sharing_model_info.shared_CPU_percent = CPU
 
     @dclayMethod(bw="int")
     def set_shared_bandwidth_size(self, bw):
         self._check_cloud("Trying to set shared bandwidth size on a cloud agent")
-        self.dev.sharing_model_info.shared_bandwidth_size = bw
+        self.device.sharing_model_info.shared_bandwidth_size = bw
 
     # Get Resource Info and Aggregation
 
     @dclayMethod(return_="tuple<model_mf2c.classes.User, model_mf2c.classes.StaticInfo, model_mf2c.classes.DynamicInfo, model_mf2c.classes.NetworkInfo, model_mf2c.classes.BehaviourInfo, model_mf2c.classes.SecurityInfo>")
     def get_resource_info(self):
         self._check_cloud("Trying to get resource info on a cloud agent")
-        self.dev.behaviour_info, self.dev.security_info
-        return self.dev.owner, self.dev.static_info, self.dev.dynamic_info, self.dev.network_info, self.dev.behaviour_info, self.dev.security_info
+        self.device.behaviour_info, self.device.security_info
+        return self.device.owner, self.device.static_info, self.device.dynamic_info, self.device.network_info, self.device.behaviour_info, self.device.security_info
 
     @dclayMethod(return_="dict")
     def get_resource_info_as_dict(self):
         self._check_cloud("Trying to get resource info on a cloud agent")
-        ret = {"Owner": self.dev.owner.name}
-        ret.update(self.dev.static_info.to_dict())
-        ret.update(self.dev.dynamic_info.to_dict())
-        ret.update(self.dev.network_info.to_dict())
-        ret.update(self.dev.behaviour_info.to_dict())
-        ret.update(self.dev.security_info.to_dict())
+        ret = {"Owner": self.device.owner.name}
+        ret.update(self.device.static_info.to_dict())
+        ret.update(self.device.dynamic_info.to_dict())
+        ret.update(self.device.network_info.to_dict())
+        ret.update(self.device.behaviour_info.to_dict())
+        ret.update(self.device.security_info.to_dict())
         return ret
 
     # Get all children info and manage children

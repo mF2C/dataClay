@@ -60,7 +60,7 @@ if __name__ == "__main__":
     # my_agent.make_persistent(my_agent.id, api.LOCAL) # my_agent.id is the alias to recover the object
     my_agent.make_persistent(my_agent.id) # Without "LOCAL" for testing. It must be recursive
 
-    device = my_agent.dev
+    device = my_agent.device
     assert my_device == device 
 
     user = device.owner

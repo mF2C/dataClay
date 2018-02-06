@@ -6,7 +6,7 @@ from model_mf2c.classes import (
 
 def calculate_agent_value(my_agent):
     #do whatever
-    return my_agent.dev.static_info.total_storage_size * 0.5
+    return my_agent.device.static_info.total_storage_size * 0.5
 
 
 def send_welcome_message():
@@ -78,6 +78,10 @@ def test_all_not_cloud(agent):
     # Static info
     print "Static info (not modifiable):"
     pprint(agent.get_static_info())
+    agent.device.set_CPU_info("This is CPU info for the Landscaper")
+    agent.device.set_hwloc("This is the result of hwloc for the Landscaper")
+    pprint(agent.device.get_CPU_info())
+    pprint(agent.device.get_hwloc())
     # Dynamic info
     print "Dynamic info (before update):"
     pprint(agent.get_dynamic_info())
