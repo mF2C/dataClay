@@ -1,0 +1,61 @@
+{
+"Devices":[
+  {
+	"resourceId" : "https://cimi.org/resources/devices/1",
+	"name" : "device1",
+	"description" : "device 1",
+	"resourceURI" : "https://cimi.org/resources/devices",
+
+	"id": "mf2c-device1",
+	"operatingSystem": "OS1",
+	"systemArchitecture": "Architecture 1",
+	"processorMaker": "ProcMaker 1",
+	"processorArchitecture": "ProcArch 1",
+	"numCPUs": 1,
+	"CPUClockSpeed": 1,
+    "numCores" : 1,
+	"RAMSize" : 1,
+	"storageSize": 1000,
+	"limitedPower": true,
+	"graphicsCardInfo": "Graphics Card 1"
+  },
+  {
+	"resourceId" : "https://cimi.org/resources/devices/2",
+	"name" : "device2",
+	"description" : "device 2",
+	"resourceURI" : "https://cimi.org/resources/devices",
+
+	"id": "mf2c-device2",
+	"operatingSystem": "OS2",
+	"systemArchitecture": "Architecture 2",
+	"processorMaker": "ProcMaker 2",
+	"processorArchitecture": "ProcArch 2",
+	"numCPUs": 2,
+	"CPUClockSpeed": 2,
+    "numCores" : 2,
+	"RAMSize" : 2,
+	"storageSize": 2000,
+	"limitedPower": false,
+	"graphicsCardInfo": "Graphics Card 2"
+  },
+  {
+	"resourceId" : "https://cimi.org/resources/devices/3",
+	"name" : "device3",
+	"description" : "device 3",
+	"resourceURI" : "https://cimi.org/resources/devices",
+
+	"id": "mf2c-device3",
+	"operatingSystem": "OS3",
+	"systemArchitecture": "Architecture 3",
+	"processorMaker": "ProcMaker 3",
+	"processorArchitecture": "ProcArch 3",
+	"numCPUs": 3,
+	"CPUClockSpeed": 3,
+    "numCores" : 3,
+	"RAMSize" : 3,
+	"storageSize": 3000,
+	"limitedPower": true,
+	"graphicsCardInfo": "Graphics Card 3"
+  }
+ ]
+}

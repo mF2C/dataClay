@@ -1,0 +1,31 @@
+{
+"Agents":[
+  {
+	"resourceId" : "https://cimi.org/resources/agents/1",
+	"name" : "agent1",
+	"description" : "agent 1",
+	"resourceURI" : "https://cimi.org/resources/agents",
+
+	"id": "mf2c-agent1",
+	"device": "https://cimi.org/resources/devices/1"
+  },
+  {
+	"resourceId" : "https://cimi.org/resources/agents/2",
+	"name" : "agent2",
+	"description" : "agent 2",
+	"resourceURI" : "https://cimi.org/resources/agents",
+
+	"id": "mf2c-agent2",
+	"device": "https://cimi.org/resources/devices/2"
+  },
+  {
+  	"resourceId" : "https://cimi.org/resources/agents/3",
+	"name" : "agent3",
+	"description" : "agent 3",
+	"resourceURI" : "https://cimi.org/resources/agents",
+
+	"id": "mf2c-agent3",
+	"device": "https://cimi.org/resources/devices/3"
+   }
+ ]
+}

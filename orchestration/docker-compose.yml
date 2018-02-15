@@ -25,7 +25,6 @@ services:
       - DATACLAY_ADMIN_PASSWORD=admin
       - POSTGRES_HOST=lmpostgres
     volumes:
-      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
       - ./log4j.properties:/usr/src/app/log4j.properties:ro
     networks:
       - lm
@@ -51,7 +50,6 @@ services:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres
     volumes:
-      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
       - ./log4j.properties:/usr/src/app/log4j.properties:ro
     networks:
       - ds

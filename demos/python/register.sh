@@ -1,5 +1,5 @@
 #!/bin/bash
-TOOLPATH=tool/dClayTool.sh
+TOOLPATH=../../tool/dClayTool.sh
 
 echo
 echo "***"
