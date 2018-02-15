@@ -1,12 +1,12 @@
 #!/bin/bash
-TOOLSPATH=../../tools/dClayTool.sh
+TOOLSPATH=../../tool/dClayTool.sh
 
 # Minimum set of required variables
 APP="CIMI_"
 SRCPATH="src/model"
 STUBSPATH="stubs"
 
-
+#CLASSPATH=$CLASSPATH:../../tool/lib/dataclayclient.jar
 
 ##### Checks and derived variables definition
 
@@ -40,7 +40,7 @@ $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
 printMsg "Compile and register model"
 TMPBINPATH=`mktemp -d`
-javac -cp lib/dataclayclient.jar `find $SRCPATH -type f -name *.java` -d $TMPBINPATH
+javac -cp ../../tool/lib/dataclayclient.jar `find $SRCPATH -type f -name *.java` -d $TMPBINPATH
 $TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPBINPATH java
 rm -Rf $TMPBINPATH
 
