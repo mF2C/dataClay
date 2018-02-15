@@ -1,5 +1,5 @@
 dataclayclient.jar
 *pyc
-/demo/stubs
+stubs/
 session.properties
 log/

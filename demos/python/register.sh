@@ -25,6 +25,7 @@ echo "***"
 echo "*** Getting stubs and putting them in ./demo/stubs"
 echo "***"
 rm -rf ./demo/stubs
+mkdir -p ./demo/stubs
 $TOOLPATH GetStubs bsc password model_mf2c ./demo/stubs
 
 echo
