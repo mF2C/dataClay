@@ -27,18 +27,3 @@ echo "***"
 rm -rf ./demo/stubs
 mkdir -p ./demo/stubs
 $TOOLPATH GetStubs bsc password model_mf2c ./demo/stubs
-
-echo
-echo "***"
-echo "*** Storing settings in ./cfgfiles/session.properties"
-echo "***"
-cat << EOF > ./cfgfiles/session.properties
-Account=bsc
-Password=password
-StubsClasspath=$PWD/demo/stubs
-DataSets=dstest
-DataSetForStore=dstest
-DataClayClientConfig=$PWD/cfgfiles/client.properties
-LocalBackend=DS1
-EOF
-
