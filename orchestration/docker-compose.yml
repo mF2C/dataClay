@@ -26,6 +26,7 @@ services:
       - POSTGRES_HOST=lmpostgres
     volumes:
       - ./log4j.properties:/usr/src/app/log4j.properties:ro
+      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
     networks:
       - lm
       - ds
@@ -51,6 +52,7 @@ services:
       - POSTGRES_HOST=ds1postgres
     volumes:
       - ./log4j.properties:/usr/src/app/log4j.properties:ro
+      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
     networks:
       - ds
 
