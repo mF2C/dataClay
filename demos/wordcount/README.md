@@ -31,19 +31,21 @@ With Global Requirements satisfied and dockers orchestrated with the provided do
 you can proceed with the following steps to execute a Wordcount test:
 
 `0_FilesToDocker.sh`
-- exports files directory to dataClay docker
+- Exports files directory to dataClay docker. 
+- A target directory path (**remote\_path** for step 3) of backend docker must be provided.
 
 `1_RegisterModel.sh`
-- registers the class model in dataClay
+- Registers the class model in dataClay
 
 `2_BuildApps.sh`
-- builds the producer/consumer applications
+- Builds the producer/consumer applications
 
 `3_TextGeneration.sh`
-- runs producer application
+- Runs producer application. 
+- An alias for the index of texts (**text\_col\_alias**) and **remote\_path** from step 0 are provided.
 
 `4_WordCount.sh`
-- runs consumer application
+- Runs consumer application. 
+- The **text\_col\_alias** is provided.
 
 Notice that having extra backends would require deploying files (`0_FilesToDocker.sh`) to other backends.
-The script can modified accordingly to do it.
