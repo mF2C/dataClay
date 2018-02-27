@@ -16,7 +16,7 @@ and a 'stubs' directory to store downloaded stubs after model registration.
 Apps Requirements
 =================
 
-It is expected that environment variable called COMPSSLIB is defined, pointing to the path of a recent compss-engine.jar lib.
+**It is expected that environment variable called COMPSSLIB is defined, pointing to the path of a recent compss-engine.jar lib.**
 
 Both TextGeneration and WordCount scripts will ask for the alias for the Index of files. This will serve as an entry point to find all texts.
 
