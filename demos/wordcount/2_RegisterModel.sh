@@ -1,4 +1,5 @@
 #!/bin/bash
+
 TOOLSPATH=../../tool/dClayTool.sh
 DATACLAYLIB=../../tool/lib/dataclayclient.jar
 

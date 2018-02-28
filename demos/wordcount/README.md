@@ -18,34 +18,32 @@ Apps Requirements
 
 Both TextGeneration and WordCount scripts will ask for the alias for the Index of files. This will serve as an entry point to find all texts.
 
-Also, TextGeneration script asks for a remote path (a folder with files, or a single file), the distributed index will read them to create 
-the actual Text objects in dataClay. 
-
-This path must be found from any dataClay backend. For instance, in MN a shared filesystem can be used to share a specific location.
-
- 
 Dockers example (1 backend)
 ===========================
 
 With Global Requirements satisfied and dockers orchestrated with the provided docker-compose file, 
 you can proceed with the following steps to execute a Wordcount test:
 
-`0_FilesToDocker.sh`
+`1_FilesToDocker.sh`
 - Exports files directory to dataClay docker. 
-- A target directory path (**remote\_path** for step 3) of backend docker must be provided.
 
-`1_RegisterModel.sh`
+`2_RegisterModel.sh`
 - Registers the class model in dataClay
 
-`2_BuildApps.sh`
+`3_BuildApps.sh`
 - Builds the producer/consumer applications
 
-`3_TextGeneration.sh`
+`4_TextGeneration.sh`
 - Runs producer application. 
-- An alias for the index of texts (**text\_col\_alias**) and **remote\_path** from step 0 are provided.
+- An alias for the index of texts is provided. 
 
-`4_WordCount.sh`
+`5_WordCount.sh`
 - Runs consumer application. 
-- The **text\_col\_alias** is provided.
+- The alias used in script 3 must be provided.
 
-Notice that having extra backends would require deploying files (`0_FilesToDocker.sh`) to other backends.
+Further considerations
+======================
+
+- Scenarios with more than one backend would require deploying files (`1_FilesToDocker.sh`) to other backends. To do so, nowadays, would imply changing the script properly.
+
+- Input directory of text files is currently hardcoded in `1_FilesToDocker.sh` script, but it can be changed editing the script properly.
