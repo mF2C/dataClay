@@ -17,7 +17,7 @@ Execution example
 - Registers the class model in dataClay
 
 `2_Build.sh`
-- Builds the producer/consumer applications
+- Builds the the main demo application
 
 `3_DataGenerator.sh`
 - Stores the basic data (objects) for the demo in dataClay.
