@@ -39,7 +39,7 @@ you can proceed with the following steps to execute a Wordcount test:
 
 `5_WordCount.sh`
 - Runs consumer application. 
-- The alias used in script 3 must be provided.
+- The alias used in script 4 must be provided.
 
 Further considerations
 ======================
