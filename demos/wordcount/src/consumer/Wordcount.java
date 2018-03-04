@@ -37,33 +37,33 @@ public class Wordcount {
 	Text[] textsToCount = totalTexts(tc, timesPerText);
 	if (textsToCount.length <= 0) {
 	    System.out.println("[ERROR] Obtained TextCollection: " + textColAlias + " with no text to be wordcounted.");
-	    else {
-		System.out.println("[LOG] Obtained TextCollection: " + textColAlias + " with " + textsToCount.length
-			+ " texts to count.");
-		partialResult = new TextStats[textsToCount.length];
+	} else {
+	    System.out.println("[LOG] Obtained TextCollection: " + textColAlias + " with " + textsToCount.length
+		    + " texts to count.");
+	    partialResult = new TextStats[textsToCount.length];
 
-		// Run wordcount N times
-		for (int i = 0; i < execTimes; i++) {
-		    System.out.println("[LOG] Computing result");
-		    long startTime = System.currentTimeMillis();
-		    TextStats finalResult = run(textsToCount);
-		    COMPSs.barrier();
-		    long endTime = System.currentTimeMillis();
-		    if (finalResult == null) {
-			System.err.println("[ERROR] Null result");
-			break;
-		    }
-		    System.out.println("[TIMER] Execution " + i + " time: " + (endTime - startTime) + " ms");
-		    printResult(finalResult);
-		    endTime = System.currentTimeMillis();
-		    System.out.println("[TIMER] Execution " + i + " time + result check: " + (endTime - startTime) + " ms");
+	    // Run wordcount N times
+	    for (int i = 0; i < execTimes; i++) {
+		System.out.println("[LOG] Computing result");
+		long startTime = System.currentTimeMillis();
+		TextStats finalResult = run(textsToCount);
+		COMPSs.barrier();
+		long endTime = System.currentTimeMillis();
+		if (finalResult == null) {
+		    System.err.println("[ERROR] Null result");
+		    break;
 		}
-	    }
-
-	    if (configPropertiesFile != null) {
-		StorageItf.finish();
+		System.out.println("[TIMER] Execution " + i + " time: " + (endTime - startTime) + " ms");
+		printResult(finalResult);
+		endTime = System.currentTimeMillis();
+		System.out.println("[TIMER] Execution " + i + " time + result check: " + (endTime - startTime) + " ms");
 	    }
 	}
+
+	if (configPropertiesFile != null) {
+	    StorageItf.finish();
+	}
+    }
 
     /**
      * @brief Main run method
