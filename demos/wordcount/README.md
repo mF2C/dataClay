@@ -41,6 +41,8 @@ you can proceed with the following steps to execute a Wordcount test:
 - Runs consumer application. 
 - The alias used in script 4 must be provided.
 
+You can also run WordCount app within a docker using `5_WordCount_docker.sh`.
+
 Further considerations
 ======================
 
