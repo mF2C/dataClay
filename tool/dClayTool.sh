@@ -39,16 +39,34 @@ SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
 errorMsg() {
-	echo "[ERROR] $1"
+	echo "[dataClay] [tool ERROR] $1"
 	exit -1
 }
 
-if [ "x$DATACLAY_JAR" == "x" ]; then
+DOCKER_BASE="orchestration_logicmodule_1"
+DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
+if [ -z "$DATACLAY_JAR" ]; then
   # No environment, we are not in Mare so assume relative placement of jar
   SCRIPT=$(readlink -f "$0")
   SCRIPTPATH=`dirname "$SCRIPT"` #script path
   mkdir -p $SCRIPTPATH/lib
   CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
+  touch $SCRIPTPATH/.dockerid
+  
+  DOCKER_ID=`docker inspect -f "{{.Id}}" $DOCKER_BASE`
+  if [ ! -f $CLIENTJAR ]; then
+    UPDATE_LIB=1
+  elif [ -z "`grep $DOCKER_ID $SCRIPTPATH/.dockerid`" ]; then
+	UPDATE_LIB=1
+  fi
+
+  if [ ! -z $UPDATE_LIB ]; then
+	rm -f $CLIENTJAR
+    docker cp $DOCKER_DCLIB $CLIENTJAR
+	echo $DOCKER_ID > $SCRIPTPATH/.dockerid
+	echo "[dataClay] [tool LOG] Retrieved $CLIENTJAR from $DOCKER_DCLIB"
+  fi
+
 else
   # Environment set means we are in Mare or in some already-prepared computing Environment
   # Assume everything is ok.
@@ -56,10 +74,9 @@ else
 fi
 
 if [ ! -f $CLIENTJAR ]; then
-	docker cp orchestration_logicmodule_1:/usr/src/app/dataclay.jar $CLIENTJAR
-	if [ ! -f $CLIENTJAR ]; then
-		errorMsg "ERROR: dataClay containers not running or cannot copy lib from /usr/src/app/dataclay.jar"
-	fi
+	errorMsg "Cannot resolve dataClay jar library. Possible causes: 
+                   - DATACLAY_JAR=\"$DATACLAY_JAR\" is not defined or not a valid path,
+                   - lib cannot be retrieved from docker at: $DOCKER_DCLIB."
 fi
 
 # Base ops commands
