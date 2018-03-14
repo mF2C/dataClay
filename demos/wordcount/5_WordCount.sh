@@ -19,7 +19,7 @@ if [ ! -f $COMPSSLIB ]; then
 	exit -1
 fi
 
-TOEXEC="java -cp stubs:bin:$DCLIB:$COMPSSLIB consumer.Wordcount $@"
+TOEXEC="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp stubs:bin:$DCLIB:$COMPSSLIB consumer.Wordcount $@"
 
 echo ""
 echo "Executing:"

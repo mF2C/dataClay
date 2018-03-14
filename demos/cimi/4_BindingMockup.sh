@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #export DATACLAYSESSIONFILE="$PWD/config.properties"
-TOEXEC="java -cp stubs:bin:../../tool/lib/dataclayclient.jar app.DataClayBindingMockup $@"
+TOEXEC="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp stubs:bin:../../tool/lib/dataclayclient.jar app.DataClayBindingMockup $@"
 echo ""
 echo "Executing"
 echo ""

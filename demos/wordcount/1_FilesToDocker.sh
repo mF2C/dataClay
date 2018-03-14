@@ -3,4 +3,7 @@
 INPUTDIR=./files
 REMOTEPATH=/tmp
 
-docker cp $INPUTDIR orchestration_ds1java_1:$REMOTEPATH
+DSs=`docker inspect --format="{{.Id}}" \`docker ps | grep ds.java | cut -d" " -f1\``
+for i in $DSs; do
+	docker cp $INPUTDIR $i:$REMOTEPATH
+done

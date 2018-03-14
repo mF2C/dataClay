@@ -19,7 +19,7 @@ PASS=${APP}Pass
 DATASET=${APP}DS
 
 printMsg() {
-	printf "\n******\n***** $1 \n******\n "
+	printf "\n******\n***** $1 \n******\n"
 }
 
 

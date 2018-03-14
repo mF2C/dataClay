@@ -13,10 +13,10 @@ and a 'stubs' directory to store downloaded stubs after model registration.
 Execution example
 =================
 
-`1_Register.sh`
+`1_RegisterModel.sh`
 - Registers the class model in dataClay
 
-`2_Build.sh`
+`2_BuildApps.sh`
 - Builds the the main demo application
 
 `3_DataGenerator.sh`

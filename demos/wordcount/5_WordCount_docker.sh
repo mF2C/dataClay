@@ -31,4 +31,4 @@ docker run --rm \
         -v "$DCLIB":$DK_DCLIB \
         -v "$COMPSSLIB":$DK_COMPSSLIB \
         -w $BASEDIR openjdk:8 \
-        java -cp stubs:bin:$DK_DCLIB:$DK_COMPSSLIB consumer.Wordcount $@
+        java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp stubs:bin:$DK_DCLIB:$DK_COMPSSLIB consumer.Wordcount $@

@@ -13,7 +13,7 @@ if [ ! -f $DCLIB ]; then
 	exit -1
 fi
 
-TOEXEC="java -cp stubs:bin:$DCLIB producer.TextCollectionGen $1 $REMOTEPATH ${@:2}"
+TOEXEC="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp stubs:bin:$DCLIB producer.TextCollectionGen $1 $REMOTEPATH ${@:2}"
 echo ""
 echo "Executing:"
 echo ""

@@ -10,6 +10,6 @@ fi
 
 echo ""
 echo -n "Compiling ... "
-mkdir bin
+mkdir -p bin
 javac -cp stubs:$DCLIB src/app/*.java -d bin/
 echo " done"
