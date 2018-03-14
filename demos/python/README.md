@@ -63,3 +63,4 @@ the application just call it:
 Note that the relatives paths are important for the dataClay framework to find
 the `cfgfiles` folder.
 
+**Standard error can be redirected to prevent logging messages on main screen**
