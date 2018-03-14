@@ -34,6 +34,6 @@ public class CIMIResourceCollection extends DataClayObject implements Iterable<C
 
     @Override
     public List<Object> filter(String conditions) {
-	return filterObject(conditions);
+	return super.filter(conditions);
     }
 }
