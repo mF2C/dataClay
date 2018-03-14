@@ -7,29 +7,37 @@ cat << EOF
 
 
  -------------------------------------------------------------------------------------------
-| Basic          | Arguments                                                                |
+| Basic            | Arguments                                                              |
  -------------------------------------------------------------------------------------------
- NewAccount        <new_user_name>  <new_user_pass>
+ NewAccount         <new_user_name>  <new_user_pass>
 
- NewModel          <user_name>  <user_pass>  <namespace_name> <class_path> <$SUPPORTEDLANGS>
- GetStubs          <user_name>  <user_pass>  <namespace_name> <stubs_path>
+ NewModel           <user_name>  <user_pass>  <namespace_name> <class_path> <$SUPPORTEDLANGS>
+ GetStubs           <user_name>  <user_pass>  <namespace_name> <stubs_path>
 
- NewDataContract   <user_name>  <user_pass>  <dataset_name>   <beneficiary_user_name>
+ NewDataContract    <user_name>  <user_pass>  <dataset_name>   <beneficiary_user_name>
 
 
  ------------------------------------------------------------------------------------------
-| Misc           | Arguments                                                                |
+| Misc             | Arguments                                                             |
  ------------------------------------------------------------------------------------------
- GetBackends       <user_name>  <user_pass>  <$SUPPORTEDLANGS>
+ GetBackends        <user_name>  <user_pass>  <$SUPPORTEDLANGS>
 
- NewNamespace      <user_name>  <user_pass>  <namespace_name> <$SUPPORTEDLANGS>
- GetNamespaces     <user_name>  <user_pass>
+ NewNamespace       <user_name>  <user_pass>  <namespace_name> <$SUPPORTEDLANGS>
+ GetNamespaces      <user_name>  <user_pass>
 
- NewDataset        <user_name>  <user_pass>  <dataset_name>   <$SUPPORTEDDSETS>
- GetDatasets       <user_name>  <user_pass>
+ NewDataset         <user_name>  <user_pass>  <dataset_name>   <$SUPPORTEDDSETS>
+ GetDatasets        <user_name>  <user_pass>
+
+ RegisterDataClay   <dc_id> <dc_name> <dc_host> <dc_port>
+ GetDataClayInfo    <dc_name>
+ CheckDataClay      <dc_name>
 
 EOF
 exit 0
+}
+errorMsg() {
+	echo "[dataClay] [tool ERROR] $1"
+	exit -1
 }
 
 shopt -s nocasematch # ignore case in case or if clauses
@@ -38,21 +46,17 @@ TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
-errorMsg() {
-	echo "[dataClay] [tool ERROR] $1"
-	exit -1
-}
-
-DOCKER_BASE="orchestration_logicmodule_1"
+DOCKER_BASE=`docker inspect --format='{{.Id}}' \`docker ps | grep logicmodule | head -1 | cut -d" " -f1\``
 DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
-if [ -z "$DATACLAY_JAR" ]; then
-  # No environment, we are not in Mare so assume relative placement of jar
+if [ -z $DATACLAY_JAR ]; then
+  # No predefined DATACLAY_JAR, so assume relative placement of jar
   SCRIPT=$(readlink -f "$0")
   SCRIPTPATH=`dirname "$SCRIPT"` #script path
   mkdir -p $SCRIPTPATH/lib
   CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
   touch $SCRIPTPATH/.dockerid
-  
+
+  # In case of using dockers, try to find lib there 
   DOCKER_ID=`docker inspect -f "{{.Id}}" $DOCKER_BASE`
   if [ ! -f $CLIENTJAR ]; then
     UPDATE_LIB=1
@@ -77,10 +81,12 @@ if [ ! -f $CLIENTJAR ]; then
 	errorMsg "Cannot resolve dataClay jar library. Possible causes: 
                    - DATACLAY_JAR=\"$DATACLAY_JAR\" is not defined or not a valid path,
                    - lib cannot be retrieved from docker at: $DOCKER_DCLIB."
+else
+	echo "[dataClay] [tool LOG] $0 will use this dataClay lib: $CLIENTJAR"
 fi
 
 # Base ops commands
-JAVA_OPSBASE="java -cp $CLIENTJAR"
+JAVA_OPSBASE="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp $CLIENTJAR"
 PY_OPSBASE="python -m dataclay.tool"
 
 # Basic operations
@@ -101,6 +107,10 @@ PY_NEW_MODEL="$PY_OPSBASE register_model"
 # Get stubs operations
 JAVA_GETSTUBS="$JAVA_OPSBASE dataclay.tool.GetStubs"
 PY_GETSTUBS="$PY_OPSBASE get_stubs"
+
+# Federation
+REG_DATACLAY="$JAVA_OPSBASE dataclay.tool.NewDataClayInstance"
+GET_DATACLAY="$JAVA_OPSBASE dataclay.tool.GetDataClayInfo"
 
 if [ -z $1 ]; then
 	usage
@@ -187,6 +197,15 @@ case $OPERATION in
 				fi
 				;;
 		esac
+		;;
+	'RegisterDataClay')
+		$REG_DATACLAY ${@:2}
+		;;
+	'CheckDataClay')
+		$GET_DATACLAY $2 --check
+		;;
+	'GetDataClayInfo')
+		$GET_DATACLAY $2
 		;;
 	*)
 		echo "[ERROR]: Operation $1 is not supported."
