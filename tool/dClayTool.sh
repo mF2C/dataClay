@@ -50,8 +50,7 @@ DOCKER_BASE=`docker inspect --format='{{.Id}}' \`docker ps | grep logicmodule | 
 DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
 if [ -z $DATACLAY_JAR ]; then
   # No predefined DATACLAY_JAR, so assume relative placement of jar
-  SCRIPT=$(readlink -f "$0")
-  SCRIPTPATH=`dirname "$SCRIPT"` #script path
+  SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"  
   mkdir -p $SCRIPTPATH/lib
   CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
   touch $SCRIPTPATH/.dockerid
