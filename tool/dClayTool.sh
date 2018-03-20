@@ -36,7 +36,9 @@ EOF
 exit 0
 }
 errorMsg() {
+	echo ""
 	echo "[dataClay] [tool ERROR] $1"
+	echo ""
 	exit -1
 }
 
@@ -46,9 +48,18 @@ TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
-DOCKER_BASE=`docker inspect --format='{{.Id}}' \`docker ps | grep logicmodule | head -1 | cut -d" " -f1\``
-DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
-if [ -z $DATACLAY_JAR ]; then
+if [ ! -z $DATACLAY_JAR ]; then
+  # Environment set means we are in Mare or in some already-prepared computing Environment
+  # Assume everything is ok.
+  CLIENTJAR=$DATACLAY_JAR
+else
+  type docker >/dev/null 2>&1 || { errorMsg "If DATACLAY_JAR is not installed, docker is required; but it is not installed. Aborting."; }
+  DOCKER_BASE=`docker inspect --format='{{.Id}}' \`docker ps | grep logicmodule | head -1 | cut -d" " -f1\``
+  if [ -z $DOCKER_BASE ]; then
+	errorMsg "Could not inspect a running logicmodule docker."  
+  fi
+  
+  DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
   # No predefined DATACLAY_JAR, so assume relative placement of jar
   SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"  
   mkdir -p $SCRIPTPATH/lib
@@ -69,17 +80,12 @@ if [ -z $DATACLAY_JAR ]; then
 	echo $DOCKER_ID > $SCRIPTPATH/.dockerid
 	echo "[dataClay] [tool LOG] Retrieved $CLIENTJAR from $DOCKER_DCLIB"
   fi
-
-else
-  # Environment set means we are in Mare or in some already-prepared computing Environment
-  # Assume everything is ok.
-  CLIENTJAR=$DATACLAY_JAR
 fi
 
 if [ ! -f $CLIENTJAR ]; then
 	errorMsg "Cannot resolve dataClay jar library. Possible causes: 
-                   - DATACLAY_JAR=\"$DATACLAY_JAR\" is not defined or not a valid path,
-                   - lib cannot be retrieved from docker at: $DOCKER_DCLIB."
+                   - DATACLAY_JAR=\"$DATACLAY_JAR\" is not defined or is not a valid path
+                   - a dataClay docker environment cannot be found."
 else
 	echo "[dataClay] [tool LOG] $0 will use this dataClay lib: $CLIENTJAR"
 fi

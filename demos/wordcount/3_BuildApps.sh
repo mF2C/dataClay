@@ -7,11 +7,11 @@ if [ ! -f $DCLIB ]; then
 	exit -1
 fi
 if [ -z $COMPSSLIB ]; then
-	echo "[ERROR] COMPSS lib variable undefined"
+	echo "[ERROR] COMPSSLIB variable with valid COMPSS path is undefined"
 	exit -1
 fi
 if [ ! -f $COMPSSLIB ]; then
-	echo "[ERROR] COMPSs lib (or link) not found at $COMPSSLIB."
+	echo "[ERROR] COMPSs lib (or link) not found at COMPSSLIB=$COMPSSLIB."
 	exit -1
 fi
 
