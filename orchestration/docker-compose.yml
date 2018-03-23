@@ -5,67 +5,162 @@ networks:
   ds:  # Note that this is shared between all DS
 
 services:
-  lmpostgres:
+
+  ####################################
+  #  LOGIC MODULE ON DC 1            #
+  ####################################
+  lmpostgres1:
     image: postgres
     env_file:
-      - ./PG.environment
+      - ./env/PG.environment
     networks:
       - lm
     command: -c fsync=off
 
-  logicmodule:
-    image: bscdataclay/logicmodule
+  logicmodule1:
+    image: "bscdataclay/logicmodule"
     ports:
       - "11034:1034"
     env_file:
-      - ./LM.environment
-      - ./PG.environment
+      - ./env/LM.environment
+      - ./env/PG.environment
     environment:
       - DATACLAY_ADMIN_USER=admin
       - DATACLAY_ADMIN_PASSWORD=admin
-      - POSTGRES_HOST=lmpostgres
+      - POSTGRES_HOST=lmpostgres1
     volumes:
-      - ./log4j.properties:/usr/src/app/log4j.properties:ro
-      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
     networks:
       - lm
       - ds
 
-  ds1postgres:
+  ####################################
+  #  JAVA DATA SERVICES ON DC 1      #
+  ####################################
+  ds1postgres1:
     image: postgres
     env_file:
-      - ./PG.environment
+      - ./env/PG.environment
     networks:
       - ds
     command: -c fsync=off
 
-  ds1java:
-    image: bscdataclay/dsjava
+  ds1java1:
+    image: "bscdataclay/dsjava"
     ports:
       - 2127
     env_file:
-      - ./DS.environment
-      - ./PG.environment
-      - ./LM.environment
+      - ./env/DS.environment
+      - ./env/PG.environment
+      - ./env/LM.environment
     environment:
       - DATASERVICE_NAME=DS1
-      - POSTGRES_HOST=ds1postgres
+      - POSTGRES_HOST=ds1postgres1
     volumes:
-      - ./log4j.properties:/usr/src/app/log4j.properties:ro
-      - ./global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
     networks:
       - ds
 
-  ds1pythonee:
-    image: bscdataclay/dspython
+  ####################################
+  #  PYTHON DATA SERVICES ON DC 1    #
+  ####################################
+
+
+  # Python ExecutionEnvironment (which, by default, are unused)
+  # See initDC.sh shell script for more information on initialization
+  ds1pythonee1:
+    image: "bscdataclay/dspython"
     ports:
       - 6867
     env_file:
-      - ./LM.environment
-      - ./DS.environment
+      - ./env/LM.environment
+      - ./env/DS.environment
     environment:
       - DATASERVICE_NAME=DS1
-      - POSTGRES_HOST=ds1postgres
+      - POSTGRES_HOST=ds1postgres1
+      - DEBUG=True
+      #- PYTHONVERBOSE=1
+    networks:
+      - ds
+
+  #############################################
+  #   LOGIC MODULE ON DC 2                    #
+  #############################################
+  lmpostgres2:
+    image: postgres
+    env_file:
+      - ./env/PG2.environment
+    networks:
+      - lm
+    command: -c fsync=off
+
+  logicmodule2:
+    image: "bscdataclay/logicmodule"
+    ports:
+      - "12034:2034"
+    env_file:
+      - ./env/LM2.environment
+      - ./env/PG2.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+      - POSTGRES_HOST=lmpostgres2
+    volumes:
+      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+    networks:
+      - lm
+      - ds
+
+  ####################################
+  #    JAVA DATA SERVICES ON DC 2    #
+  ####################################
+  ds1postgres2:
+    image: postgres
+    env_file:
+      - ./env/PG2.environment
+    networks:
+      - ds
+    command: -c fsync=off
+
+  ds1java2:
+    image: "bscdataclay/dsjava"
+    ports:
+      - 3127
+    env_file:
+      - ./env/DS2.environment
+      - ./env/PG2.environment
+      - ./env/LM2.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+      - POSTGRES_HOST=ds1postgres2
+    volumes:
+      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+    networks:
+      - ds
+
+  ####################################
+  #  PYTHON DATA SERVICES ON DC 2    #
+  ####################################
+
+
+  # Python ExecutionEnvironment (which, by default, are unused)
+  # See initDC.sh shell script for more information on initialization
+  ds1pythonee2:
+    image: "bscdataclay/dspython"
+    ports:
+      - 6867
+    env_file:
+      - ./env/LM2.environment
+      - ./env/DS2.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+      - POSTGRES_HOST=ds1postgres2
+      - DEBUG=True
+      #- PYTHONVERBOSE=1
     networks:
       - ds
 

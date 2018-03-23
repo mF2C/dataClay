@@ -28,6 +28,7 @@ cat << EOF
  NewDataset         <user_name>  <user_pass>  <dataset_name>   <$SUPPORTEDDSETS>
  GetDatasets        <user_name>  <user_pass>
 
+ GetDataClayID    
  RegisterDataClay   <dc_id> <dc_name> <dc_host> <dc_port>
  GetDataClayInfo    <dc_name>
  CheckDataClay      <dc_name>
@@ -116,6 +117,7 @@ PY_GETSTUBS="$PY_OPSBASE get_stubs"
 # Federation
 REG_DATACLAY="$JAVA_OPSBASE dataclay.tool.NewDataClayInstance"
 GET_DATACLAY="$JAVA_OPSBASE dataclay.tool.GetDataClayInfo"
+GET_DATACLAYID="$JAVA_OPSBASE dataclay.tool.GetCurrentDataClayID"
 
 if [ -z $1 ]; then
 	usage
@@ -211,6 +213,9 @@ case $OPERATION in
 		;;
 	'GetDataClayInfo')
 		$GET_DATACLAY $2
+		;;
+	'GetDataClayID')
+		$GET_DATACLAYID $2
 		;;
 	*)
 		echo "[ERROR]: Operation $1 is not supported."
