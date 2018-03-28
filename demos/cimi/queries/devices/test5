@@ -1,0 +1,1 @@
+[:Filter [:AndExpr [:Comp [:Attribute operatinSystem] [:PrefixOp ^=] [:SingleQuoteString 'OS3']]]]

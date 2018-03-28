@@ -1,0 +1,5 @@
+"category/temperature='true'"
+"category/temperature='true' and category/inclinometer='true'"
+"category/temperature='true' and category/jammer='false'"
+"category/cpu>=1 and category/storage>=1"
+"category/cpu>=1 and category/storage>=1"

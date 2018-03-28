@@ -9,19 +9,16 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import dataclay.api.DataClay;
-import model.Agent;
-import model.CIMIResource;
-import model.CIMIResourceCollection;
-import model.Device;
+import model.*;
 
 public class DataGenerator {
     private static void usage() {
-	System.out.println("Usage: app.DataGenerator <JSONfile_Devices> <JSONFile_Agents>");
+	System.out.println("Usage: app.DataGenerator <JSONfile_Devices> <JSONFile_Agents> <JSONFile_Services>");
 	System.exit(-1);
     }
 
     public static void main(String[] args) throws Exception {
-	if (args.length != 2) {
+	if (args.length != 3) {
 	    usage();
 	}
 	// Init dataClay session
@@ -29,6 +26,7 @@ public class DataGenerator {
 
 	genResources(args[0], "Devices");
 	genResources(args[1], "Agents");
+	genResources(args[2], "Services");
 
 	// Finish dataClay session
 	DataClay.finish();
@@ -45,6 +43,7 @@ public class DataGenerator {
 	CIMIResourceCollection resources = new CIMIResourceCollection();
 	CIMIResourceCollection devicesColl = null;
 	if (resourceType.equals("Agents")) {
+	    // Devices are required for Agents
 	    devicesColl = (CIMIResourceCollection) CIMIResourceCollection.getByAlias("Devices");
 	}
 
@@ -69,15 +68,28 @@ public class DataGenerator {
 
 	    } else if (resourceType.equals("Agents")) {
 
+		// Devices are required for Agents
 		Device myDevice = (Device) devicesColl.get(resource.get("device").getAsString());
 
 		cimiResource = new Agent(resource.get("id").getAsString(), myDevice,
 			resource.get("resourceId").getAsString(), resource.get("name").getAsString(),
 			resource.get("description").getAsString(), resource.get("resourceURI").getAsString());
-	    }
-	    resources.put(cimiResource);
-	}
+	    } else if (resourceType.equals("Services")) {
 
-	resources.makePersistent(resourceType);
+		JsonObject category = resource.get("category").getAsJsonObject();
+		cimiResource = new Service(category.get("cpu").getAsInt(), category.get("memory").getAsInt(),
+			category.get("storage").getAsInt(), category.get("inclinometer").getAsBoolean(),
+			category.get("temperature").getAsBoolean(), category.get("jammer").getAsBoolean(),
+			category.get("location").getAsBoolean(), resource.get("id").getAsString(),
+			resource.get("name").getAsString(), resource.get("description").getAsString(),
+			resource.get("resourceURI").getAsString());
+	    }
+	    if (cimiResource != null) {
+		resources.put(cimiResource);
+	    }
+	}
+	if (!resources.isEmpty()) {
+	    resources.makePersistent(resourceType);
+	}
     }
 }

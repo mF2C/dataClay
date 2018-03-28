@@ -1,0 +1,1 @@
+[:Filter [:AndExpr [:Comp [:Attribute numCPUs] [:RelOp >=] [:SingleQuoteString '2']]] [:Filter [:AndExpr [:Comp [:Attribute limitedPower] [:EqOp =] [:SingleQuoteString 'false']]]]]

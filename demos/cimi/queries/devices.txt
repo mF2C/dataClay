@@ -1,0 +1,5 @@
+"limitedPower='true'"
+"numCPUs>='2'"
+"numCPUs>='2' and limitedPower='false'"
+"numCPUs>='2' or limitedPower='false'"
+"operatinSystem^='OS3'"

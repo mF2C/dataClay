@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import dataclay.DataClayObject;
+import dataclay.util.filtering.ASTUtil;
 
 @SuppressWarnings("serial")
 public class CIMIResourceCollection extends DataClayObject implements Iterable<CIMIResource> {
@@ -22,7 +23,7 @@ public class CIMIResourceCollection extends DataClayObject implements Iterable<C
     public void put(final CIMIResource newResource) {
 	resources.put(newResource.getResourceId(), newResource);
     }
-    
+
     public void delete(final String id) {
 	resources.remove(id);
     }
@@ -33,7 +34,11 @@ public class CIMIResourceCollection extends DataClayObject implements Iterable<C
     }
 
     @Override
-    public List<Object> filter(String conditions) {
-	return super.filter(conditions);
+    public List<Object> filter(String query) {
+	return filterByAST(ASTUtil.cimiToAST(query));
+    }
+    
+    public boolean isEmpty() {
+	return resources.isEmpty();
     }
 }

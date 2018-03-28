@@ -1,0 +1,72 @@
+{
+"Services":[
+  {
+    "id": "0",
+    "name": "hello-world",
+    "description": "Hello World Service",
+    "resourceURI": "/hello-world",
+    "exec": "hello-world",
+    "exec_type": "docker",
+    "category": {
+      "cpu": "1",
+      "memory": "1",
+      "storage": "1",
+      "inclinometer": false,
+      "temperature": false,
+      "jammer": false,
+      "location": false
+    }
+  },
+  {
+    "id": "1",
+    "name": "use-case-1",
+    "description": "Emergency Management System",
+    "resourceURI": "/uc1",
+    "exec": "uc1.jar",
+    "exec_type": "compss",
+    "category": {
+      "cpu": "1",
+      "memory": "1",
+      "storage": "1",
+      "inclinometer": true,
+      "temperature": true,
+      "jammer": true,
+      "location": true
+    }
+  },
+  {
+    "id": "2",
+    "name": "use-case-2",
+    "description": "Smart Boats",
+    "resourceURI": "/uc2",
+    "exec": "uc2.jar",
+    "exec_type": "compss",
+    "category": {
+      "cpu": "1",
+      "memory": "1",
+      "storage": "1",
+      "inclinometer": false,
+      "temperature": true,
+      "jammer": false,
+      "location": true
+    }
+  },
+  {
+    "id": "3",
+    "name": "use-case-3",
+    "description": "Airport Location System",
+    "resourceURI": "/uc3",
+    "exec": "uc3.jar",
+    "exec_type": "compss",
+    "category": {
+      "cpu": "1",
+      "memory": "1",
+      "storage": "1",
+      "inclinometer": false,
+      "temperature": false,
+      "jammer": false,
+      "location": true
+    }
+  }
+ ]
+}

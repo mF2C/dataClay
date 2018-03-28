@@ -1,0 +1,1 @@
+[:Filter [:AndExpr [:Comp [:Attribute category / temperature] [:EqOp =] [:SingleQuoteString 'true']]]]
