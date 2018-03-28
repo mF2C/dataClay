@@ -1,1 +1,1 @@
-[:Filter [:AndExpr [:Comp [:Attribute category / cpu] [:RelOp >=] [:IntValue 1]] [:AndExpr [:Comp [:Attribute category / storage] [:RelOp >=] [:IntValue 1]]]]]
+[:Filter [:AndExpr [:Comp [:Attribute category / cpu] [:EqOp =] [:SingleQuoteString 'low']] [:AndExpr [:Comp [:Attribute category / storage] [:EqOp =] [:SingleQuoteString 'low']]]]]

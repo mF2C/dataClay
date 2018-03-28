@@ -7,7 +7,7 @@ public class Service extends CIMIResource {
 
     private Map<String, Object> category;
 
-    public Service(int cpu, int memory, int storage, boolean inclinometer,
+    public Service(String cpu, String memory, String storage, boolean inclinometer,
 	    boolean temperature, boolean jammer, boolean location, String resourceID, String resourceName,
 	    String resourceDescription, String resourceURI) {
 

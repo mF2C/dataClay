@@ -77,8 +77,8 @@ public class DataGenerator {
 	    } else if (resourceType.equals("Services")) {
 
 		JsonObject category = resource.get("category").getAsJsonObject();
-		cimiResource = new Service(category.get("cpu").getAsInt(), category.get("memory").getAsInt(),
-			category.get("storage").getAsInt(), category.get("inclinometer").getAsBoolean(),
+		cimiResource = new Service(category.get("cpu").getAsString(), category.get("memory").getAsString(),
+			category.get("storage").getAsString(), category.get("inclinometer").getAsBoolean(),
 			category.get("temperature").getAsBoolean(), category.get("jammer").getAsBoolean(),
 			category.get("location").getAsBoolean(), resource.get("id").getAsString(),
 			resource.get("name").getAsString(), resource.get("description").getAsString(),
