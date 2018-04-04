@@ -10,7 +10,7 @@ services:
   #  LOGIC MODULE ON DC 1            #
   ####################################
   lmpostgres1:
-    image: postgres
+    image: postgres:9.5.12
     env_file:
       - ./env/PG.environment
     networks:
@@ -39,7 +39,7 @@ services:
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
   ds1postgres1:
-    image: postgres
+    image: postgres:9.5.12
     env_file:
       - ./env/PG.environment
     networks:
@@ -89,7 +89,7 @@ services:
   #   LOGIC MODULE ON DC 2                    #
   #############################################
   lmpostgres2:
-    image: postgres
+    image: postgres:9.5.12
     env_file:
       - ./env/PG2.environment
     networks:
@@ -118,7 +118,7 @@ services:
   #    JAVA DATA SERVICES ON DC 2    #
   ####################################
   ds1postgres2:
-    image: postgres
+    image: postgres:9.5.12
     env_file:
       - ./env/PG2.environment
     networks:
