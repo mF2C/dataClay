@@ -20,8 +20,10 @@ public class Device extends CIMIResource {
     private String graphicsCardInfo;
     // Add this @Replication annotation before every attribute that may be modified
     // in the child and should be synched to the leader
+    @Replication.InMaster
     @Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
     private String CPU_info; // For the Landscaper collector
+    @Replication.InMaster
     @Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
     private String hwloc; // For the Landscaper collector
     // private List<Component> attachedComponents;

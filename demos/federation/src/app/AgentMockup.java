@@ -124,6 +124,10 @@ public class AgentMockup {
     private static void runAsNormalAgent() throws Exception {
 	// Discovery module (receiving welcome messages)
 	String message = receiveWelcomeMessage();
+	if (message == null || message.isEmpty()) {
+	    System.out.println("Mobile cannot discover the leader.");
+	    return;
+	}
 	// Get all the required info from the message to connect to the DM in the leader
 	DataClayInstance myLeaderDM = getDataManagementConfig(message);
 	// TODO Register the dataClay instance in the leader, with all the required info
