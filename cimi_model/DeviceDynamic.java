@@ -26,18 +26,18 @@ public class DeviceDynamic extends CIMIResource {
 	private
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public DeviceDynamic(Device device, String ramUnits, float ramFree, float ramFreePercent, 
-			String storageUnits, int storageFree, float storageFreePercent, float cpuFreePercent, 
+	public DeviceDynamic(Device device, float ramFree, float ramFreePercent, 
+			int storageFree, float storageFreePercent, float cpuFreePercent, 
 			String powerRemainingStatus, int powerRemainingStatusSeconds, String ethernetAddress, 
 			String wifiAddress, List<Object> ethernetThroughputInfo, List<Object> wifiThroughputInfo, Device myleaderID,  
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
 		this.device = device;
 		//this.isLeader = isLeader;
-		this.ramUnits = ramUnits;
+		//this.ramUnits = ramUnits;
 		this.ramFree = ramFree;
 		this.ramFreePercent = ramFreePercent;
-		this.storageUnits = storageUnits;
+		//this.storageUnits = storageUnits;
 		this.storageFree = storageFree;
 		this.storageFreePercent = storageFreePercent;
 		this.cpuFreePercent = cpuFreePercent;
@@ -59,9 +59,9 @@ public class DeviceDynamic extends CIMIResource {
 		this.isLeader = isLeader;
 	}
 	
-	public void set_ramUnits(String ramUnits) {
-		this.ramUnits = ramUnits;
-	}
+	//public void set_ramUnits(String ramUnits) {
+	//	this.ramUnits = ramUnits;
+	//}
 	
 	public void set_ramFree(float ramFree) {
 		this.ramFree = ramFree;
@@ -71,9 +71,9 @@ public class DeviceDynamic extends CIMIResource {
 		this.ramFreePercent = ramFreePercent;
 	}
 	
-	public void set_storageUnits(String storageUnits) {
-		this.storageUnits = storageUnits;
-	}
+	//public void set_storageUnits(String storageUnits) {
+	//	this.storageUnits = storageUnits;
+	//}
 	
 	public void set_storageFree(int storageFree) {
 		this.storageFree = storageFree;
@@ -119,10 +119,10 @@ public class DeviceDynamic extends CIMIResource {
 		Map<String, Object> info = getCIMIResourceInfo();
 		info.put("device", this.device);
 		//info.put("isLeader", this.isLeader);
-		info.put("ramUnits", this.ramUnits);
+		//info.put("ramUnits", this.ramUnits);
 		info.put("ramFree", this.ramFree);
 		info.put("ramFreePercent", this.ramFreePercent);
-		info.put("storageUnits", this.storageUnits);
+		//info.put("storageUnits", this.storageUnits);
 		info.put("storageFree", this.storageFree);
 		info.put("storageFreePercent", this.storageFreePercent);
 		info.put("cpuFreePercent", this.cpuFreePercent);
