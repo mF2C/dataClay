@@ -21,12 +21,13 @@ public class Device extends CIMIResource {
 	private String networkingStandards;
 	private String ethernetAddress;
 	private String wifiAddress;
+	private String myleaderID;
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
 	public Device(String deviceID, boolean isLeader, String os, String arch, String cpuManufacturer,
 			int physicalCores, int logicalCores, int cpuClockSpeed, int memory, int storage, 
 			boolean powerPlugged, String networkingStandards, String ethernetAddress, String wifiAddress,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
+			String myleaderID, String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
 		this.deviceID = deviceID;
 		this.isLeader = isLeader;
@@ -42,6 +43,7 @@ public class Device extends CIMIResource {
 		this.networkingStandards = networkingStandards;
 		this.ethernetAddress = ethernetAddress;
 		this.wifiAddress = wifiAddress;
+		this.myleaderID = myleaderID;
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -100,6 +102,9 @@ public class Device extends CIMIResource {
 	public void set_wifiAddress(String wifiAddress) {
 		this.wifiAddress = wifiAddress;		
 	}
+	public void set_myleaderID(String myleaderID) {
+		this.myleaderID = myleaderID;		
+	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
 	public Map<String, Object> get_Device_info() {
@@ -118,6 +123,7 @@ public class Device extends CIMIResource {
 		info.put("networkingStandards", this.networkingStandards);
 		info.put("ethernetAddress", this.ethernetAddress);
 		info.put("wifiAddress", this.wifiAddress);
+		info.put("myleaderID", this.myleaderID);
 		return info;
 	}
 
