@@ -9,11 +9,11 @@ public class FogArea extends CIMIResource {
 	//where String is the field name, and Object is the value
 	private Device leaderDevice;
 	private int numDevices;
-	private String ramUnits;
+	//private String ramUnits;
 	private int ramTotal;
 	private int ramMax;
 	private int ramMin;
-	private String storageUnits;
+	//private String storageUnits;
 	private int storageTotal;
 	private int storageMax;
 	private int storageMin;
@@ -30,8 +30,8 @@ public class FogArea extends CIMIResource {
 	private String powerRemainingMin;
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public FogArea(Device leaderDevice, int numDevices, String ramUnits, int ramTotal, int ramMax, int ramMin,
-			String storageUnits, int storageTotal, int storageMax, int storageMin, float avgProcessingCapacityPercent,
+	public FogArea(Device leaderDevice, int numDevices, int ramTotal, int ramMax, int ramMin,
+		        int storageTotal, int storageMax, int storageMin, float avgProcessingCapacityPercent,
 			float cpuMaxPercent, float cpuMinPercent, int avgPhysicalCores, int physicalCoresMax, int physicalCoresMin,
 			int avgLogicalCores, int logicalCoresMax, int logicalCoresMin, String powerRemainingMax, String powerRemainingMin,
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
@@ -39,11 +39,11 @@ public class FogArea extends CIMIResource {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
 		this.leaderDevice = leaderDevice;
 		this.numDevices = numDevices;
-		this.ramUnits = ramUnits;
+		//this.ramUnits = ramUnits;
 		this.ramTotal = ramTotal;
 		this.ramMax = ramMax;
 		this.ramMin = ramMin;
-		this.storageUnits = storageUnits;
+		//this.storageUnits = storageUnits;
 		this.storageTotal = storageTotal;
 		this.storageMax = storageMax;
 		this.storageMin = storageMin;
@@ -69,9 +69,9 @@ public class FogArea extends CIMIResource {
 		this.numDevices = numDevices;
 	}
 	
-	public void set_ramUnits(String ramUnits) {
-		this.ramUnits = ramUnits;
-	}
+	//public void set_ramUnits(String ramUnits) {
+	//	this.ramUnits = ramUnits;
+	//}
 	
 	public void set_ramTotal(int ramTotal) {
 		this.ramTotal = ramTotal;
@@ -85,9 +85,9 @@ public class FogArea extends CIMIResource {
 		this.ramMin = ramMin;
 	}
 	
-	public void set_storageUnits(String storageUnits) {
-		this.storageUnits = storageUnits;
-	}
+	//public void set_storageUnits(String storageUnits) {
+	//	this.storageUnits = storageUnits;
+	//}
 	
 	public void set_storageTotal(int storageTotal) {
 		this.storageTotal = storageTotal;
@@ -150,11 +150,11 @@ public class FogArea extends CIMIResource {
 		Map<String, Object> info = getCIMIResourceInfo();
 		info.put("leaderDevice", leaderDevice);
 		info.put("numDevices", numDevices);
-		info.put("ramUnits", ramUnits);
+		//info.put("ramUnits", ramUnits);
 		info.put("ramTotal", ramTotal);
 		info.put("ramMax", ramMax);
 		info.put("ramMin", ramMin);
-		info.put("storageUnits", storageUnits);
+		//info.put("storageUnits", storageUnits);
 		info.put("storageTotal", storageTotal);
 		info.put("storageMax", storageMax);
 		info.put("storageMin", storageMin);
