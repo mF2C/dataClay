@@ -11,10 +11,10 @@ public class Callback extends CIMIResource {
     private String state;
     private Map<String, Object> targetResource;
     private Map<String, Object> data;
-    private Calendar expires;
+    private String expires;
     
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Callback(String action, String state, Map<String, Object> targetResource, Map<String, Object> data, Calendar expires,
+	public Callback(String action, String state, Map<String, Object> targetResource, Map<String, Object> data, String expires,
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 			
 		super(resourceID, resourceName, resourceDescription, resourceURI);
@@ -42,7 +42,7 @@ public class Callback extends CIMIResource {
 		this.data = data;
     }
     
-    public void set_expires(Calendar expires) {
+    public void set_expires(String expires) {
 		this.expires = expires;
 	}
 	
