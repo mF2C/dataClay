@@ -15,13 +15,13 @@ public class Agreement extends CIMIResource {
 	//	name: String
 	//	provider: Map<String, String> - another nested field: id, name
 	//	client: Map<String, String> - another nested field: id, name
-	//	creation: DateTime
-	//	expiration: DateTime
+	//	creation: String
+	//	expiration: String
 	//	guarantees: List<Map<String, String>> - another nested field: name, constraint
 	private Map<String, Object> assessment; //opt
 	//assessment is a nested field
-	//	first_execution: DateTime
-	//	last_execution: DateTime
+	//	first_execution: String
+	//	last_execution: String
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
 	public Agreement(String state, Map<String, Object> details, Map<String, Object> assessment,
