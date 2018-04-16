@@ -1,32 +1,27 @@
 package CIMI;
 
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 public abstract class CIMIResource extends DataClayObject {
-	private String id;
+    private String id;
     private String name;
     private String description;
     private String resourceURI;
-    private Calendar created;
-    private Calendar updated;
+    private String created;
+    private String updated;
 
     public CIMIResource(final String resourceID, final String resourceName, final String resourceDescription,
-	    String resourceTypeURI) {
+	    String resourceTypeURI, String dateCreated, String dateUpdated) {
     	
-    	this.id = resourceID.toString();
+    	this.id = resourceID;
     	this.name = resourceName;
     	this.description = resourceDescription;
-    	this.resourceURI = resourceTypeURI.toString();
-    	this.created = Calendar.getInstance();
-    	this.updated = Calendar.getInstance();
+    	this.resourceURI = resourceTypeURI;
+    	this.created = dateCreated;
+    	this.updated = dateUpdated;
     }
   
-    public void resourceUpdated() {
-    	updated = Calendar.getInstance();
-    }
-
     public String getResourceId() {
     	return id;
     }
@@ -35,11 +30,11 @@ public abstract class CIMIResource extends DataClayObject {
     	return name;
     }
     
-    public Calendar getCreated() {
+    public String getCreated() {
     	return created;
     }
 
-    public Calendar getUpdated() {
+    public String getUpdated() {
     	return updated;
     }
 
@@ -49,7 +44,6 @@ public abstract class CIMIResource extends DataClayObject {
     
     public void updateDescription(String newDescription) {
     	this.description = newDescription;
-    	resourceUpdated();
     }
 
     public String getResourceURI() {
@@ -58,7 +52,6 @@ public abstract class CIMIResource extends DataClayObject {
 
     public void updateResourceURI(String newResourceURI) {
     	this.resourceURI = newResourceURI;
-    	resourceUpdated();
     }
     
     public Map<String, Object> getCIMIResourceInfo() {
