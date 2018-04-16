@@ -1,6 +1,5 @@
 package CIMI;
 
-import java.util.Date;
 import java.util.Map;
 
 public class SLAViolation extends CIMIResource {
@@ -9,10 +8,10 @@ public class SLAViolation extends CIMIResource {
 	//where String is the field name, and Object is the value
 	private String agreement_id;
 	private String guarantee;
-	private Date datetime;
+	private String datetime;
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public SLAViolation(String agreement_id, String guarantee, Date datetime,
+	public SLAViolation(String agreement_id, String guarantee, String datetime,
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
 		this.agreement_id = agreement_id;
@@ -29,7 +28,7 @@ public class SLAViolation extends CIMIResource {
 		this.guarantee = guarantee;
 	}
 	
-	public void set_datetime(Date datetime) {
+	public void set_datetime(String datetime) {
 		this.datetime = datetime;
 	}
 	
