@@ -23,12 +23,12 @@ public class Agreement extends CIMIResource {
 	//	first_execution: String
 	//	last_execution: String
 	
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Agreement(String state, Map<String, Object> details, Map<String, Object> assessment,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.details = details;
-		this.assessment = assessment;
+	
+	public Agreement(Map<String, Object> objectData) {
+		super(objectData);
+		this.state = (String) objectData.get("state");
+		this.details = (Map<String, Object>) objectData.get("details");
+		this.assessment = (Map<String, Object>) objectData.get("assessment");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -36,21 +36,28 @@ public class Agreement extends CIMIResource {
 		this.state = state;
 	}
 	
-	public void details(Map<String, Object> details) {
+	public void set_details(Map<String, Object> details) {
 		this.details = details;
 	}
 	
-	public void assessment(Map<String, Object> assessment) {
+	public void set_assessment(Map<String, Object> assessment) {
 		this.assessment = assessment;
 	}
 	
-	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_Agreement_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("state", this.state);
-		info.put("details", this.details);
-		info.put("assessment", this.assessment);
+	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = super.getCIMIResourceData();
+		if (this.state != null) info.put("state", this.state);
+		if (this.details != null) info.put("details", this.details);
+		if (this.assessment != null)info.put("assessment", this.assessment);
 		return info;
+	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		setCIMIResourceData(data);
+		if (data.get("state") != null) set_state((String) data.get("state"));
+		if (data.get("details") != null) set_details((Map<String, Object>) data.get("details"));
+		if (data.get("assessment") != null) set_assessment((Map<String, Object>) data.get("assessment"));
 	}
 
 }

@@ -8,56 +8,51 @@ public class FogArea extends CIMIResource {
 	//If it contains nested info, it is implemented as a Map<String, Object>
 	//where String is the field name, and Object is the value
 	private Device leaderDevice;
-	private int numDevices;
+	private Integer numDevices;
 	//private String ramUnits;
-	private int ramTotal;
-	private int ramMax;
-	private int ramMin;
+	private Integer ramTotal;
+	private Integer ramMax;
+	private Integer ramMin;
 	//private String storageUnits;
-	private int storageTotal;
-	private int storageMax;
-	private int storageMin;
-	private float avgProcessingCapacityPercent;
-	private float cpuMaxPercent;
-	private float cpuMinPercent;
-	private int avgPhysicalCores;
-	private int physicalCoresMax;
-	private int physicalCoresMin;
-	private int avgLogicalCores;
-	private int logicalCoresMax;
-	private int logicalCoresMin;
+	private Integer storageTotal;
+	private Integer storageMax;
+	private Integer storageMin;
+	private Float avgProcessingCapacityPercent;
+	private Float cpuMaxPercent;
+	private Float cpuMinPercent;
+	private Integer avgPhysicalCores;
+	private Integer physicalCoresMax;
+	private Integer physicalCoresMin;
+	private Integer avgLogicalCores;
+	private Integer logicalCoresMax;
+	private Integer logicalCoresMin;
 	private String powerRemainingMax;
 	private String powerRemainingMin;
 	
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public FogArea(Device leaderDevice, int numDevices, int ramTotal, int ramMax, int ramMin,
-		        int storageTotal, int storageMax, int storageMin, float avgProcessingCapacityPercent,
-			float cpuMaxPercent, float cpuMinPercent, int avgPhysicalCores, int physicalCoresMax, int physicalCoresMin,
-			int avgLogicalCores, int logicalCoresMax, int logicalCoresMin, String powerRemainingMax, String powerRemainingMin,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-		
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.leaderDevice = leaderDevice;
-		this.numDevices = numDevices;
-		//this.ramUnits = ramUnits;
-		this.ramTotal = ramTotal;
-		this.ramMax = ramMax;
-		this.ramMin = ramMin;
-		//this.storageUnits = storageUnits;
-		this.storageTotal = storageTotal;
-		this.storageMax = storageMax;
-		this.storageMin = storageMin;
-		this.avgProcessingCapacityPercent = avgProcessingCapacityPercent;
-		this.cpuMaxPercent = cpuMaxPercent;
-		this.cpuMinPercent = cpuMinPercent;
-		this.avgPhysicalCores = avgPhysicalCores;
-		this.physicalCoresMax = physicalCoresMax;
-		this.physicalCoresMin = physicalCoresMin;
-		this.avgLogicalCores = avgLogicalCores;
-		this.logicalCoresMax = logicalCoresMax;
-		this.logicalCoresMin = logicalCoresMin;
-		this.powerRemainingMax = powerRemainingMax;
-		this.powerRemainingMin = powerRemainingMin;
+	//Constructor
+	public FogArea(Map<String, Object> objectData) {
+		super(objectData);
+		this.leaderDevice = (Device) objectData.get("leaderDevice");
+		this.numDevices = (int) objectData.get("numDevices");
+		//this.ramUnits = (String) objectData.get("ramUnits");
+		this.ramTotal = (int) objectData.get("ramTotal");
+		this.ramMax = (int) objectData.get("ramMax");
+		this.ramMin = (int) objectData.get("ramMin");
+		//this.storageUnits = (String) objectData.get("storageUnits");
+		this.storageTotal = (int) objectData.get("storageTotal");
+		this.storageMax = (int) objectData.get("storageMax");
+		this.storageMin = (int) objectData.get("storageMin");
+		this.avgProcessingCapacityPercent = (float) objectData.get("avgProcessingCapacityPercent");
+		this.cpuMaxPercent = (float) objectData.get("cpuMaxPercent");
+		this.cpuMinPercent = (float) objectData.get("cpuMinPercent");
+		this.avgPhysicalCores = (int) objectData.get("avgPhysicalCores");
+		this.physicalCoresMax = (int) objectData.get("physicalCoresMax");
+		this.physicalCoresMin = (int) objectData.get("physicalCoresMin");
+		this.avgLogicalCores = (int) objectData.get("avgLogicalCores");
+		this.logicalCoresMax = (int) objectData.get("logicalCoresMax");
+		this.logicalCoresMin = (int) objectData.get("logicalCoresMin");
+		this.powerRemainingMax = (String) objectData.get("powerRemainingMax");
+		this.powerRemainingMin = (String) objectData.get("powerRemainingMin");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -69,9 +64,9 @@ public class FogArea extends CIMIResource {
 		this.numDevices = numDevices;
 	}
 	
-	//public void set_ramUnits(String ramUnits) {
-	//	this.ramUnits = ramUnits;
-	//}
+//	public void set_ramUnits(String ramUnits) {
+//		this.ramUnits = ramUnits;
+//	}
 	
 	public void set_ramTotal(int ramTotal) {
 		this.ramTotal = ramTotal;
@@ -85,9 +80,9 @@ public class FogArea extends CIMIResource {
 		this.ramMin = ramMin;
 	}
 	
-	//public void set_storageUnits(String storageUnits) {
-	//	this.storageUnits = storageUnits;
-	//}
+//	public void set_storageUnits(String storageUnits) {
+//		this.storageUnits = storageUnits;
+//	}
 	
 	public void set_storageTotal(int storageTotal) {
 		this.storageTotal = storageTotal;
@@ -145,31 +140,55 @@ public class FogArea extends CIMIResource {
 		this.powerRemainingMin = powerRemainingMin;
 	}
 	
-	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info" 
-	public Map<String, Object> get_FogArea_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("leaderDevice", leaderDevice);
-		info.put("numDevices", numDevices);
-		//info.put("ramUnits", ramUnits);
-		info.put("ramTotal", ramTotal);
-		info.put("ramMax", ramMax);
-		info.put("ramMin", ramMin);
-		//info.put("storageUnits", storageUnits);
-		info.put("storageTotal", storageTotal);
-		info.put("storageMax", storageMax);
-		info.put("storageMin", storageMin);
-		info.put("avgProcessingCapacityPercent", avgProcessingCapacityPercent);
-		info.put("cpuMaxPercent", cpuMaxPercent);
-		info.put("cpuMinPercent", cpuMinPercent);
-		info.put("avgPhysicalCores", avgPhysicalCores);
-		info.put("physicalCoresMax", physicalCoresMax);
-		info.put("physicalCoresMin", physicalCoresMin);
-		info.put("avgLogicalCores", avgLogicalCores);
-		info.put("logicalCoresMax", logicalCoresMax);
-		info.put("logicalCoresMin", logicalCoresMin);
-		info.put("powerRemainingMax", powerRemainingMax);
-		info.put("powerRemainingMin", powerRemainingMin);
+	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData" 
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = getCIMIResourceData();
+		if (this.leaderDevice != null) info.put("leaderDevice", leaderDevice);
+		if (this.numDevices != null) info.put("numDevices", numDevices);
+//		info.put("ramUnits", ramUnits);
+		if (this.ramTotal != null) info.put("ramTotal", ramTotal);
+		if (this.ramMax != null) info.put("ramMax", ramMax);
+		if (this.ramMin != null) info.put("ramMin", ramMin);
+//		info.put("storageUnits", storageUnits);
+		if (this.storageTotal != null) info.put("storageTotal", storageTotal);
+		if (this.storageMax != null) info.put("storageMax", storageMax);
+		if (this.storageMin != null) info.put("storageMin", storageMin);
+		if (this.avgProcessingCapacityPercent != null) info.put("avgProcessingCapacityPercent", avgProcessingCapacityPercent);
+		if (this.cpuMaxPercent != null) info.put("cpuMaxPercent", cpuMaxPercent);
+		if (this.cpuMinPercent != null) info.put("cpuMinPercent", cpuMinPercent);
+		if (this.avgPhysicalCores != null) info.put("avgPhysicalCores", avgPhysicalCores);
+		if (this.physicalCoresMax != null) info.put("physicalCoresMax", physicalCoresMax);
+		if (this.physicalCoresMin != null) info.put("physicalCoresMin", physicalCoresMin);
+		if (this.avgLogicalCores != null) info.put("avgLogicalCores", avgLogicalCores);
+		if (this.logicalCoresMax != null) info.put("logicalCoresMax", logicalCoresMax);
+		if (this.logicalCoresMin != null) info.put("logicalCoresMin", logicalCoresMin);
+		if (this.powerRemainingMax != null) info.put("powerRemainingMax", powerRemainingMax);
+		if (this.powerRemainingMin != null) info.put("powerRemainingMin", powerRemainingMin);
 		return info;
+	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		super.setCIMIResourceData(data);
+		if (data.get("leaderDevice") != null) set_leaderDevice((Device) data.get("leaderDevice"));
+		if (data.get("numDevices") != null) set_numDevices((int) data.get("numDevices"));
+		if (data.get("ramTotal") != null) set_ramTotal((int) data.get("ramTotal"));
+		if (data.get("ramMax") != null) set_ramMax((int) data.get("ramMax"));
+		if (data.get("ramMin") != null) set_ramMin((int) data.get("ramMin"));
+		if (data.get("storageTotal") != null) set_storageTotal((int) data.get("storageTotal"));
+		if (data.get("storageMax") != null) set_storageMax((int) data.get("storageMax"));
+		if (data.get("storageMin") != null) set_storageMin((int) data.get("storageMin"));
+		if (data.get("avgProcessingCapacityPercent") != null) 
+			set_avgProcessingCapacityPercent((float) data.get("avgProcessingCapacityPercent"));
+		if (data.get("cpuMaxPercentcpuMaxPercent") != null) set_cpuMaxPercent((float) data.get("cpuMaxPercent"));
+		if (data.get("cpuMinPercent") != null) set_cpuMinPercent((float) data.get("cpuMinPercent"));
+		if (data.get("avgPhysicalCores") != null) set_avgPhysicalCores((int) data.get("avgPhysicalCores"));
+		if (data.get("physicalCoresMax") != null) set_physicalCoresMax((int) data.get("physicalCoresMax"));
+		if (data.get("physicalCoresMin") != null) set_physicalCoresMin((int) data.get("physicalCoresMin"));
+		if (data.get("avgLogicalCores") != null) set_avgLogicalCores((int) data.get("avgLogicalCores"));
+		if (data.get("logicalCoresMax") != null) set_logicalCoresMax((int) data.get("logicalCoresMax"));
+		if (data.get("logicalCoresMin") != null) set_logicalCoresMin((int) data.get("logicalCoresMin"));
+		if (data.get("powerRemainingMax") != null) set_powerRemainingMax((String) data.get("powerRemainingMax"));
+		if (data.get("powerRemainingMin") != null) set_powerRemainingMin((String) data.get("powerRemainingMin"));
 	}
 
 }

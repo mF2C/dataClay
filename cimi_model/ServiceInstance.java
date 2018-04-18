@@ -13,23 +13,20 @@ public class ServiceInstance extends CIMIResource {
 	private String status;
 	private List<Map<String, Object>> agents;
 		//agents is a collection of "nested" info:
-		//	agent: Agent -> TODO: the Agent resource does not exist!!!!
+		//	agent: String
 		//	url: String
 		//	port: int
 		//	container_id: String
 		//	status: String
 		//	num_cpus: int
 	
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public ServiceInstance(String service_id, String agreement_id, String status, 
-			List<Map<String, Object>> agents,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-		
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.service_id = service_id;
-		this.agreement_id = agreement_id;
-		this.status = status;
-		this.agents = agents;
+	//Constructor
+	public ServiceInstance(Map<String, Object> objectData) {
+		super(objectData);
+		this.service_id = (String) objectData.get("service_id");
+		this.agreement_id = (String) objectData.get("agreement_id");
+		this.status = (String) objectData.get("status");
+		this.agents = (List<Map<String, Object>>) objectData.get("agents");
 	}
 		
 	//Setters (a setter for each property called "set_propertyname")
@@ -37,7 +34,7 @@ public class ServiceInstance extends CIMIResource {
 		this.service_id = service_id;
 	}
 	
-	public void agreement_id(String agreement_id) {
+	public void set_agreement_id(String agreement_id) {
 		this.agreement_id = agreement_id;
 	}
 	
@@ -49,14 +46,22 @@ public class ServiceInstance extends CIMIResource {
 		this.agents = agents;
 	}
 	
-	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_ServiceInstance_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("service_id", this.service_id);
-		info.put("agreement_id", this.agreement_id);
-		info.put("status", this.status);
-		info.put("agents", this.agents);
+	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = getCIMIResourceData();
+		if (this.service_id != null) info.put("service_id", this.service_id);
+		if (this.agreement_id != null) info.put("agreement_id", this.agreement_id);
+		if (this.status != null) info.put("status", this.status);
+		if (this.agents != null) info.put("agents", this.agents);
 		return info;
+	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		super.setCIMIResourceData(data);
+		if (data.get("service_id") != null) set_service_id((String) data.get("service_id"));
+		if (data.get("agreement_id") != null) set_agreement_id((String) data.get("agreement_id"));
+		if (data.get("status") != null) set_status((String) data.get("status"));
+		if (data.get("agents") != null) set_agents((List<Map<String, Object>>) data.get("agents"));
 	}
 		
 
