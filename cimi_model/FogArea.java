@@ -142,7 +142,7 @@ public class FogArea extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData" 
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.leaderDevice != null) info.put("leaderDevice", leaderDevice);
 		if (this.numDevices != null) info.put("numDevices", numDevices);
 //		info.put("ramUnits", ramUnits);

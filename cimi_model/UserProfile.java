@@ -28,7 +28,7 @@ public class UserProfile extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"	//For all classes, I will return a Map with all the info, called get_classname_info.
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.service_consumer != null) info.put("service_consumer", this.service_consumer);
 		if (this.resource_contributor != null) info.put("resource_contributor", this.resource_contributor);
 		return info;

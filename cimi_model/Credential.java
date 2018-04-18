@@ -14,13 +14,11 @@ public class Credential extends CIMIResource {
 	private String method; 
 	//credential-template/method
 	
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Credential(String type, String method,  
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-			
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.method = method;
-		this.type = type;
+	//Constructor
+	public Credential(Map<String, Object> objectData) {
+		super(objectData);
+		this.method = (String) objectData.get("method");
+		this.type = (String) objectData.get("type");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -33,11 +31,16 @@ public class Credential extends CIMIResource {
 	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_Credential_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("type", this.type);
-		info.put("method", this.method);
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = super.getCIMIResourceData();
+		if (this.type != null) info.put("type", this.type);
+		if (this.method != null) info.put("method", this.method);
 		return info;
 	}
 	
+	public void updateAllData(Map<String, Object> data) {
+		setCIMIResourceData(data);
+		if (data.get("type") != null) set_type((String) data.get("type"));
+		if (data.get("method") != null) set_method((String) data.get("method"));
+	}
 }

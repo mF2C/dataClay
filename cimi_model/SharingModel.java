@@ -58,7 +58,7 @@ public class SharingModel extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.max_apps != null) info.put("max_apps", this.max_apps);
 		if (this.gps_allowed != null) info.put("gps_allowed", this.gps_allowed);
 		if (this.max_cpu_usage != null) info.put("max_cpu_usage", this.max_cpu_usage);

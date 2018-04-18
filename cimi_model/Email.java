@@ -10,13 +10,11 @@ public class Email extends CIMIResource {
     private String address;
     private Boolean validated;
 
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Email(String address, Boolean validated,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-			
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-        this.validated = validated;
-        this.address = address;
+	//Constructor
+	public Email(Map<String, Object> objectData) {
+		super(objectData);
+        this.validated = (Boolean) objectData.get("validated");
+        this.address = (String) objectData.get("address");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -29,11 +27,17 @@ public class Email extends CIMIResource {
 	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_Email_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-        info.put("address", this.address);
-        info.put("validated", this.validated);
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = super.getCIMIResourceData();
+		if (this.address != null) info.put("address", this.address);
+		if (this.validated != null) info.put("validated", this.validated);
 		return info;
+	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		setCIMIResourceData(data);
+		if (data.get("address") != null) set_address((String) data.get("address"));
+		if (data.get("validated") != null) set_validated((Boolean) data.get("validated"));
 	}
 	
 }

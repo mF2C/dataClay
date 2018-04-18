@@ -13,16 +13,14 @@ public class Callback extends CIMIResource {
     private Map<String, Object> data;
     private String expires;
     
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Callback(String action, String state, Map<String, Object> targetResource, Map<String, Object> data, String expires,
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-			
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.action = action;
-        this.state = state;
-        this.targetResource = targetResource;
-        this.data = data;
-        this.expires = expires;
+	//Constructor
+	public Callback(Map<String, Object> objectData) {
+		super(objectData);
+		this.action = (String) objectData.get("action");
+        this.state = (String) objectData.get("state");
+        this.targetResource = (Map<String, Object>) objectData.get("targetResource");
+        this.data = (Map<String, Object>) objectData.get("data");
+        this.expires = (String) objectData.get("expires");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -47,14 +45,23 @@ public class Callback extends CIMIResource {
 	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_Callback_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("action", this.action);
-        info.put("state", this.state);
-        info.put("targetResource", this.targetResource);
-        info.put("data", this.data);
-        info.put("expires", this.expires);
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = super.getCIMIResourceData();
+		if (this.action != null) info.put("action", this.action);
+		if (this.state != null) info.put("state", this.state);
+		if (this.targetResource != null) info.put("targetResource", this.targetResource);
+		if (this.data != null) info.put("data", this.data);
+		if (this.expires != null) info.put("expires", this.expires);
 		return info;
+	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		setCIMIResourceData(data);
+		if (data.get("action") != null) set_action((String) data.get("action"));
+		if (data.get("state") != null) set_state((String) data.get("state"));
+		if (data.get("targetResource") != null) set_targetResource((Map<String, Object>) data.get("targetResource"));
+		if (data.get("data") != null) set_data((Map<String, Object>) data.get("data"));
+		if (data.get("expires") != null) set_expires((String) data.get("expires"));
 	}
 	
 }

@@ -17,19 +17,17 @@ public class Session extends CIMIResource {
 	private String clientIP;
 	private String redirectURI;
 	
-	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public Session(Map<String, Object> sessionTemplate, String method, String expiry, String username,
-			String roles, String server, String clientIP, String redirectURI,  
-			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
-			
-		super(resourceID, resourceName, resourceDescription, resourceURI);
-		this.method = method;
-		this.sessionTemplate = sessionTemplate;
-		this.expiry = expiry;
-		this.roles = roles;
-		this.server = server;
-		this.clientIP = clientIP;
-		this.redirectURI = redirectURI;
+	//Constructor
+	public Session(Map<String, Object> objectData) {
+		super(objectData);
+		this.method = (String) objectData.get("method");
+		this.sessionTemplate = (Map<String, Object>) objectData.get("sessionTemplate");
+		this.expiry = (String) objectData.get("expiry");
+		this.roles = (String) objectData.get("roles");
+		this.server = (String) objectData.get("server");
+		this.clientIP = (String) objectData.get("clientIP");
+		this.redirectURI = (String) objectData.get("redirectURI");
+		this.username = (String) objectData.get("username");
 	}
 	
 	//Setters (a setter for each property called "set_propertyname")
@@ -62,16 +60,28 @@ public class Session extends CIMIResource {
 	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
-	public Map<String, Object> get_Session_info() {
-		Map<String, Object> info = getCIMIResourceInfo();
-		info.put("redirectURI", this.redirectURI);
-		info.put("clientIP", this.clientIP);
-		info.put("server", this.server);
-		info.put("roles", this.roles);
-		info.put("expiry", this.expiry);
-		info.put("method", this.method);
-		info.put("sessionTemplate", this.sessionTemplate);		
+	public Map<String, Object> getCIMIResourceData() {
+		Map<String, Object> info = super.getCIMIResourceData();
+		if (this.redirectURI != null) info.put("redirectURI", this.redirectURI);
+		if (this.clientIP != null) info.put("clientIP", this.clientIP);
+		if (this.server != null) info.put("server", this.server);
+		if (this.roles != null) info.put("roles", this.roles);
+		if (this.expiry != null) info.put("expiry", this.expiry);
+		if (this.method != null) info.put("method", this.method);
+		if (this.sessionTemplate != null) info.put("sessionTemplate", this.sessionTemplate);		
 		return info;
 	}
+	
+	public void updateAllData(Map<String, Object> data) {
+		setCIMIResourceData(data);
+		if (data.get("redirectURI") != null) set_redirectURI((String) data.get("redirectURI"));
+		if (data.get("clientIP") != null) set_clientIP((String) data.get("clientIP"));
+		if (data.get("server") != null) set_server((String) data.get("server"));
+		if (data.get("roles") != null) set_roles((String) data.get("roles"));
+		if (data.get("expiry") != null) set_expiry((String) data.get("expiry"));
+		if (data.get("method") != null) set_method((String) data.get("method"));
+		if (data.get("sessionTemplate") != null) set_sessionTemplate((Map<String, Object>) data.get("sessionTemplate"));
+	}
+
 	
 }

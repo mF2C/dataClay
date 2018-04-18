@@ -107,7 +107,7 @@ public class DeviceDynamic extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.device != null) info.put("device", this.device);
 //		info.put("isLeader", this.isLeader);
 //		info.put("ramUnits", this.ramUnits);

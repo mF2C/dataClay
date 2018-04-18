@@ -61,7 +61,7 @@ public class Service extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.exec != null) info.put("exec", this.exec);
 		if (this.exec_type != null) info.put("exec_type", this.exec_type);
 		if (this.exec_ports != null) info.put("exec_ports", this.exec_ports);

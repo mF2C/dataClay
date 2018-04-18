@@ -33,7 +33,7 @@ public class SlaViolation extends CIMIResource {
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "getCIMIResourceData"
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = getCIMIResourceData();
+		Map<String, Object> info = super.getCIMIResourceData();
 		if (this.agreement_id != null) info.put("agreement_id", this.agreement_id);
 		if (this.guarantee != null) info.put("guarantee", this.guarantee);
 		if (this.datetime != null) info.put("datetime", this.datetime);
