@@ -2,6 +2,7 @@ package CIMI;
 
 import java.util.Map;
 
+@SuppressWarnings({ "unchecked", "serial" })
 public class Agreement extends CIMIResource {
 
 	//An attribute for each field in the CIMI resource spec, with the same name and type.

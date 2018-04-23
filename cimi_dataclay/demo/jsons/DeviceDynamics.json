@@ -1,0 +1,18 @@
+[{
+    "id": "device-dynamic/12345",
+    "resourceURI": "DeviceDynamicTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+      "device": {
+		"href" : "device/12345"
+	  }
+ }]

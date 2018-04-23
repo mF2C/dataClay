@@ -6,7 +6,7 @@
   </Appenders>
 
   <Loggers>
-    <Root level="debug">
+    <Root level="warning">
       <AppenderRef ref="ConsoleAppender" />
     </Root>
   </Loggers>

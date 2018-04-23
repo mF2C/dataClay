@@ -1,0 +1,37 @@
+[{
+    "id": "service-instance/12345",
+    "resourceURI": "ServiceInstanceTypeURI",
+    "created": "201804181541",
+    "updated": "201804181541",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+  "service_id": "",
+  "agreement_id": "agreement-id",
+  "user_id": "user-id",
+  "status": "active",
+  "agents": [
+    {
+      "agent_id": "agent1",
+      "port": 1,
+      "container_id": "container-id",
+      "status": "active",
+      "num_cpus": 2,
+      "allow": true
+    },
+    {
+      "agent_id": "agent2",
+      "port": 2,
+      "container_id": "container-id",
+      "status": "active",
+      "num_cpus": 2,
+      "allow": true
+    }
+  ]
+}]

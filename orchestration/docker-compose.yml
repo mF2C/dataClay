@@ -80,7 +80,7 @@ services:
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres1
-      - DEBUG=True
+      - DEBUG=false
       #- PYTHONVERBOSE=1
     networks:
       - ds
@@ -159,7 +159,7 @@ services:
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres2
-      - DEBUG=True
+      - DEBUG=false
       #- PYTHONVERBOSE=1
     networks:
       - ds
