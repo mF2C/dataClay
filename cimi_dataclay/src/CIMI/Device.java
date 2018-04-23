@@ -23,6 +23,8 @@ public class Device extends CIMIResource {
 	private String networkingStandards;
 	private String ethernetAddress;
 	private String wifiAddress;
+	private String hwloc;
+	private String cpuinfo;
 
 	public Device(final Map<String, Object> objectData) {
 		super(objectData);
@@ -40,6 +42,7 @@ public class Device extends CIMIResource {
 		this.networkingStandards = (String) objectData.get("networkingStandards");
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
+		this.hwloc = (String) objectData.get("hwloc");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
@@ -98,6 +101,16 @@ public class Device extends CIMIResource {
 	public void set_wifiAddress(final String wifiAddress) {
 		this.wifiAddress = wifiAddress;
 	}
+	
+	public void set_hwloc(final String hwloc) {
+		this.hwloc = hwloc;
+	}
+	
+	public void set_cpuinfo(final String cpuinfo) {
+		this.cpuinfo = cpuinfo;
+	}
+
+
 
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "getCIMIResourceData"
@@ -132,6 +145,10 @@ public class Device extends CIMIResource {
 			info.put("ethernetAddress", this.ethernetAddress);
 		if (this.wifiAddress != null)
 			info.put("wifiAddress", this.wifiAddress);
+		if (this.hwloc != null)
+			info.put("hwloc", this.hwloc);
+		if (this.cpuinfo != null)
+			info.put("cpuinfo", this.cpuinfo);
 		return info;
 	}
 
@@ -165,6 +182,10 @@ public class Device extends CIMIResource {
 			set_ethernetAddress((String) data.get("ethernetAddress"));
 		if (data.get("wifiAddress") != null)
 			set_wifiAddress((String) data.get("wifiAddress"));
+		if (data.get("hwloc") != null)
+			set_hwloc((String) data.get("hwloc"));
+		if (data.get("cpuinfo") != null)
+			set_cpuinfo((String) data.get("cpuinfo"));
 
 	}
 
