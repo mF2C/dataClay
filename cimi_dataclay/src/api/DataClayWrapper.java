@@ -1,4 +1,4 @@
-package api; 
+package api;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,17 +7,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import CIMI.Agreement;
-import CIMI.CIMIResource;
-import CIMI.Device;
-import CIMI.DeviceDynamic;
-import CIMI.FogArea;
-import CIMI.ResourceCollection;
-import CIMI.Service;
-import CIMI.ServiceInstance;
-import CIMI.SharingModel;
-import CIMI.SlaViolation;
-import CIMI.UserProfile;
+import CIMI.*;
 
 public class DataClayWrapper {
 
@@ -49,6 +39,7 @@ public class DataClayWrapper {
 		objectData = preProcessSubObjects(type, objectData);
 		CIMIResource obj;
 		switch (type) {
+		// mF2C resources
 		case "agreement":
 			obj = new Agreement(objectData);
 			break;
@@ -76,22 +67,70 @@ public class DataClayWrapper {
 		case "user-profile":
 			obj = new UserProfile(objectData);
 			break;
+		case "service-operation-report":
+			obj = new ServiceOperationReport(objectData);
+			break;
+		// CIMI resources
+		case "cloud-entry-point":
+			obj = new CloudEntryPoint(objectData);
+			break;
+		case "email":
+			obj = new Email(objectData);
+			break;
+		case "user":
+			obj = new User(objectData);
+			break;
+		case "user-template":
+			//obj = new UserTemplate(objectData);
+			break;
+		case "credential":
+			obj = new Credential(objectData);
+			break;
+		case "credential-template":
+			//obj = new CredentialTemplate(objectData);
+			break;
+		case "configuration":
+			//obj = new Configuration(objectData);
+			break;
+		case "configuration-template":
+			//obj = new ConfigurationTemplate(objectData);
+			break;
+		case "session":
+			obj = new Session(objectData);
+			break;
+		case "session-template":
+			//obj = new SessionTemplate(objectData);
+			break;
+		case "user-param":
+			//obj = new UserParam(objectData);
+			break;
+		case "user-param-template":
+			//obj = new UserParamTemplate(objectData);
+			break;
+		case "callback":
+			obj = new Callback(objectData);
+			break;
+		case "example-resource":
+			//obj = new ExampleResource(objectData);
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
 		obj.makePersistent(id); // id is the alias
-		ResourceCollection resources;
-		final String className = javaize(type);
-		try {
-			System.out.println("Getting by alias " + className + "Collection");
-			resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection");
-		} catch (final Exception e) {
-			resources = new ResourceCollection();
-			System.out.println("Persisting " + className + "Collection");
-			resources.makePersistent(className + "Collection");
+		if (!type.equals("cloud-entry-point")) {
+			ResourceCollection resources;
+			final String className = javaize(type);
+			try {
+				System.out.println("Getting by alias " + className + "Collection");
+				resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection");
+			} catch (final Exception e) {
+				resources = new ResourceCollection();
+				System.out.println("Persisting " + className + "Collection");
+				resources.makePersistent(className + "Collection");
+				// addToCloudEntryPoint(type, resources);
+			}
+			resources.put(id, obj);
 		}
-		resources.put(id, obj);
-
 	}
 
 	/**
@@ -163,6 +202,49 @@ public class DataClayWrapper {
 		case "user-profile":
 			UserProfile.deleteAlias(id);
 			break;
+		case "service-operation-report":
+			ServiceOperationReport.deleteAlias(id);
+			break;
+		// CIMI resources
+		case "email":
+			Email.deleteAlias(id);
+			break;
+		case "user":
+			User.deleteAlias(id);
+			break;
+		case "user-template":
+			//UserTemplate.deleteAlias(id);
+			break;
+		case "credential":
+			Credential.deleteAlias(id);
+			break;
+		case "credential-template":
+			//CredentialTemplate.deleteAlias(id);
+			break;
+		case "configuration":
+			//Configuration.deleteAlias(id);
+			break;
+		case "configuration-template":
+			//ConfigurationTemplate.deleteAlias(id);
+			break;
+		case "session":
+			Session.deleteAlias(id);
+			break;
+		case "session-template":
+			//SessionTemplate.deleteAlias(id);
+			break;
+		case "user-param":
+			//UserParam.deleteAlias(id);
+			break;
+		case "user-param-template":
+			//UserParamTemplate.deleteAlias(id);
+			break;
+		case "callback":
+			Callback.deleteAlias(id);
+			break;
+		case "example-resource":
+			//ExampleResource.deleteAlias(id);
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
@@ -232,6 +314,67 @@ public class DataClayWrapper {
 			final UserProfile up = (UserProfile) UserProfile.getByAlias(id);
 			up.updateAllData(objectData);
 			break;
+		case "service-operation-report":
+			final ServiceOperationReport sor = (ServiceOperationReport) ServiceOperationReport.getByAlias(id);
+			sor.updateAllData(objectData);
+			break;
+		// CIMI resources
+		case "cloud-entry-point":
+			final CloudEntryPoint cep = (CloudEntryPoint) CloudEntryPoint.getByAlias(id);
+			cep.updateAllData(objectData);
+			break;
+		case "email":
+			final Email em = (Email) Email.getByAlias(id);
+			em.updateAllData(objectData);
+			break;
+		case "user":
+			final User u = (User) User.getByAlias(id);
+			u.updateAllData(objectData);
+			break;
+		case "user-template":
+			//final UserTemplate ut = (UserTemplate) UserTemplate.getByAlias(id);
+			//ut.updateAllData(objectData);
+			break;
+		case "credential":
+			final Credential cr = (Credential) Credential.getByAlias(id);
+			cr.updateAllData(objectData);
+			break;
+		case "credential-template":
+			//final CredentialTemplate ct = (CredentialTemplate) CredentialTemplate.getByAlias(id);
+			//ct.updateAllData(objectData);
+			break;
+		case "configuration":
+			//final Configuration cf = (Configuration) Configuration.getByAlias(id);
+			//cf.updateAllData(objectData);
+			break;
+		case "configuration-template":
+			//final ConfigurationTemplate cft = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
+			//cft.updateAllData(objectData);
+			break;
+		case "session":
+			final Session s = (Session) Session.getByAlias(id);
+			s.updateAllData(objectData);
+			break;
+		case "session-template":
+			//final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
+			//st.updateAllData(objectData);
+			break;
+		case "user-param":
+			//final UserParam upar = (UserParam) UserParam.getByAlias(id);
+			//upar.updateAllData(objectData);
+			break;
+		case "user-param-template":
+			//final UserParamTemplate upt = (UserParamTemplate) UserParamTemplate.getByAlias(id);
+			//upt.updateAllData(objectData);
+			break;
+		case "callback":
+			final Callback c = (Callback) Callback.getByAlias(id);
+			c.updateAllData(objectData);
+			break;
+		case "example-resource":
+			//final ExampleResource er = (ExampleResource) ExampleResource.getByAlias(id);
+			//er.updateAllData(objectData);
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
@@ -293,6 +436,8 @@ public class DataClayWrapper {
 			}
 		}
 		final String aliasOfCollection = javaize(type) + "Collection";
+		System.out.println("Getting by alias " + aliasOfCollection);
+		System.out.println("Expression: " + expressionWithAcl);
 		final ResourceCollection collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
 		final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
 		final List<String> result = new ArrayList<>();
@@ -305,7 +450,7 @@ public class DataClayWrapper {
 		return result;
 	}
 
-	private static String generateAclCheckComplete(String user, String role) {
+	private static String generateAclCheckComplete(final String user, final String role) {
 		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute owner] [:EqOp =] "
 				+ "[:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
 				+ "[:EqOp =] [:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute owner] "
@@ -313,7 +458,7 @@ public class DataClayWrapper {
 				+ "[:Attribute permissions] [:EqOp =] [:SingleQuoteString '" + role + "']]]]]]]]]] ";
 	}
 
-	private static String generateAclCheckSimple(String userOrRole) {
+	private static String generateAclCheckSimple(final String userOrRole) {
 		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute owner] [:EqOp =] "
 				+ "[:SingleQuoteString '" + userOrRole + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
 				+ "[:EqOp =] [:SingleQuoteString '" + userOrRole + "']]]]]]]] ";
@@ -344,6 +489,7 @@ public class DataClayWrapper {
 			throws IllegalArgumentException {
 		CIMIResource obj;
 		switch (type) {
+		// mF2C resources
 		case "agreement":
 			obj = (Agreement) Agreement.getByAlias(id);
 			break;
@@ -371,13 +517,58 @@ public class DataClayWrapper {
 		case "user-profile":
 			obj = (UserProfile) UserProfile.getByAlias(id);
 			break;
+		case "service-operation-report":
+			obj = (ServiceOperationReport) ServiceOperationReport.getByAlias(id);
+			break;
+		// CIMI resources
+		case "cloud-entry-point":
+			obj = (CloudEntryPoint) CloudEntryPoint.getByAlias(id);
+			break;
+		case "email":
+			obj = (Email) Email.getByAlias(id);
+			break;
+		case "user":
+			obj = (User) User.getByAlias(id);
+			break;
+		case "user-template":
+			//obj = (UserTemplate) UserTemplate.getByAlias(id);
+			break;
+		case "credential":
+			obj = (Credential) Credential.getByAlias(id);
+			break;
+		case "credential-template":
+			//obj = (CredentialTemplate) CredentialTemplate.getByAlias(id);
+			break;
+		case "configuration":
+			//obj = (Configuration) Configuration.getByAlias(id);
+			break;
+		case "configuration-template":
+			//obj = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
+			break;
+		case "session":
+			obj = (Session) Session.getByAlias(id);
+			break;
+		case "session-template":
+			//obj = (SessionTemplate) SessionTemplate.getByAlias(id);
+			break;
+		case "user-param":
+			//obj = (UserParam) UserParam.getByAlias(id);
+			break;
+		case "user-param-template":
+			//obj = (UserParamTemplate) UserParamTemplate.getByAlias(id);
+			break;
+		case "callback":
+			obj = (Callback) Callback.getByAlias(id);
+			break;
+		case "example-resource":
+			//obj = (ExampleResource) ExampleResource.getByAlias(id);
+			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
 		return obj;
 	}
 
-	@SuppressWarnings("unchecked")
 	private static Map<String, Object> preProcessSubObjects(final String type, final Map<String, Object> objectData)
 			throws IllegalArgumentException {
 		CIMIResource obj;
@@ -402,6 +593,16 @@ public class DataClayWrapper {
 				objectData.put("leaderDevice", obj);
 			}
 			break;
+		case "service-operation-report":
+			link = (Map<String, Object>) objectData.get("serviceInstance");
+			resourceId = (String) link.get("href");
+			subType = resourceId.substring(0, resourceId.indexOf("/"));
+			subId = resourceId.substring(resourceId.indexOf("/") + 1);
+			if (resourceId != null) {
+				obj = getResourceAsObject(subType, subId);
+				objectData.put("serviceInstance", obj);
+			}
+			break;
 		default:
 			break;
 		}
@@ -414,7 +615,7 @@ public class DataClayWrapper {
 		case "device-dynamic":
 			obj = (CIMIResource) objectData.get("device");
 			if (obj != null) {
-				Map<String, String> link = new HashMap<String, String>();
+				final Map<String, String> link = new HashMap<>();
 				link.put("href", obj.get_id());
 				objectData.put("device", link);
 			}
@@ -422,9 +623,17 @@ public class DataClayWrapper {
 		case "fog-area":
 			obj = (CIMIResource) objectData.get("leaderDevice");
 			if (obj != null) {
-				Map<String, String> link = new HashMap<String, String>();
+				final Map<String, String> link = new HashMap<>();
 				link.put("href", obj.get_id());
 				objectData.put("leaderDevice", link);
+			}
+			break;
+		case "service-operation-report":
+			obj = (CIMIResource) objectData.get("serviceInstance");
+			if (obj != null) {
+				final Map<String, String> link = new HashMap<>();
+				link.put("href", obj.get_id());
+				objectData.put("serviceInstance", link);
 			}
 			break;
 		default:

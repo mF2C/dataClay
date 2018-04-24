@@ -10,30 +10,47 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import dataclay.api.DataClay;
-
 import api.DataClayWrapper;
+import dataclay.api.DataClay;
 
 public class ClojureMockup {
 
-	public static void main(final String[] args) throws Exception {	    
-	    	if (args.length != 4) {
-	    	    System.err.println("Missing JSON paths to: Services, Devices, DeviceDynamics and ServiceInstances");
-	    	    System.exit(-1);
-	    	}
+	public static void main(final String[] args) throws Exception {
+		if (args.length < 4) {
+			System.err.println("Missing JSON paths to: Services, Devices, DeviceDynamics and ServiceInstances");
+			System.exit(-1);
+		}
 		final String services = readFile(args[0]);
 		final String devices = readFile(args[1]);
 		final String deviceDynamics = readFile(args[2]);
 		final String serviceInstances = readFile(args[3]);
 
+		if (args.length > 4) {
+			// specified session file.
+			DataClay.setSessionFile(args[4]);
+		}
 		DataClay.init();
+
 		// CREATE
+		// First create the CloudEntryPoint
+		final Map<String, Object> cloudData = new HashMap<>();
+		cloudData.put("id", "cloud-entry-point");
+		cloudData.put("name", "Cloud entry point");
+		cloudData.put("description", "This is the Cloud entry point");
+		cloudData.put("resourceURI", "Cloud URI");
+		final JSONObject jsonData = new JSONObject(cloudData);
+		DataClayWrapper.create("cloud-entry-point", "cloud-entry-point", jsonData.toString());
+
+		System.out.println("Cloud Entry Point created: ");
+		System.out.println(DataClayWrapper.read("cloud-entry-point", "cloud-entry-point"));
+
 		System.out.println("Parsing services: " + services);
 		JSONArray array = new JSONArray(services);
 		for (final Object element : array) {
 			call_create((JSONObject) element);
 		}
 		System.out.println("Services created");
+
 		System.out.println("Parsing devices: " + devices);
 		array = new JSONArray(devices);
 		for (final Object element : array) {
@@ -173,8 +190,8 @@ public class ClojureMockup {
 
 	}
 
-	public static String readFile(String path) throws IOException {
-		byte[] encoded = Files.readAllBytes(Paths.get(path));
+	public static String readFile(final String path) throws IOException {
+		final byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded);
 	}
 

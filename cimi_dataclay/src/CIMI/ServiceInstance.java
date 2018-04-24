@@ -9,6 +9,7 @@ public class ServiceInstance extends CIMIResource {
 	// An attribute for each field in the CIMI resource spec, with the same name
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
+	private String user_id;
 	private String service_id;
 	private String agreement_id;
 	private String status;
@@ -24,6 +25,7 @@ public class ServiceInstance extends CIMIResource {
 	// Constructor
 	public ServiceInstance(final Map<String, Object> objectData) {
 		super(objectData);
+		this.user_id = (String) objectData.get("user_id");
 		this.service_id = (String) objectData.get("service_id");
 		this.agreement_id = (String) objectData.get("agreement_id");
 		this.status = (String) objectData.get("status");
@@ -31,6 +33,10 @@ public class ServiceInstance extends CIMIResource {
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
+	public void set_user_id(final String user_id) {
+		this.user_id = user_id;
+	}
+
 	public void set_service_id(final String service_id) {
 		this.service_id = service_id;
 	}
@@ -52,6 +58,8 @@ public class ServiceInstance extends CIMIResource {
 	@Override
 	public Map<String, Object> getCIMIResourceData() {
 		final Map<String, Object> info = super.getCIMIResourceData();
+		if (this.user_id != null)
+			info.put("user_id", this.user_id);
 		if (this.service_id != null)
 			info.put("service_id", this.service_id);
 		if (this.agreement_id != null)
@@ -65,6 +73,8 @@ public class ServiceInstance extends CIMIResource {
 
 	public void updateAllData(final Map<String, Object> data) {
 		super.setCIMIResourceData(data);
+		if (data.get("user_id") != null)
+			set_user_id((String) data.get("user_id"));
 		if (data.get("service_id") != null)
 			set_service_id((String) data.get("service_id"));
 		if (data.get("agreement_id") != null)
