@@ -24,18 +24,21 @@ public abstract class CIMIResource extends DataClayObject {
 	// right: String
 	// Aux fields to implement the filter more easily:
 	@SuppressWarnings("unused")
-	private final String owner;
+	private String owner;
 	@SuppressWarnings("unused")
-	private final String permissions;
+	private String permissions;
 
 	public CIMIResource(final Map<String, Object> resourceData) {
 		setCIMIResourceData(resourceData);
-		final Map<String, Object> ownerValue = (Map<String, Object>) acl.get("owner");
-		this.owner = (String) ownerValue.get("principal");
-		final List<Map<String, Object>> rulesValue = (List<Map<String, Object>>) acl.get("rules");
-		// TODO For the moment we assume there is only one element
-		final Map<String, Object> permission = rulesValue.get(0);
-		this.permissions = (String) permission.get("principal");
+		if (acl != null) {
+			final Map<String, Object> ownerValue = (Map<String, Object>) acl.get("owner");
+			this.owner = (String) ownerValue.get("principal");
+			final List<Map<String, Object>> rulesValue = (List<Map<String, Object>>) acl.get("rules");
+			// TODO For the moment we assume there is only one element
+			final Map<String, Object> permission = rulesValue.get(0);
+			this.permissions = (String) permission.get("principal");
+
+		}
 	}
 
 	public String get_id() {
