@@ -37,7 +37,7 @@ public class DataClayWrapper {
 
 		Map<String, Object> objectData = new JSONObject(data).toMap();
 		objectData = preProcessSubObjects(type, objectData);
-		CIMIResource obj;
+		CIMIResource obj = null;
 		switch (type) {
 		// mF2C resources
 		case "agreement":
@@ -81,37 +81,37 @@ public class DataClayWrapper {
 			obj = new User(objectData);
 			break;
 		case "user-template":
-			//obj = new UserTemplate(objectData);
+			// obj = new UserTemplate(objectData);
 			break;
 		case "credential":
 			obj = new Credential(objectData);
 			break;
 		case "credential-template":
-			//obj = new CredentialTemplate(objectData);
+			// obj = new CredentialTemplate(objectData);
 			break;
 		case "configuration":
-			//obj = new Configuration(objectData);
+			// obj = new Configuration(objectData);
 			break;
 		case "configuration-template":
-			//obj = new ConfigurationTemplate(objectData);
+			// obj = new ConfigurationTemplate(objectData);
 			break;
 		case "session":
 			obj = new Session(objectData);
 			break;
 		case "session-template":
-			//obj = new SessionTemplate(objectData);
+			// obj = new SessionTemplate(objectData);
 			break;
 		case "user-param":
-			//obj = new UserParam(objectData);
+			// obj = new UserParam(objectData);
 			break;
 		case "user-param-template":
-			//obj = new UserParamTemplate(objectData);
+			// obj = new UserParamTemplate(objectData);
 			break;
 		case "callback":
 			obj = new Callback(objectData);
 			break;
 		case "example-resource":
-			//obj = new ExampleResource(objectData);
+			// obj = new ExampleResource(objectData);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
@@ -213,37 +213,37 @@ public class DataClayWrapper {
 			User.deleteAlias(id);
 			break;
 		case "user-template":
-			//UserTemplate.deleteAlias(id);
+			// UserTemplate.deleteAlias(id);
 			break;
 		case "credential":
 			Credential.deleteAlias(id);
 			break;
 		case "credential-template":
-			//CredentialTemplate.deleteAlias(id);
+			// CredentialTemplate.deleteAlias(id);
 			break;
 		case "configuration":
-			//Configuration.deleteAlias(id);
+			// Configuration.deleteAlias(id);
 			break;
 		case "configuration-template":
-			//ConfigurationTemplate.deleteAlias(id);
+			// ConfigurationTemplate.deleteAlias(id);
 			break;
 		case "session":
 			Session.deleteAlias(id);
 			break;
 		case "session-template":
-			//SessionTemplate.deleteAlias(id);
+			// SessionTemplate.deleteAlias(id);
 			break;
 		case "user-param":
-			//UserParam.deleteAlias(id);
+			// UserParam.deleteAlias(id);
 			break;
 		case "user-param-template":
-			//UserParamTemplate.deleteAlias(id);
+			// UserParamTemplate.deleteAlias(id);
 			break;
 		case "callback":
 			Callback.deleteAlias(id);
 			break;
 		case "example-resource":
-			//ExampleResource.deleteAlias(id);
+			// ExampleResource.deleteAlias(id);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
@@ -332,48 +332,51 @@ public class DataClayWrapper {
 			u.updateAllData(objectData);
 			break;
 		case "user-template":
-			//final UserTemplate ut = (UserTemplate) UserTemplate.getByAlias(id);
-			//ut.updateAllData(objectData);
+			// final UserTemplate ut = (UserTemplate) UserTemplate.getByAlias(id);
+			// ut.updateAllData(objectData);
 			break;
 		case "credential":
 			final Credential cr = (Credential) Credential.getByAlias(id);
 			cr.updateAllData(objectData);
 			break;
 		case "credential-template":
-			//final CredentialTemplate ct = (CredentialTemplate) CredentialTemplate.getByAlias(id);
-			//ct.updateAllData(objectData);
+			// final CredentialTemplate ct = (CredentialTemplate)
+			// CredentialTemplate.getByAlias(id);
+			// ct.updateAllData(objectData);
 			break;
 		case "configuration":
-			//final Configuration cf = (Configuration) Configuration.getByAlias(id);
-			//cf.updateAllData(objectData);
+			// final Configuration cf = (Configuration) Configuration.getByAlias(id);
+			// cf.updateAllData(objectData);
 			break;
 		case "configuration-template":
-			//final ConfigurationTemplate cft = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
-			//cft.updateAllData(objectData);
+			// final ConfigurationTemplate cft = (ConfigurationTemplate)
+			// ConfigurationTemplate.getByAlias(id);
+			// cft.updateAllData(objectData);
 			break;
 		case "session":
 			final Session s = (Session) Session.getByAlias(id);
 			s.updateAllData(objectData);
 			break;
 		case "session-template":
-			//final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
-			//st.updateAllData(objectData);
+			// final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
+			// st.updateAllData(objectData);
 			break;
 		case "user-param":
-			//final UserParam upar = (UserParam) UserParam.getByAlias(id);
-			//upar.updateAllData(objectData);
+			// final UserParam upar = (UserParam) UserParam.getByAlias(id);
+			// upar.updateAllData(objectData);
 			break;
 		case "user-param-template":
-			//final UserParamTemplate upt = (UserParamTemplate) UserParamTemplate.getByAlias(id);
-			//upt.updateAllData(objectData);
+			// final UserParamTemplate upt = (UserParamTemplate)
+			// UserParamTemplate.getByAlias(id);
+			// upt.updateAllData(objectData);
 			break;
 		case "callback":
 			final Callback c = (Callback) Callback.getByAlias(id);
 			c.updateAllData(objectData);
 			break;
 		case "example-resource":
-			//final ExampleResource er = (ExampleResource) ExampleResource.getByAlias(id);
-			//er.updateAllData(objectData);
+			// final ExampleResource er = (ExampleResource) ExampleResource.getByAlias(id);
+			// er.updateAllData(objectData);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
@@ -487,7 +490,7 @@ public class DataClayWrapper {
 
 	private static CIMIResource getResourceAsObject(final String type, final String id)
 			throws IllegalArgumentException {
-		CIMIResource obj;
+		CIMIResource obj = null;
 		switch (type) {
 		// mF2C resources
 		case "agreement":
@@ -531,37 +534,37 @@ public class DataClayWrapper {
 			obj = (User) User.getByAlias(id);
 			break;
 		case "user-template":
-			//obj = (UserTemplate) UserTemplate.getByAlias(id);
+			// obj = (UserTemplate) UserTemplate.getByAlias(id);
 			break;
 		case "credential":
 			obj = (Credential) Credential.getByAlias(id);
 			break;
 		case "credential-template":
-			//obj = (CredentialTemplate) CredentialTemplate.getByAlias(id);
+			// obj = (CredentialTemplate) CredentialTemplate.getByAlias(id);
 			break;
 		case "configuration":
-			//obj = (Configuration) Configuration.getByAlias(id);
+			// obj = (Configuration) Configuration.getByAlias(id);
 			break;
 		case "configuration-template":
-			//obj = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
+			// obj = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
 			break;
 		case "session":
 			obj = (Session) Session.getByAlias(id);
 			break;
 		case "session-template":
-			//obj = (SessionTemplate) SessionTemplate.getByAlias(id);
+			// obj = (SessionTemplate) SessionTemplate.getByAlias(id);
 			break;
 		case "user-param":
-			//obj = (UserParam) UserParam.getByAlias(id);
+			// obj = (UserParam) UserParam.getByAlias(id);
 			break;
 		case "user-param-template":
-			//obj = (UserParamTemplate) UserParamTemplate.getByAlias(id);
+			// obj = (UserParamTemplate) UserParamTemplate.getByAlias(id);
 			break;
 		case "callback":
 			obj = (Callback) Callback.getByAlias(id);
 			break;
 		case "example-resource":
-			//obj = (ExampleResource) ExampleResource.getByAlias(id);
+			// obj = (ExampleResource) ExampleResource.getByAlias(id);
 			break;
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
