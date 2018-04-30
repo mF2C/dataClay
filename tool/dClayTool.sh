@@ -33,6 +33,8 @@ cat << EOF
  GetDataClayInfo    <dc_name>
  CheckDataClay      <dc_name>
 
+ SetMetadataBackup  <leader_address>  <backup_address>
+
 EOF
 exit 0
 }
@@ -49,22 +51,22 @@ TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
+SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"
+mkdir -p $SCRIPTPATH/lib
+CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
 if [ ! -z $DATACLAY_JAR ]; then
   # Environment set means we are in Mare or in some already-prepared computing Environment
   # Assume everything is ok.
-  CLIENTJAR=$DATACLAY_JAR
+  rm -f $CLIENTJAR
+  ln -s $DATACLAY_JAR $CLIENTJAR
 else
+  # No predefined DATACLAY_JAR, so assuming docker env
   type docker >/dev/null 2>&1 || { errorMsg "If DATACLAY_JAR is not installed, docker is required; but it is not installed. Aborting."; }
   DOCKER_BASE=`docker inspect --format='{{.Id}}' \`docker ps | grep logicmodule | head -1 | cut -d" " -f1\``
   if [ -z $DOCKER_BASE ]; then
 	errorMsg "Could not inspect a running logicmodule docker."  
   fi
-  
   DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
-  # No predefined DATACLAY_JAR, so assume relative placement of jar
-  SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"  
-  mkdir -p $SCRIPTPATH/lib
-  CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
   touch $SCRIPTPATH/.dockerid
 
   # In case of using dockers, try to find lib there 
@@ -118,6 +120,9 @@ PY_GETSTUBS="$PY_OPSBASE get_stubs"
 REG_DATACLAY="$JAVA_OPSBASE dataclay.tool.NewDataClayInstance"
 GET_DATACLAY="$JAVA_OPSBASE dataclay.tool.GetDataClayInfo"
 GET_DATACLAYID="$JAVA_OPSBASE dataclay.tool.GetCurrentDataClayID"
+
+# LM backup
+SET_METADATA_BACKUP="$JAVA_OPSBASE dataclay.tool.SetMetadataBackup"
 
 if [ -z $1 ]; then
 	usage
@@ -216,6 +221,9 @@ case $OPERATION in
 		;;
 	'GetDataClayID')
 		$GET_DATACLAYID $2
+		;;
+	'SetMetadataBackup')
+		$SET_METADATA_BACKUP ${@:2}
 		;;
 	*)
 		echo "[ERROR]: Operation $1 is not supported."
