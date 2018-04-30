@@ -16,8 +16,8 @@ services:
     ports:
       - "11034:1034"
     env_file:
-      - ./env/dc1/LM.environment
       - ./env/PG.environment
+      - ./env/LM.environment
     environment:
       - DATACLAY_ADMIN_USER=admin
       - DATACLAY_ADMIN_PASSWORD=admin
@@ -41,8 +41,8 @@ services:
       - 2127
     env_file:
       - ./env/PG.environment
-      - ./env/dc1/DS1.environment
-      - ./env/dc1/LM.environment
+      - ./env/DS.environment
+      - ./env/LM.environment
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres1
@@ -59,11 +59,11 @@ services:
   ds2java1:
     image: "bscdataclay/dsjava"
     ports:
-      - 2128
+      - 2127
     env_file:
       - ./env/PG.environment
-      - ./env/dc1/DS2.environment
-      - ./env/dc1/LM.environment
+      - ./env/DS.environment
+      - ./env/LM.environment
     environment:
       - DATASERVICE_NAME=DS2
       - POSTGRES_HOST=ds2postgres1
@@ -82,8 +82,8 @@ services:
     ports:
       - 6867
     env_file:
-      - ./env/dc1/LM.environment
-      - ./env/dc1/DS1.environment
+      - ./env/DS.environment
+      - ./env/LM.environment
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres1
@@ -106,8 +106,8 @@ services:
     ports:
       - "12034:2034"
     env_file:
-      - ./env/dc2/LM.environment
       - ./env/PG.environment
+      - ./env/LM2.environment
     environment:
       - DATACLAY_ADMIN_USER=admin
       - DATACLAY_ADMIN_PASSWORD=admin
@@ -128,11 +128,11 @@ services:
   ds1java2:
     image: "bscdataclay/dsjava"
     ports:
-      - 3127
+      - 2127
     env_file:
       - ./env/PG.environment
-      - ./env/dc2/DS1.environment
-      - ./env/dc2/LM.environment
+      - ./env/DS.environment
+      - ./env/LM2.environment
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres2
@@ -151,8 +151,8 @@ services:
     ports:
       - 6867
     env_file:
-      - ./env/dc2/LM.environment
-      - ./env/dc2/DS1.environment
+      - ./env/DS.environment
+      - ./env/LM2.environment
     environment:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres2
@@ -175,8 +175,8 @@ services:
     ports:
       - "13034:3034"
     env_file:
-      - ./env/dc1/LM_BK.environment
       - ./env/PG.environment
+      - ./env/LM_BK.environment
     environment:
       - DATACLAY_ADMIN_USER=admin
       - DATACLAY_ADMIN_PASSWORD=admin
