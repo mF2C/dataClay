@@ -7,7 +7,24 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
-import CIMI.*;
+import CIMI.Agreement;
+import CIMI.CIMIResource;
+import CIMI.Callback;
+import CIMI.CloudEntryPoint;
+import CIMI.Credential;
+import CIMI.Device;
+import CIMI.DeviceDynamic;
+import CIMI.Email;
+import CIMI.FogArea;
+import CIMI.ResourceCollection;
+import CIMI.Service;
+import CIMI.ServiceInstance;
+import CIMI.ServiceOperationReport;
+import CIMI.Session;
+import CIMI.SharingModel;
+import CIMI.SlaViolation;
+import CIMI.User;
+import CIMI.UserProfile;
 
 public class DataClayWrapper {
 
@@ -121,11 +138,9 @@ public class DataClayWrapper {
 			ResourceCollection resources;
 			final String className = javaize(type);
 			try {
-				System.out.println("Getting by alias " + className + "Collection");
 				resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection");
 			} catch (final Exception e) {
 				resources = new ResourceCollection();
-				System.out.println("Persisting " + className + "Collection");
 				resources.makePersistent(className + "Collection");
 				// addToCloudEntryPoint(type, resources);
 			}
@@ -402,10 +417,10 @@ public class DataClayWrapper {
 	 */
 	public static List<String> query(final String type, final String expression, final String user, final String role) {
 
-		final String exprWithoutFilter = expression;
 		final String aclCheck;
 		final String expressionWithAcl;
 		if (expression != null && !expression.isEmpty()) {
+			String exprWithoutFilter = expression.substring(9); // Remove the "[:Filter " at the beginning
 			if (user != null && !user.isEmpty()) {
 				if (role != null && !role.isEmpty()) {
 					aclCheck = generateAclCheckComplete(user, role);
@@ -439,7 +454,6 @@ public class DataClayWrapper {
 			}
 		}
 		final String aliasOfCollection = javaize(type) + "Collection";
-		System.out.println("Getting by alias " + aliasOfCollection);
 		System.out.println("Expression: " + expressionWithAcl);
 		final ResourceCollection collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
 		final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
@@ -458,13 +472,13 @@ public class DataClayWrapper {
 				+ "[:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
 				+ "[:EqOp =] [:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute owner] "
 				+ "[:EqOp =] [:SingleQuoteString '" + role + "']]] [:Filter [:AndExpr [:Comp "
-				+ "[:Attribute permissions] [:EqOp =] [:SingleQuoteString '" + role + "']]]]]]]]]] ";
+				+ "[:Attribute permissions] [:EqOp =] [:SingleQuoteString '" + role + "']]]]]]]]";
 	}
 
 	private static String generateAclCheckSimple(final String userOrRole) {
 		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute owner] [:EqOp =] "
 				+ "[:SingleQuoteString '" + userOrRole + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
-				+ "[:EqOp =] [:SingleQuoteString '" + userOrRole + "']]]]]]]] ";
+				+ "[:EqOp =] [:SingleQuoteString '" + userOrRole + "']]]]]]";
 	}
 
 	private static String javaize(final String type) {
