@@ -16,6 +16,8 @@ Execution example
 
 Steps to execute the sample application in `src/demo`:
 
-`bash demo/buildApp.sh `
+`bash registerModel.sh`
+
+`bash demo/buildApp.sh`
 
 `bash demo/runApp.sh demo/jsons/Services.json demo/jsons/Devices.json demo/jsons/DeviceDynamics.json demo/jsons/ServiceInstances.json`
