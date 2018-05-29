@@ -20,13 +20,13 @@ limitations under the License.
                              http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>dataclay</groupId>
-  <artifactId>cimi</artifactId>
+  <artifactId>cimi-stubs</artifactId>
   
   <packaging>jar</packaging>
   
   <version>0.0.1-SNAPSHOT</version>
-  <name>cimi dataclay</name>
-  <description>dataclay integration for cimi</description>
+  <name>dataclay cimi stubs</name>
+  <description>dataclay cimi stubs for integration</description>
   <url>https://github.com/SixSq/dataClay</url>
 
   <properties>
@@ -36,6 +36,8 @@ limitations under the License.
     <src.dir>src</src.dir>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <app>CIMIjson</app>
   </properties>
   
   <repositories>
@@ -90,7 +92,7 @@ limitations under the License.
 
   <build>
     <sourceDirectory>${src.dir}</sourceDirectory>
-    <finalName>cimi-dataclay</finalName>
+    <finalName>cimi-stubs</finalName>
     <plugins>
 
       <plugin>
@@ -100,6 +102,34 @@ limitations under the License.
         <configuration>
           <source>1.8</source>
           <target>1.8</target>
+          <excludes>
+            <exclude>**/demo/*.java</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.6.0</version>
+        <executions>
+          <execution>
+            <id>create-stubs</id>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <phase>compile</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>${basedir}/../tool/dClayTool.sh</executable>
+          <arguments>
+            <argument>GetStubs</argument>
+            <argument>${app}User</argument>
+            <argument>${app}Pass</argument>
+            <argument>${app}NS</argument>
+            <argument>${project.build.directory}/classes</argument>
+          </arguments>
         </configuration>
       </plugin>
 
