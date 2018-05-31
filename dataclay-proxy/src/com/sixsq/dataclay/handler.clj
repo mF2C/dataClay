@@ -24,23 +24,47 @@
     [ring.util.response :as response]))
 
 
+(defn parse-edn
+  [body]
+  (try
+    (edn/read-string body)
+    (catch Exception e
+      (let [msg (str "invalid edn body received: " (str e))]
+        (log/error msg)
+        (throw (ex-info msg (-> (response/response msg)
+                                (response/status 400))))))))
+
+
+(defn dispatch
+  [[fn-name & args :as edn-body]]
+  (log/debug "dispatching dataclay function: " fn-name args)
+  (case (keyword fn-name)
+    :add (apply scrud/add args)
+    :retrieve (apply scrud/retrieve args)
+    :edit (apply scrud/retrieve args)
+    :delete (apply scrud/delete args)
+    :query (apply scrud/query args)
+    (let [msg (str "invalid function name/signature: " fn-name)]
+      (log/error msg)
+      (throw (ex-info msg (-> (response/response msg)
+                              (response/status 400)))))))
+
+
 (defn handler [request]
   (if-let [body (request/body-string request)]
     (try
-      (let [[fn-name & args :as edn-body] (edn/read-string body)]
-        (log/debug "received valid edn body:" (prn-str edn-body))
-        (case (keyword fn-name)
-          :add (apply scrud/add args)
-          :retrieve (apply scrud/retrieve args)
-          :edit (apply scrud/retrieve args)
-          :delete (apply scrud/delete args)
-          :query (apply scrud/query args)
-          (-> (response/response (str "invalid function name: " fn-name))
-              (response/status 400))))
+      (log/debugf "raw body of request: '%s'" body)
+      (let [edn-body (parse-edn body)]
+        (log/debug "received valid edn body:" (with-out-str (clojure.pprint/pprint edn-body)))
+        (let [response (prn-str (dispatch edn-body))]
+          (log/debug "response:" response)
+          (response/response response)))
       (catch Exception e
-        (log/error "invalid edn body received:" body)
-        (-> (response/response (str "invalid edn body: " (str e) "\n"))
-            (response/status 400))))
+        (or (ex-data e)
+            (let [msg (str "error executing request: " body "\n" (str e))]
+              (log/error msg)
+              (throw (ex-info msg (-> (response/response msg)
+                                      (response/status 400))))))))
     (do
       (log/error "request received without body")
       (-> (response/response "request received without body\n")

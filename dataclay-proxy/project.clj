@@ -43,9 +43,9 @@
   :dependencies
   [[org.clojure/clojure]
    [org.clojure/tools.logging]
-   #_[org.clojure/data.json]
-   #_[ring]
-   #_[http-kit "2.2.0"]
+   [org.clojure/data.json]
+   [ring]
+   [http-kit "2.2.0"]
    [dataclay/client "0.0.1"]]
 
   :main com.sixsq.dataclay.proxy)

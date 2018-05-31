@@ -20,8 +20,7 @@
     [com.sixsq.dataclay.handler :refer [handler]]
     [org.httpkit.server :refer [run-server]])
   (:import
-    (dataclay.api DataClay)
-    (api DataClayWrapper)))
+    (dataclay.api DataClay)))
 
 
 (defn -main [& args]
@@ -32,18 +31,6 @@
       (log/error "error initializing dataClay:" (str e))
       (log/error "halting service")
       (System/exit 1)))
-
-  (try
-    (log/info "adding service")
-    (DataClayWrapper/create "service" "123456" (slurp "service.json"))
-    (catch Exception e
-      (log/error "error adding service:" (str e))))
-
-  (try
-    (log/info "reading service")
-    (log/error "RESULT: " (DataClayWrapper/read "service" "123456"))
-    (catch Exception e
-      (log/error "error reading service:" (str e))))
 
   (try
     (let [port 6472]
