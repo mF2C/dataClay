@@ -1,6 +1,6 @@
 ;;
 ;; Copyright (c) 2018, SixSq Sarl
-;; 
+;;
 ;; Licensed under the Apache License, Version 2.0 (the "License");
 ;; you may not use this file except in compliance with the License.
 ;; You may obtain a copy of the License at
@@ -16,19 +16,39 @@
 
 (ns com.sixsq.dataclay.proxy
   (:require
-   [org.httpkit.server :refer [run-server]]
-   [clj-time.core :as t])
+    [clojure.tools.logging :as log]
+    [com.sixsq.dataclay.handler :refer [handler]]
+    [org.httpkit.server :refer [run-server]])
   (:import
-   (dataclay.api DataClay) 
-   (api DataClayWrapper)))
+    (dataclay.api DataClay)
+    (api DataClayWrapper)))
 
-(defn app [req]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    (str (t/time-now))})
 
 (defn -main [& args]
-  (DataClay/init)
+  (try
+    (log/info "initializing dataclay")
+    (DataClay/init)
+    (catch Exception e
+      (log/error "error initializing dataClay:" (str e))
+      (log/error "halting service")
+      (System/exit 1)))
 
-  (run-server app {:port 8080})
-  (println "Server started on port 8080"))
+  (try
+    (log/info "adding service")
+    (DataClayWrapper/create "service" "123456" (slurp "service.json"))
+    (catch Exception e
+      (log/error "error adding service:" (str e))))
+
+  (try
+    (log/info "reading service")
+    (log/error "RESULT: " (DataClayWrapper/read "service" "123456"))
+    (catch Exception e
+      (log/error "error reading service:" (str e))))
+
+  (try
+    (let [port 6472]
+      (run-server handler {:port port})
+      (log/info "dataClay proxy successfully started on port" port))
+    (catch Exception e
+      (log/error "error starting web service:" (str e))
+      (System/exit 1))))

@@ -1,6 +1,6 @@
 ;;
 ;; Copyright (c) 2018, SixSq Sarl
-;; 
+;;
 ;; Licensed under the Apache License, Version 2.0 (the "License");
 ;; you may not use this file except in compliance with the License.
 ;; You may obtain a copy of the License at
@@ -24,33 +24,28 @@
   :license {:name         "Apache 2.0"
             :url          "http://www.apache.org/licenses/LICENSE-2.0.txt"
             :distribution :repo}
-  
+
   :plugins [[lein-parent "0.3.2"]
             [lein-environ "1.1.0"]]
-  
+
   :parent-project {:coords  [sixsq/slipstream-parent "5.3.5"]
                    :inherit [:min-lein-version
                              :managed-dependencies
                              :repositories
                              :deploy-repositories]}
-  
-  :source-paths ["src"]
-  
-  :resource-paths ["bin" "stubs" "cfglog"]
-  
-  :pom-location "target/"
-  
 
-  #_:dependencies #_[[org.clojure/clojure "1.8.0"]
-                 [http-kit "2.2.0"]
-                 [clj-time "0.14.4"]]
+  :source-paths ["src"]
+
+  :resource-paths ["bin" "stubs" "cfglog"]
+
+  :pom-location "target/"
 
   :dependencies
   [[org.clojure/clojure]
-   [http-kit "2.2.0"]
-   [clj-time]
-   #_[dataclay/cimi-stubs "0.0.1-SNAPSHOT"]
-   [dataclay/client "0.0.1"]
-   #_[com.sixsq.slipstream/SlipStreamCljResources-jar "3.52-SNAPSHOT"]]
+   [org.clojure/tools.logging]
+   #_[org.clojure/data.json]
+   #_[ring]
+   #_[http-kit "2.2.0"]
+   [dataclay/client "0.0.1"]]
 
   :main com.sixsq.dataclay.proxy)
