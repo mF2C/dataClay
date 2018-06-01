@@ -20,7 +20,8 @@
     [com.sixsq.dataclay.handler :refer [handler]]
     [org.httpkit.server :refer [run-server]])
   (:import
-    (dataclay.api DataClay)))
+    (dataclay.api DataClay))
+  (:gen-class))
 
 
 (defn -main [& args]

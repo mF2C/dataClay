@@ -48,4 +48,7 @@
    [http-kit "2.2.0"]
    [dataclay/client "0.0.1"]]
 
-  :main com.sixsq.dataclay.proxy)
+  :main com.sixsq.dataclay.proxy
+
+  :aot [com.sixsq.dataclay.proxy]
+  )
