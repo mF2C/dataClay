@@ -3,106 +3,43 @@
 A service that acts as a simple proxy between the SixSq CIMI server
 and DataClay.
 
+## Build DataClay Proxy
 
-## Start DataClay
+To build the Docker image which contains the DataClay proxy service, 
+you'll find the `release.sh` script which will:
+ 
+ 1. deploy DataClay
+ 2. wait for it to be ready
+ 3. generate a random user password
+ 4. run registerModel
+ 5. run buildApp
+ 6. build an uberjar with for the proxy
+ 7. adapt the cfgfiles to user the DC container service name:port, and update the user password
+ 8. build the Docker image, adding all the created and modified files into the image
+ 9. tag the created image to latest
+ 10. cleanup the local environment
 
-You must have the DataClay system running before starting this
-proxy. To do that use the Docker compose file in the ``orchestration``
-directory of this repository.  From there, the system can be started
-with ``docker-compose up``.
-
-## Mac OS X
-
-If you're not on an Apple machine, then you can skip to the next step
-to initialize DataClay.  If you're using an Apple machine then, you
-must run the DataClay proxy from another machine or from within a
-Linux container.
-
-**WARNING: The dataClay client does NOT work on Mac OS X.**
-
-If you'll run the DataClay proxy from a container, you must odify the
-`client.properties` configuration file.  The file should contain the
-values:
-
-```
-HOST=logicmodule1
-TCPPORT=1034
-```
-
-This will point to the service inside of the Docker network.
-
-You can then start the container.  You'll want to mount the repository
-workspace in the container and probably also your SSH credentials.
+The script accepts the Docker image tag as an argument, so all you have 
+to do is, from this directory:
 
 ```bash
-$ docker run -it \
-    -v /Users/loomis/Documents/code/SixSq/dataClay:/root/dataClay \
-    -v /Users/loomis/.ssh/:/root/.ssh \
-    --network orchestration_default \
-    --publish 6472:6472 \
-    openjdk:8-jdk
+./release.sh ${TAG}    
+# where TAG=1.1 for example
 ```
 
-You will have to modify the file system mounts and you may need to
-modify the value of the `--network` parameter.
+After this you should end up with `mf2c/dataclay-proxy:${TAG}` and 
+`mf2c/dataclay-proxy:latest` in your local docker repository. You can then 
+use `docker push` to upload them to the mF2C public Docker Hub.
 
-From within the container, set the `DATACLAY_JAR` environmental
-variable to point to the `dataclayclient.jar` file.  Download this if
-necessary.  The automated extraction of this with Docker will not work
-within a Docker container.
+## Deploying the proxy
 
-You will also have to download Leiningen to run the service.  Follow
-the [Leiningen installation
-instructions](https://leiningen.org/#install).  This is essentially
-the following:
+If DataClay is already running, to deploy the proxy all you need to 
+know is there Docker network where DataClay is running (`docker network ls`).
+Let's assume this is `DC_NET=orchestrator_default`, then:
 
 ```bash
-$ curl -o /usr/bin/lein \
-    https://raw.githubusercontent.com/technomancy/leiningen/stable/bin/lein 
-$ chmod a+x /usr/bin/lein 
-$ lein --help 
-
+docker run --net $DC_NET -p 6472:6472 mf2c/dataclay-proxy:${TAG}
 ```
-
-Now, you can continue with the steps below.
-
-## Initialize DataClay
-
-Next you will have to compile the mF2C resources into a DataClay model
-and register them.  Run the following script from the `dataclay-proxy`
-subdirectory of the repository:
-
-```sh
-$ bash registerModel.sh
-```
-
-Then you must compile the DataClayWrapper that acts as an interface
-between DataClay and the CIMI SCRUD actions.
-
-```sh
-$ bash buildApp.sh
-```
-
-## Start DataClay Proxy
-
-Before starting the service, make sure that you've provided your
-repository credentials in the file `~/.lein/profiles.clj`.  You will
-need this to download the DataClay client jar file.
-
-At this point, you can actually start the DataClay proxy service.
-Just do the following: 
-
-```sh
-$ lein run
-```
-
-If it starts successfully, you'll see a message like:
-
-```
-INFO: dataClay proxy successfully started on port 6472
-```
-
-on the console.
 
 ## Proxy Usage
 
