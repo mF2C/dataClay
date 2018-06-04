@@ -15,7 +15,7 @@
 ;;
 
 (def +version+ "1.10-SNAPSHOT")
-(def +slipstream-version+ "3.52-SNAPSHOT")
+(def +slipstream-version+ "3.53-SNAPSHOT")
 
 (defproject com.sixsq.dataclay/proxy "0.1.0-SNAPSHOT"
   :description "dataclay proxy service"
@@ -46,7 +46,8 @@
    [org.clojure/data.json]
    [ring]
    [http-kit "2.2.0"]
-   [dataclay/client "0.0.1"]]
+   [dataclay/client "0.0.1"]
+   [com.sixsq.slipstream/utils ~+slipstream-version+]]
 
   :main com.sixsq.dataclay.proxy
 

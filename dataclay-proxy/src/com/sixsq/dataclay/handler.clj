@@ -19,9 +19,24 @@
     [clojure.edn :as edn]
     [clojure.tools.logging :as log]
     [com.sixsq.dataclay.scrud :as scrud]
+    [com.sixsq.dataclay.utils.response :as r]
+    [com.sixsq.slipstream.util.response :as response]
     [org.httpkit.server :refer [run-server]]
-    [ring.util.request :as request]
-    [ring.util.response :as response]))
+    [ring.util.request :as request]))
+
+
+(defn check-exception
+  "Checks to see if the exception in 'expected' or not. An expected exception
+   is an ExceptionInfo object with the HTTP response available as the
+   exception's data. Any other exception is unexpected and will result in a 500
+   response being sent."
+  [e body]
+  (if-let [response (ex-data e)]
+    (r/wrapped-response response)
+    (let [msg (str "error executing request: " body "\n" (str e))]
+      (log/error msg)
+      (.printStackTrace e)
+      (response/response-error msg))))
 
 
 (defn parse-edn
@@ -31,41 +46,35 @@
     (catch Exception e
       (let [msg (str "invalid edn body received: " (str e))]
         (log/error msg)
-        (throw (ex-info msg (-> (response/response msg)
-                                (response/status 400))))))))
+        (throw (ex-info msg (response/response-error msg)))))))
 
 
 (defn dispatch
   [[fn-name & args :as edn-body]]
-  (log/debug "dispatching dataclay function: " fn-name args)
-  (case (keyword fn-name)
-    :add (apply scrud/add args)
-    :retrieve (apply scrud/retrieve args)
-    :edit (apply scrud/retrieve args)
-    :delete (apply scrud/delete args)
-    :query (apply scrud/query args)
-    (let [msg (str "invalid function name/signature: " fn-name)]
-      (log/error msg)
-      (throw (ex-info msg (-> (response/response msg)
-                              (response/status 400)))))))
+  (let [f (case (keyword fn-name)
+            :add scrud/add
+            :retrieve scrud/retrieve
+            :edit scrud/edit
+            :delete scrud/delete
+            :query scrud/query
+            ::invalid-signature)]
+    (if-not (= f ::invalid-signature)
+      (try
+        (log/info "dispatching dataclay function: " fn-name args)
+        (apply f args)
+        (catch Exception e
+          (check-exception e edn-body)))
+      (let [msg (str "invalid function name/signature: " fn-name)]
+        (log/error msg)
+        (throw (ex-info msg (response/response-error msg)))))))
 
 
 (defn handler [request]
   (if-let [body (request/body-string request)]
     (try
-      (log/debugf "raw body of request: '%s'" body)
-      (let [edn-body (parse-edn body)]
-        (log/debug "received valid edn body:" (with-out-str (clojure.pprint/pprint edn-body)))
-        (let [response (prn-str (dispatch edn-body))]
-          (log/debug "response:" response)
-          (response/response response)))
+      (-> body parse-edn dispatch)
       (catch Exception e
-        (or (ex-data e)
-            (let [msg (str "error executing request: " body "\n" (str e))]
-              (log/error msg)
-              (throw (ex-info msg (-> (response/response msg)
-                                      (response/status 400))))))))
-    (do
-      (log/error "request received without body")
-      (-> (response/response "request received without body\n")
-          (response/status 400)))))
+        (check-exception e body)))
+    (let [msg "request received without body"]
+      (log/error msg)
+      (response/response-error msg))))

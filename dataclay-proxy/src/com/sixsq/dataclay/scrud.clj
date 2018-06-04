@@ -17,11 +17,13 @@
 (ns com.sixsq.dataclay.scrud
   (:require
     [clojure.string :as str]
+    [clojure.tools.logging :as log]
     [com.sixsq.dataclay.utils.json :as json]
-    [ring.util.response :as response]
-    [clojure.tools.logging :as log])
+    [com.sixsq.dataclay.utils.response :as r]
+    [com.sixsq.slipstream.util.response :as response])
   (:import
-    (api DataClayWrapper)))
+    (api DataClayWrapper)
+    (dataclay.exceptions.metadataservice ObjectNotRegisteredException)))
 
 
 (defn split-id
@@ -32,49 +34,52 @@
 
 (defn add
   ([{:keys [id] :as data} options]
-   (log/debug ":add function:" data options)
+   (log/info ":add function:" data options)
    (let [[type uuid] (split-id id)]
-     (DataClayWrapper/create type uuid (json/edn->json data))))
+     (DataClayWrapper/create type uuid (json/edn->json data))
+     (r/wrapped-response (response/response-created id))))
+
   ([_ {:keys [id] :as data} options]
-   (log/debug ":add function:" data options)
+   (log/info ":add function:" data options)
    (let [[type uuid] (split-id id)]
-     (DataClayWrapper/create type uuid (json/edn->json data)))))
+     (DataClayWrapper/create type uuid (json/edn->json data))
+     (r/wrapped-response (response/response-created id)))))
 
 
 (defn retrieve [id options]
-  (log/debug ":retrieve function:" id options)
+  (log/info ":retrieve function:" id options)
   (let [[type uuid] (split-id id)]
-    (json/json->edn (DataClayWrapper/read type uuid))))
+    (try
+      (let [resource (DataClayWrapper/read type uuid)]
+        (r/wrapped-response (json/json->edn resource)))
+      (catch ObjectNotRegisteredException e
+        (throw (response/ex-not-found id))))))
 
 
 (defn delete [{:keys [id] :as data} options]
-  (log/debug ":delete function:" id options)
+  (log/info ":delete function:" id options)
+  (retrieve id options)
   (let [[type uuid] (split-id id)]
-    (try
-      (DataClayWrapper/delete type uuid)
-      (-> (response/response (format "resource %s deleted" id)))
-      (catch Exception e
-        (-> (response/response (format "resource %s NOT deleted" id))
-            (response/status 400))))))
+    (DataClayWrapper/delete type uuid)
+    (r/wrapped-response (response/response-deleted id))))
 
 
 (defn edit [{:keys [id] :as data} options]
-  (log/debug ":edit function:" data options)
+  (log/info ":edit function:" data options)
   (let [[type uuid] (split-id id)]
     (try
-      (DataClayWrapper/update type uuid data)
-      (-> (response/response (format "resource %s updated" id)))
+      (DataClayWrapper/update type uuid (json/edn->json data))
+      (r/wrapped-response (r/wrapped-response data))
       (catch Exception e
-        (-> (response/response (format "resource %s NOT updated" id))
-            (response/status 400))))))
+        (log/error (str e))
+        (.printStackTrace e)
+        (r/wrapped-response (response/response-conflict id))))))
 
 
 (defn query [collection-id {:keys [filter user-name user-roles] :as options}]
-  (log/debug ":query function:" collection-id options)
-  (let [results (DataClayWrapper/query collection-id filter user-name user-roles)
-        json-results (map json/json->edn results)
-        n (count json-results)
-        result {:count                            n
-                (keyword (str collection-id "s")) json-results}]
-    (-> (response/response (prn-str result))
-        (response/header "Content-Type" "application/edn"))))
+  (log/info ":query function:" collection-id user-name user-roles filter)
+  (let [results (DataClayWrapper/query collection-id (str filter) user-name (str (first user-roles)))
+        hits (map json/json->edn results)
+        n (count hits)
+        meta {:count n}]
+    (r/wrapped-response [meta hits])))
