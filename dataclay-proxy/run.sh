@@ -4,4 +4,4 @@ sh registerModel_v2.sh
 
 sh buildApp.sh
 
-java -jar proxy.jar
+java -cp $(pwd)/stubs:$(pwd)/proxy.jar com.sixsq.dataclay.proxy
