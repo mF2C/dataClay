@@ -76,7 +76,7 @@
         (r/wrapped-response (response/response-conflict id))))))
 
 
-(defn query [collection-id {:keys [filter user-name user-roles] :as options}]
+(defn query [collection-id {{:keys [filter user-name user-roles]} :cimi-params}]
   (log/info ":query function:" collection-id user-name user-roles filter)
   (let [results (DataClayWrapper/query collection-id (str filter) user-name (str (first user-roles)))
         hits (map json/json->edn results)
