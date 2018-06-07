@@ -17,10 +17,18 @@ public class Service extends CIMIResource {
 	// cpu: String - high, medium, low
 	// memory: String - high, medium, low
 	// storage: String - high, medium, low
+	// disk: String - hihg, medium, low
 	// inclinometer: boolean
 	// temperature: boolean
 	// jammer: boolean
 	// location: boolean
+	// battery_level: boolean
+	// door_sensor: boolean
+	// pump_sensor: boolean
+	// accelerometer: boolean
+	// humidity: boolean
+	// air_pressure: boolean
+	// ir_motion: boolean
 
 	// Constructor
 	public Service(final Map<String, Object> objectData) {

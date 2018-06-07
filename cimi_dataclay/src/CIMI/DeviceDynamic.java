@@ -1,5 +1,6 @@
 package CIMI;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ public class DeviceDynamic extends CIMIResource {
 											// don't know how to implement it
 	private List<?> wifiThroughputInfo; // TODO: The type of this field is not defined in the resource spec, so I don't
 										// know how to implement it
+	private String myLeaderID;
 
 	public DeviceDynamic(final Map<String, Object> objectData) {
 		super(objectData);
@@ -34,18 +36,31 @@ public class DeviceDynamic extends CIMIResource {
 		this.device = (Device) objectData.get("device");
 		// this.isLeader = (boolean) objectData.get("isLeader");
 		// this.ramUnits = (String) objectData.get("ramUnits");
-		this.ramFree = (Float) objectData.get("ramFree");
-		this.ramFreePercent = (Float) objectData.get("ramFreePercent");
+		Double d = (Double) objectData.get("ramFree");
+		if (d != null) {
+			this.ramFree = BigDecimal.valueOf(d).floatValue();
+		}
+		d = (Double) objectData.get("ramFreePercent");
+		if (d != null) {
+			this.ramFreePercent = BigDecimal.valueOf(d).floatValue();
+		}
 		// this.storageUnits = (String) objectData.get("storageUnits");
 		this.storageFree = (Integer) objectData.get("storageFree");
-		this.storageFreePercent = (Float) objectData.get("storageFreePercent");
-		this.cpuFreePercent = (Float) objectData.get("cpuFreePercent");
+		d = (Double) objectData.get("storageFreePercent");
+		if (d != null) {
+			this.storageFreePercent = BigDecimal.valueOf(d).floatValue();
+		}
+		d = (Double) objectData.get("cpuFreePercent");
+		if (d != null) {
+			this.cpuFreePercent = BigDecimal.valueOf(d).floatValue();
+		}
 		this.powerRemainingStatus = (String) objectData.get("powerRemainingStatus");
 		this.powerRemainingStatusSeconds = (Integer) objectData.get("powerRemainingStatusSeconds");
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.ethernetThroughputInfo = (List<Object>) objectData.get("ethernetThroughputInfo");
 		this.wifiThroughputInfo = (List<Object>) objectData.get("wifiThroughputInfo");
+		this.myLeaderID = (String) objectData.get("myLeaderID");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
@@ -108,6 +123,10 @@ public class DeviceDynamic extends CIMIResource {
 	public void set_wifiThroughputInfo(final List<Object> wifiThroughputInfo) {
 		this.wifiThroughputInfo = wifiThroughputInfo;
 	}
+	
+	public void set_myLeaderID(final String myLeaderID) {
+		this.myLeaderID = myLeaderID;
+	}
 
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "getCIMIResourceData"
@@ -141,6 +160,8 @@ public class DeviceDynamic extends CIMIResource {
 			info.put("ethernetThroughputInfo", this.ethernetThroughputInfo);
 		if (this.wifiThroughputInfo != null)
 			info.put("wifiThroughputInfo", this.wifiThroughputInfo);
+		if (this.myLeaderID != null)
+			info.put("myLeaderID", this.myLeaderID);
 		return info;
 	}
 
@@ -170,7 +191,8 @@ public class DeviceDynamic extends CIMIResource {
 			set_ethernetThroughputInfo((List<Object>) data.get("ethernetThroughputInfo"));
 		if (data.get("wifiThroughputInfo") != null)
 			set_wifiThroughputInfo((List<Object>) data.get("wifiThroughputInfo"));
-
+		if (data.get("myLeader") != null)
+			set_myLeaderID((String) data.get("myLeaderID"));
 	}
 
 }

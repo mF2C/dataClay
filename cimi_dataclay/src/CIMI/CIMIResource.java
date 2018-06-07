@@ -1,5 +1,6 @@
 package CIMI;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public abstract class CIMIResource extends DataClayObject {
 	private String owner;
 	@SuppressWarnings("unused")
 	private String permissions;
+	private String href;
 
 	public CIMIResource(final Map<String, Object> resourceData) {
 		setCIMIResourceData(resourceData);
@@ -119,6 +121,10 @@ public abstract class CIMIResource extends DataClayObject {
 			this.updated = (String) newData.get("updated");
 		if (newData.get("acl") != null)
 			this.acl = (Map<String, Object>) newData.get("acl");
+		if (newData.get("href") != null)
+			this.href = (String) newData.get("href");
+		else 
+			this.href = this.id;
 	}
 
 }
