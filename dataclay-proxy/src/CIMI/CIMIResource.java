@@ -1,5 +1,6 @@
 package CIMI;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,7 @@ public abstract class CIMIResource extends DataClayObject {
 	private String owner;
 	@SuppressWarnings("unused")
 	private String permissions;
+	private String href;
 
 	public CIMIResource(final Map<String, Object> resourceData) {
 		setCIMIResourceData(resourceData);
@@ -34,13 +36,9 @@ public abstract class CIMIResource extends DataClayObject {
 			final Map<String, Object> ownerValue = (Map<String, Object>) acl.get("owner");
 			this.owner = (String) ownerValue.get("principal");
 			final List<Map<String, Object>> rulesValue = (List<Map<String, Object>>) acl.get("rules");
-			if (rulesValue != null && rulesValue.size() > 0) {
-				// TODO For the moment we assume there is only one element
-				final Map<String, Object> permission = rulesValue.get(0);
-				this.permissions = (String) permission.get("principal");
-			} else {
-				this.permissions = this.owner;
-			}
+			// TODO For the moment we assume there is only one element
+			final Map<String, Object> permission = rulesValue.get(0);
+			this.permissions = (String) permission.get("principal");
 
 		}
 	}
@@ -123,6 +121,10 @@ public abstract class CIMIResource extends DataClayObject {
 			this.updated = (String) newData.get("updated");
 		if (newData.get("acl") != null)
 			this.acl = (Map<String, Object>) newData.get("acl");
+		if (newData.get("href") != null)
+			this.href = (String) newData.get("href");
+		else 
+			this.href = this.id;
 	}
 
 }

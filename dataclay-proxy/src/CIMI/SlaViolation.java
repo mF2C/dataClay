@@ -2,13 +2,13 @@ package CIMI;
 
 import java.util.Map;
 
-@SuppressWarnings("serial")
+@SuppressWarnings({ "unchecked", "serial" })
 public class SlaViolation extends CIMIResource {
 	// An attribute for each field in the CIMI resource spec, with the same name and
 	// type.
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
-	private Map<String, Object> agreement_id;
+	private String agreement_id;
 	private String guarantee;
 	private String datetime;
 	private String constraint;
@@ -18,7 +18,7 @@ public class SlaViolation extends CIMIResource {
 	// CIMIResource
 	public SlaViolation(final Map<String, Object> objectData) {
 		super(objectData);
-		this.agreement_id = (Map<String, Object>) objectData.get("agreement_id");
+		this.agreement_id = (String) objectData.get("agreement_id");
 		this.guarantee = (String) objectData.get("guarantee");
 		this.datetime = (String) objectData.get("datetime");
 		this.constraint = (String) objectData.get("constraint");
@@ -26,15 +26,7 @@ public class SlaViolation extends CIMIResource {
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_values(Map<String, Object> values) {
-		this.values = values;
-	}
-
-	public void set_constraint(final String constraint) {
-		this.constraint = constraint;
-	}
-	
-	public void set_agreement_id(Map<String, Object> agreement_id) {
+	public void set_agreement_id(final String agreement_id) {
 		this.agreement_id = agreement_id;
 	}
 
@@ -44,6 +36,14 @@ public class SlaViolation extends CIMIResource {
 
 	public void set_datetime(final String datetime) {
 		this.datetime = datetime;
+	}
+	
+	public void set_constraint(final String constraint) {
+		this.constraint = constraint;
+	}
+	
+	public void set_values(final Map<String, Object> values) {
+		this.values = values;
 	}
 
 	// A single getter that returns a Map with all the info in this class and in
@@ -67,7 +67,7 @@ public class SlaViolation extends CIMIResource {
 	public void updateAllData(final Map<String, Object> data) {
 		super.setCIMIResourceData(data);
 		if (data.get("agreement_id") != null)
-			set_agreement_id((Map<String, Object>) data.get("agreement_id"));
+			set_agreement_id((String) data.get("agreement_id"));
 		if (data.get("guarantee") != null)
 			set_guarantee((String) data.get("guarantee"));
 		if (data.get("datetime") != null)
