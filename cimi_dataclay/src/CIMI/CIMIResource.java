@@ -37,9 +37,12 @@ public abstract class CIMIResource extends DataClayObject {
 			this.owner = (String) ownerValue.get("principal");
 			final List<Map<String, Object>> rulesValue = (List<Map<String, Object>>) acl.get("rules");
 			// TODO For the moment we assume there is only one element
-			final Map<String, Object> permission = rulesValue.get(0);
-			this.permissions = (String) permission.get("principal");
-
+			if (rulesValue != null) {
+				final Map<String, Object> permission = rulesValue.get(0);
+				this.permissions = (String) permission.get("principal");
+			} else {
+				this.permissions = this.owner;
+			}
 		}
 	}
 
