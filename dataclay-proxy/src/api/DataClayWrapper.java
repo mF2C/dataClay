@@ -21,6 +21,7 @@ import CIMI.Service;
 import CIMI.ServiceInstance;
 import CIMI.ServiceOperationReport;
 import CIMI.Session;
+import CIMI.SessionTemplate;
 import CIMI.SharingModel;
 import CIMI.SlaViolation;
 import CIMI.User;
@@ -116,7 +117,7 @@ public class DataClayWrapper {
 			obj = new Session(objectData);
 			break;
 		case "session-template":
-			// obj = new SessionTemplate(objectData);
+			obj = new SessionTemplate(objectData);
 			break;
 		case "user-param":
 			// obj = new UserParam(objectData);
@@ -246,7 +247,7 @@ public class DataClayWrapper {
 			Session.deleteAlias(id);
 			break;
 		case "session-template":
-			// SessionTemplate.deleteAlias(id);
+			SessionTemplate.deleteAlias(id);
 			break;
 		case "user-param":
 			// UserParam.deleteAlias(id);
@@ -373,8 +374,8 @@ public class DataClayWrapper {
 			s.updateAllData(objectData);
 			break;
 		case "session-template":
-			// final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
-			// st.updateAllData(objectData);
+			final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
+			st.updateAllData(objectData);
 			break;
 		case "user-param":
 			// final UserParam upar = (UserParam) UserParam.getByAlias(id);
@@ -566,7 +567,7 @@ public class DataClayWrapper {
 			obj = (Session) Session.getByAlias(id);
 			break;
 		case "session-template":
-			// obj = (SessionTemplate) SessionTemplate.getByAlias(id);
+			obj = (SessionTemplate) SessionTemplate.getByAlias(id);
 			break;
 		case "user-param":
 			// obj = (UserParam) UserParam.getByAlias(id);

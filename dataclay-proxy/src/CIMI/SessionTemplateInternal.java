@@ -2,7 +2,7 @@ package CIMI;
 
 import java.util.Map;
 
-public class SessionTemplate extends CIMIResource {
+public class SessionTemplateInternal extends CIMIResource {
 	
 	//An attribute for each field in the CIMI resource spec, with the same name 
 	//If it contains nested info, it is implemented as a Map<String, Object>
@@ -16,7 +16,7 @@ public class SessionTemplate extends CIMIResource {
 
 	
 	//Constructor
-	public SessionTemplate(Map<String, Object> objectData) {
+	public SessionTemplateInternal(Map<String, Object> objectData) {
 		super(objectData);
 		this.method = (String) objectData.get("method");
 		this.instance = (String) objectData.get("instance");
