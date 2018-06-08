@@ -29,9 +29,8 @@ cat << EOF
  GetDatasets        <user_name>  <user_pass>
 
  GetDataClayID    
- RegisterDataClay   <dc_id> <dc_name> <dc_host> <dc_port>
- GetDataClayInfo    <dc_name>
- CheckDataClay      <dc_name>
+ GetExtDataClayID   <dc_host> <dc_port>
+ RegisterDataClay   <dc_host> <dc_port>
 
  SetMetadataBackup  <leader_address>  <backup_address>
 
@@ -117,9 +116,9 @@ JAVA_GETSTUBS="$JAVA_OPSBASE dataclay.tool.GetStubs"
 PY_GETSTUBS="$PY_OPSBASE get_stubs"
 
 # Federation
-REG_DATACLAY="$JAVA_OPSBASE dataclay.tool.NewDataClayInstance"
-GET_DATACLAY="$JAVA_OPSBASE dataclay.tool.GetDataClayInfo"
 GET_DATACLAYID="$JAVA_OPSBASE dataclay.tool.GetCurrentDataClayID"
+GET_EXT_DATACLAYID="$JAVA_OPSBASE dataclay.tool.GetExternalDataClayID"
+REG_EXT_DATACLAY="$JAVA_OPSBASE dataclay.tool.NewDataClayInstance"
 
 # LM backup
 SET_METADATA_BACKUP="$JAVA_OPSBASE dataclay.tool.SetMetadataBackup"
@@ -210,20 +209,17 @@ case $OPERATION in
 				;;
 		esac
 		;;
-	'RegisterDataClay')
-		$REG_DATACLAY ${@:2}
-		;;
-	'CheckDataClay')
-		$GET_DATACLAY $2 --check
-		;;
-	'GetDataClayInfo')
-		$GET_DATACLAY $2
-		;;
 	'GetDataClayID')
 		$GET_DATACLAYID $2
 		;;
+	'RegisterDataClay')
+		$REG_EXT_DATACLAY $2 $3
+		;;
+	'GetExtDataClayID')
+		$GET_EXT_DATACLAYID $2 $3
+		;;
 	'SetMetadataBackup')
-		$SET_METADATA_BACKUP ${@:2}
+		$SET_METADATA_BACKUP $2 $3
 		;;
 	*)
 		echo "[ERROR]: Operation $1 is not supported."
