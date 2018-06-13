@@ -468,17 +468,17 @@ public class DataClayWrapper {
 	}
 
 	private static String generateAclCheckComplete(final String user, final String role) {
-		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute owner] [:EqOp =] "
-				+ "[:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
-				+ "[:EqOp =] [:SingleQuoteString '" + user + "']]] [:Filter [:AndExpr [:Comp [:Attribute owner] "
-				+ "[:EqOp =] [:SingleQuoteString '" + role + "']]] [:Filter [:AndExpr [:Comp "
-				+ "[:Attribute permissions] [:EqOp =] [:SingleQuoteString '" + role + "']]]]]]]]";
+		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
+				+ "[:SingleQuoteString \"'" + user + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
+				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + user + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] "
+				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + role + "'\"]]] [:Filter [:AndExpr [:Comp "
+				+ "[:Attribute \"permissions\"] [:EqOp \"=\"] [:SingleQuoteString \"'" + role + "'\"]]]]]]]]";
 	}
 
 	private static String generateAclCheckSimple(final String userOrRole) {
-		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute owner] [:EqOp =] "
-				+ "[:SingleQuoteString '" + userOrRole + "']]] [:Filter [:AndExpr [:Comp [:Attribute permissions] "
-				+ "[:EqOp =] [:SingleQuoteString '" + userOrRole + "']]]]]]";
+		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
+				+ "[:SingleQuoteString \"'" + userOrRole + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
+				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + userOrRole + "'\"]]]]]]";
 	}
 
 	private static String javaize(final String type) {
