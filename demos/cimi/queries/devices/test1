@@ -1,1 +1,1 @@
-[:Filter [:AndExpr [:Comp [:Attribute limitedPower] [:EqOp =] [:SingleQuoteString 'true']]]]
+[:Filter [:AndExpr [:Comp [:Attribute "limitedPower"] [:EqOp "="] [:SingleQuoteString "'true'"]]]]
