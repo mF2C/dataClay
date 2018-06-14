@@ -25,8 +25,94 @@ import CIMI.SharingModel;
 import CIMI.SlaViolation;
 import CIMI.User;
 import CIMI.UserProfile;
+import dataclay.commonruntime.ClientManagementLib;
+import dataclay.exceptions.metadataservice.ObjectNotRegisteredException;
+import dataclay.util.ids.DataClayInstanceID;
 
 public class DataClayWrapper {
+
+	public static DataClayInstanceID leaderDC = null;
+	public static ArrayList<DataClayInstanceID> childrenDCs = new ArrayList<>();
+	public static DataClayInstanceID localDC = null;
+	public static String[] resourceTypes = { "agreement", "device", "device-dynamic", "fog-area", "service",
+			"service-instance", "sharing-model", "sla-violation", "user-profile", "service-operation-report",
+			"cloud-entry-point", "email", "user", "credential", "session", "callback" };
+
+	// All this should happen during Discovery. Now simulating it before execution.
+	// Assuming a config file that contains the following:
+	// LEADER_DC=host:port
+	// CHILDREN_DC=host1:port1;host2:port2;...;hostn:portn
+	public static void init() {
+		final String leaderAddr = System.getenv("LEADER_DC"); // TODO: Can it be unified with some other var required by
+		// others?
+		final String childrenAddr = System.getenv("CHILDREN_DC"); // TODO: Idem
+		String[] hostPort;
+
+		if ((leaderAddr != null && !leaderAddr.isEmpty()) || (childrenAddr != null && !childrenAddr.isEmpty())) {
+			localDC = ClientManagementLib.getDataClayID();
+		}
+		if (leaderAddr != null && !leaderAddr.isEmpty()) {
+			hostPort = leaderAddr.split(":");
+			// Register the dataClay instance of my leader
+			leaderDC = ClientManagementLib.registerExternalDataClay(hostPort[0], Integer.parseInt(hostPort[1]));
+			System.out.println("-- My dataClay leader is: " + leaderDC);
+		}
+		final ArrayList<ResourceCollection> collections = createLocalResourceCollections();
+		if (childrenAddr != null && !childrenAddr.isEmpty()) {
+
+			// Create shared object to sync with children
+			final String[] childrenHostPorts = childrenAddr.split(";");
+			for (final String addr : childrenHostPorts) {
+				if (addr == null) {
+					continue;
+				}
+				try {
+					hostPort = addr.split(":");
+					// Check if child is registered. If not, register it and federate collections
+					final DataClayInstanceID childDC = ClientManagementLib.registerExternalDataClay(hostPort[0],
+							Integer.parseInt(hostPort[1]));
+					System.out.println("-- I have a dataClay child: " + childDC);
+					childrenDCs.add(childDC);
+					if (collections.size() > 0) {
+						System.out.println("Federating collections to children.");
+						for (final ResourceCollection col : collections) {
+							col.federate(childDC, false);
+						}
+					}
+
+				} catch (final Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+
+	private static ArrayList<ResourceCollection> createLocalResourceCollections() {
+		final ArrayList<ResourceCollection> result = new ArrayList<>();
+		for (final String type : resourceTypes) {
+			if (!type.equals("cloud-entry-point")) {
+				final String className = javaize(type);
+				final ResourceCollection resources = new ResourceCollection();
+				try {
+					String suffix;
+					if (localDC == null) {
+						suffix = "";
+					} else {
+						suffix = localDC.getId().toString();
+					}
+					resources.makePersistent(className + "Collection" + suffix); // we need to add localID
+					// because
+					// these collections are
+					// shared
+					result.add(resources);
+				} catch (final Exception e) {
+					// already registered, ok.
+				}
+				// addToCloudEntryPoint(type, resources);
+			}
+		}
+		return result;
+	}
 
 	/**
 	 * Create object from JSON in dataClay
@@ -40,10 +126,10 @@ public class DataClayWrapper {
 	 * @param data
 	 *            json file passed to the CIMI server by the user, with the
 	 *            server-managed fields
-	 * @throws IllegalArgumentException
-	 *             if some argument is wrong
+	 * @throws Exception
+	 *             if something is wrong
 	 */
-	public static void create(final String type, final String id, final String data) throws IllegalArgumentException {
+	public static void create(final String type, final String id, final String data) throws Exception {
 		// (id, resourceID, created, updated) added/replaced as necessary
 		if (type == null)
 			throw new IllegalArgumentException("Argument 'type' is empty");
@@ -134,17 +220,63 @@ public class DataClayWrapper {
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
 		obj.makePersistent(id); // id is the alias
+		if (leaderDC != null) {
+			obj.federate(leaderDC, false); // Non-recursive because each object is individually federated
+		}
+
 		if (!type.equals("cloud-entry-point")) {
-			ResourceCollection resources;
+			ResourceCollection resources = null;
+			ResourceCollection leaderResources = null;
 			final String className = javaize(type);
+			String suffix;
+			if (localDC == null) {
+				suffix = "";
+			} else {
+				suffix = localDC.getId().toString();
+			}
 			try {
-				resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection");
+				// Possible optimization: keep collections in a local variable to avoid
+				// "getByAlias"
+
+				resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection" + suffix);
 			} catch (final Exception e) {
-				resources = new ResourceCollection();
-				resources.makePersistent(className + "Collection");
-				// addToCloudEntryPoint(type, resources);
+				/*
+				 * Version with ResourceCollections created on-the-fly, now they are all created
+				 * in the init * resources = new ResourceCollection();
+				 * resources.makePersistent(className + "Collection" + localDC.getId()); //
+				 * addToCloudEntryPoint(type, resources);
+				 */
+				System.err.println(
+						"ERROR: Resource collection '" + className + "Collection" + suffix + "' does not exist");
+				throw e;
+			}
+			if (leaderDC != null) {
+				try {
+					// Possible optimization: keep collections in a local variable to avoid
+					// "getByAlias"
+					leaderResources = (ResourceCollection) ResourceCollection
+							.getByAlias(className + "Collection" + leaderDC.getId());
+
+				} catch (final Exception e) {
+					/*
+					 * Version with ResourceCollections created on-the-fly, now they are all created
+					 * in the init * resources = new ResourceCollection();
+					 * resources.makePersistent(className + "Collection" + localDC.getId()); //
+					 * addToCloudEntryPoint(type, resources);
+					 */
+					System.err.println("ERROR: Resource collection '" + className + "Collection" + leaderDC.getId()
+							+ "' does not exist");
+					throw e;
+				}
 			}
 			resources.put(id, obj);
+			// Execute "resources.put" in the collection of the leader (not in children
+			// because they don't need to see it)
+			if (leaderResources != null) {
+				leaderResources.runFederated(leaderDC,
+						"putFederated(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
+						new Object[] { id, obj.getClass().getName(), id });
+			}
 		}
 	}
 
@@ -263,7 +395,13 @@ public class DataClayWrapper {
 		default:
 			throw new IllegalArgumentException("Invalid resource type: " + type);
 		}
-		final String colAlias = javaize(type) + "Collection";
+		String suffix;
+		if (localDC == null) {
+			suffix = "";
+		} else {
+			suffix = localDC.getId().toString();
+		}
+		final String colAlias = javaize(type) + "Collection" + suffix;
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection.getByAlias(colAlias);
 		resources.delete(id);
 	}
@@ -420,7 +558,7 @@ public class DataClayWrapper {
 		final String aclCheck;
 		final String expressionWithAcl;
 		if (expression != null && !expression.isEmpty()) {
-			String exprWithoutFilter = expression.substring(9); // Remove the "[:Filter " at the beginning
+			final String exprWithoutFilter = expression.substring(9); // Remove the "[:Filter " at the beginning
 			if (user != null && !user.isEmpty()) {
 				if (role != null && !role.isEmpty()) {
 					aclCheck = generateAclCheckComplete(user, role);
@@ -453,11 +591,86 @@ public class DataClayWrapper {
 				}
 			}
 		}
-		final String aliasOfCollection = javaize(type) + "Collection";
-		System.out.println("Expression: " + expressionWithAcl);
-		final ResourceCollection collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
-		final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
+		String suffix;
+		if (localDC == null) {
+			suffix = "";
+		} else {
+			suffix = localDC.getId().toString();
+		}
+		final String aliasOfCollection = javaize(type) + "Collection" + suffix;
+		// System.out.println("Expression: " + expressionWithAcl);
+		ResourceCollection collection = null;
+		try {
+			collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
+		} catch (final ObjectNotRegisteredException e) {
+			// collection does not exist yet, no object was created of type provided, return
+			// empty collection
+			return new ArrayList<>();
+		}
 		final List<String> result = new ArrayList<>();
+		if (expressionWithAcl != null) {
+			final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
+			for (final CIMIResource obj : resultSet) {
+				Map<String, Object> info = obj.getCIMIResourceData();
+				info = postProcessSubObjects(type, info);
+				final JSONObject json = new JSONObject(info);
+				result.add(json.toString());
+			}
+		} else {
+
+			final Map<String, CIMIResource> resources = collection.getResources();
+			for (final CIMIResource obj : resources.values()) {
+				Map<String, Object> info = obj.getCIMIResourceData();
+				info = postProcessSubObjects(type, info);
+				final JSONObject json = new JSONObject(info);
+				result.add(json.toString());
+			}
+		}
+
+		return result;
+	}
+
+	/**
+	 * Get a list of JSON strings representing dataClay objects that match the query
+	 * expression provided.
+	 * 
+	 * @param type
+	 *            Resource type on which to execute the query
+	 * @param expression
+	 *            query to execute. If it is empty, all resources of the type for
+	 *            which the user/role has access are returned
+	 * @param user
+	 *            user who executes the query. Can be empty.
+	 * @param role
+	 *            role of the user who executes the query. Simplification for IT-1:
+	 *            a user has a single role. Can be empty.
+	 * @return list of JSON strings representing dataClay objects that match the
+	 *         query
+	 */
+	public static List<String> queryURL(final String type, final String urlQuery) {
+
+		String suffix;
+		if (localDC == null) {
+			suffix = "";
+		} else {
+			suffix = localDC.getId().toString();
+		}
+		final String aliasOfCollection = javaize(type) + "Collection" + suffix;
+		ResourceCollection collection = null;
+		try {
+			collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
+		} catch (final ObjectNotRegisteredException e) {
+			// collection does not exist yet, no object was created of type provided, return
+			// empty collection
+			e.printStackTrace();
+			return new ArrayList<>();
+		}
+		final List<String> result = new ArrayList<>();
+		final List<Object> queryResult = collection.filterStream(urlQuery);
+		final List<CIMIResource> resultSet = new ArrayList<>();
+		for (final Object curElement : queryResult) {
+			resultSet.add((CIMIResource) curElement);
+		}
 		for (final CIMIResource obj : resultSet) {
 			Map<String, Object> info = obj.getCIMIResourceData();
 			info = postProcessSubObjects(type, info);
@@ -470,14 +683,16 @@ public class DataClayWrapper {
 	private static String generateAclCheckComplete(final String user, final String role) {
 		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
 				+ "[:SingleQuoteString \"'" + user + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
-				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + user + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] "
-				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + role + "'\"]]] [:Filter [:AndExpr [:Comp "
+				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + user
+				+ "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] " + "[:EqOp \"=\"] [:SingleQuoteString \"'"
+				+ role + "'\"]]] [:Filter [:AndExpr [:Comp "
 				+ "[:Attribute \"permissions\"] [:EqOp \"=\"] [:SingleQuoteString \"'" + role + "'\"]]]]]]]]";
 	}
 
 	private static String generateAclCheckSimple(final String userOrRole) {
 		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
-				+ "[:SingleQuoteString \"'" + userOrRole + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
+				+ "[:SingleQuoteString \"'" + userOrRole
+				+ "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
 				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + userOrRole + "'\"]]]]]]";
 	}
 
@@ -588,7 +803,7 @@ public class DataClayWrapper {
 
 	private static Map<String, Object> preProcessSubObjects(final String type, final Map<String, Object> objectData)
 			throws IllegalArgumentException {
-		CIMIResource obj;
+		CIMIResource obj = null;
 		switch (type) {
 		case "device-dynamic":
 			Map<String, Object> link = (Map<String, Object>) objectData.get("device");

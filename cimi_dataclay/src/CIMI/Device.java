@@ -2,6 +2,8 @@ package CIMI;
 
 import java.util.Map;
 
+import dataclay.util.replication.Replication;
+
 @SuppressWarnings("serial")
 public class Device extends CIMIResource {
 
@@ -21,9 +23,17 @@ public class Device extends CIMIResource {
 	private Integer storage;
 	private Boolean powerPlugged;
 	private String networkingStandards;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String ethernetAddress;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String wifiAddress;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String hwloc;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String cpuinfo;
 
 	public Device(final Map<String, Object> objectData) {
