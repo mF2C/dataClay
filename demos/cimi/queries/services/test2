@@ -1,1 +1,1 @@
-[:Filter [:AndExpr [:Comp [:Attribute category / temperature] [:EqOp =] [:SingleQuoteString 'true']] [:AndExpr [:Comp [:Attribute category / inclinometer] [:EqOp =] [:SingleQuoteString 'true']]]]]
+[:Filter [:AndExpr [:Comp [:Attribute "category" "/" "temperature"] [:EqOp "="] [:SingleQuoteString "'true'"]] [:AndExpr [:Comp [:Attribute "category" "/" "inclinometer"] [:EqOp "="] [:SingleQuoteString "'true'"]]]]]
