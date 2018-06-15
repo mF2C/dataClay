@@ -3,6 +3,8 @@ package CIMI;
 import java.util.List;
 import java.util.Map;
 
+import dataclay.util.replication.Replication;
+
 @SuppressWarnings({ "unchecked", "serial" })
 public class ServiceInstance extends CIMIResource {
 
@@ -12,7 +14,11 @@ public class ServiceInstance extends CIMIResource {
 	private String user;
 	private String service;
 	private String agreement;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String status;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<Map<String, Object>> agents;
 	// agents is a collection of "nested" info:
 	// agent: String
