@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
+import dataclay.util.replication.Replication;
+
 @SuppressWarnings({ "unchecked", "serial" })
 public class DeviceDynamic extends CIMIResource {
 
@@ -14,18 +16,40 @@ public class DeviceDynamic extends CIMIResource {
 	private Device device;
 	// private boolean isLeader;
 	// private String ramUnits;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float ramFree;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float ramFreePercent;
 	// private String storageUnits;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Integer storageFree;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float storageFreePercent;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float cpuFreePercent;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String powerRemainingStatus;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Integer powerRemainingStatusSeconds; // TODO: It is of type String in resource spec, I think it is a mistake
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String ethernetAddress; // TODO: This is here and in Device. I guess it should only be in one place
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String wifiAddress; // TODO: This is here and in Device. I guess it should only be in one place
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<?> ethernetThroughputInfo; // TODO: The type of this field is not defined in the resource spec, so I
 											// don't know how to implement it
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<?> wifiThroughputInfo; // TODO: The type of this field is not defined in the resource spec, so I don't
 										// know how to implement it
 	private String myLeaderID;
