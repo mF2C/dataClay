@@ -1,3 +1,13 @@
+
+DEPRECATED
+==========
+
+Python is not being used in mF2C, so orchestration and examples have been focused to the Java execution.
+
+dataClay keeps having support for Python, but no mF2C documentation is included. Consider this document
+deprecated and untested from now on.
+
+
 Installation of Python client libraries
 =======================================
 

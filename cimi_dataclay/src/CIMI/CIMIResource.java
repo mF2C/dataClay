@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import dataclay.DataClayObject;
+import dataclay.util.replication.Replication;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public abstract class CIMIResource extends DataClayObject {
@@ -14,6 +15,8 @@ public abstract class CIMIResource extends DataClayObject {
 	private String description;
 	private String resourceURI;
 	private String created;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String updated;
 	private Map<String, Object> acl;
 	// owner: Map

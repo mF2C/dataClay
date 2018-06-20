@@ -25,8 +25,18 @@ public class ResourceCollection extends DataClayObject implements Iterable<CIMIR
 		resources.put(id, newResource);
 	}
 
+	public void putFederated(final String id, final String className, final String newResourceAlias) {
+		final CIMIResource newResource = (CIMIResource) DataClayObject.getByAlias("CIMIjsonNS." + className,
+				newResourceAlias);
+		resources.put(id, newResource);
+	}
+
 	public void delete(final String id) {
 		resources.remove(id);
+	}
+
+	public Map<String, CIMIResource> getResources() {
+		return resources;
 	}
 
 	@Override
@@ -36,7 +46,7 @@ public class ResourceCollection extends DataClayObject implements Iterable<CIMIR
 
 	public List<CIMIResource> filterResources(final String query) {
 		final List<CIMIResource> result = new ArrayList<>();
-		final List<Object> queryResult = new ArrayList<Object>();
+		final List<Object> queryResult = new ArrayList<>();
 		if (query == null || query.isEmpty()) {
 			queryResult.addAll(resources.values());
 		} else {
@@ -46,6 +56,11 @@ public class ResourceCollection extends DataClayObject implements Iterable<CIMIR
 			result.add((CIMIResource) curElement);
 		}
 		return result;
+	}
+
+	@Override
+	public List<Object> filterStream(final String query) {
+		return super.filterStream(query);
 	}
 
 	public boolean isEmpty() {

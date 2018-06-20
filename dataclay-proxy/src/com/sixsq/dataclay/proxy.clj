@@ -20,6 +20,7 @@
     [com.sixsq.dataclay.handler :refer [handler]]
     [org.httpkit.server :refer [run-server]])
   (:import
+    (api DataClayWrapper)
     (dataclay.api DataClay))
   (:gen-class))
 
@@ -30,6 +31,14 @@
     (DataClay/init)
     (catch Exception e
       (log/error "error initializing dataClay:" (str e))
+      (log/error "halting service")
+      (System/exit 1)))
+
+  (try
+    (log/info "initializing DataClayWrapper")
+    (DataClayWrapper/init)
+    (catch Exception e
+      (log/error "error initializing DataClayWrapper:" (str e))
       (log/error "halting service")
       (System/exit 1)))
 
