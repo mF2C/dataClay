@@ -1,5 +1,4 @@
 #!/bin/bash
-
 REMOTEPATH="/tmp/files"
 
 if [ -z $1 ]; then
@@ -7,13 +6,10 @@ if [ -z $1 ]; then
 	exit -1
 fi
 
-DCLIB="../../tool/lib/dataclayclient.jar"
-if [ ! -f $DCLIB ]; then
-	echo "[ERROR] dataClay client lib (or link) not found at $DCLIB."
-	exit -1
-fi
+LIBDIR=../../tool/lib
+CLASSPATH=stubs:bin:$LIBDIR/dataclayclient.jar:$LIBDIR/dependencies/*
 
-TOEXEC="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp stubs:bin:$DCLIB producer.TextCollectionGen $1 $REMOTEPATH ${@:2}"
+TOEXEC="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp $CLASSPATH producer.TextCollectionGen $1 $REMOTEPATH ${@:2}"
 echo ""
 echo "Executing:"
 echo ""

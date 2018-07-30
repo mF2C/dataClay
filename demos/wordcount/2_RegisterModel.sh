@@ -1,13 +1,19 @@
 #!/bin/bash
-
-TOOLSPATH=../../tool/dClayTool.sh
-DATACLAYLIB=../../tool/lib/dataclayclient.jar
+TOOLSDIR=../../tool
+TOOLSPATH=$TOOLSDIR/dClayTool.sh
+LIBDIR=$TOOLSDIR/lib
 
 # Minimum set of required variables
 APP=Wordcount
 SRCPATH="src/model"
 STUBSPATH="stubs"
+CLASSPATH=$LIBDIR/dataclayclient.jar:$LIBDIR/dependencies/*:$CLASSPATH
 
+# Check toolspath
+if [ ! -f $TOOLSPATH ]; then
+	echo "Bad tools path. Edit TOOLSPATH script variable to change it."
+	exit -1
+fi
 # Local variables
 if [ ! -z $1 ]; then
 	NAMESPACE=$1
@@ -33,7 +39,7 @@ $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
 printMsg "Compile and register model"
 TMPBINPATH=`mktemp -d`
-javac -cp $DATACLAYLIB `find $SRCPATH | grep java` -d $TMPBINPATH
+javac -cp $CLASSPATH `find $SRCPATH -type f -name *.java` -d $TMPBINPATH
 $TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPBINPATH java
 rm -Rf $TMPBINPATH
 

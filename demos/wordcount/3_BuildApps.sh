@@ -1,11 +1,5 @@
 #!/bin/bash
-
-DCLIB="../../tool/lib/dataclayclient.jar"
-
-if [ ! -f $DCLIB ]; then
-	echo "[ERROR] dataClay client lib (or link) not found at $DCLIB."
-	exit -1
-fi
+LIBDIR=../../tool/lib
 if [ -z $COMPSSLIB ]; then
 	echo "[ERROR] COMPSSLIB variable with valid COMPSS path is undefined"
 	exit -1
@@ -14,10 +8,11 @@ if [ ! -f $COMPSSLIB ]; then
 	echo "[ERROR] COMPSs lib (or link) not found at COMPSSLIB=$COMPSSLIB."
 	exit -1
 fi
+CLASSPATH=stubs:$LIBDIR/dataclayclient.jar:$LIBDIR/dependencies/*:$COMPSSLIB
 
 echo ""
 echo -n "Compiling ... "
 mkdir -p bin
-javac -cp stubs:$DCLIB:$COMPSSLIB src/consumer/*.java -d bin/
-javac -cp stubs:$DCLIB:$COMPSSLIB src/producer/*.java -d bin/
+javac -cp $CLASSPATH src/consumer/*.java -d bin/
+javac -cp $CLASSPATH src/producer/*.java -d bin/
 echo " done"

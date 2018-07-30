@@ -1,20 +1,22 @@
 #!/bin/bash
 
-DCLIB="../../tool/lib/dataclayclient.jar"
+LIBPATH="../../tool/lib"
+CLASSPATH="stubs:bin:$LIBPATH/dataclayclient.jar:$LIBPATH/dependencies/*"
+
 APP="demo.LMBackupDemo"
 BASECP="stubs:bin"
 LOG4J2="-Dlog4j.configurationFile=file:cfglog/log4j2.xml"
 echo ""
 echo "Executing: "
 echo ""
-echo " java $LOG4J -cp $BASECP:$DCLIB $APP"
+echo " java $LOG4J -cp $CLASSPATH $APP"
 echo ""
 
 # Make pipe
 mkfifo demo_pipe
 
 # Running demo in background 
-java -cp $BASECP:$DCLIB $LOG4J2 $APP > output.txt 2>&1 <demo_pipe &
+java -cp $CLASSPATH $LOG4J2 $APP > output.txt 2>&1 <demo_pipe &
 exec 6>demo_pipe
 
 # Wait until process requires input

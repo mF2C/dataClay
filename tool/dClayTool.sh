@@ -50,9 +50,14 @@ TOOLNAME=$0
 SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
+# Classpaths
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"
-mkdir -p $SCRIPTPATH/lib
-CLIENTJAR=$SCRIPTPATH/lib/dataclayclient.jar
+LIBPATH=$SCRIPTPATH/lib
+CLIENTJAR=$LIBPATH/dataclayclient.jar
+DEPSPATH=$LIBPATH/dependencies
+CLASSPATH=$CLIENTJAR:$DEPSPATH/*:$CLASSPATH
+
+
 if [ ! -z $DATACLAY_JAR ]; then
   # Environment set means we are in Mare or in some already-prepared computing Environment
   # Assume everything is ok.
@@ -65,7 +70,8 @@ else
   if [ -z $DOCKER_BASE ]; then
 	errorMsg "Could not inspect a running logicmodule docker."  
   fi
-  DOCKER_DCLIB="$DOCKER_BASE:/usr/src/app/dataclay.jar"
+  DOCKER_DCDEPS="$DOCKER_BASE:/usr/src/dataclay/lib"
+  DOCKER_DCLIB="$DOCKER_BASE:/usr/src/dataclay/dataclay.jar"
   touch $SCRIPTPATH/.dockerid
 
   # In case of using dockers, try to find lib there 
@@ -78,6 +84,9 @@ else
 
   if [ ! -z $UPDATE_LIB ]; then
 	rm -f $CLIENTJAR
+	rm -Rf $DEPSPATH
+	mkdir $LIBPATH
+    docker cp $DOCKER_DCDEPS $DEPSPATH
     docker cp $DOCKER_DCLIB $CLIENTJAR
 	echo $DOCKER_ID > $SCRIPTPATH/.dockerid
 	echo "[dataClay] [tool LOG] Retrieved $CLIENTJAR from $DOCKER_DCLIB"
@@ -93,7 +102,7 @@ else
 fi
 
 # Base ops commands
-JAVA_OPSBASE="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp $CLIENTJAR"
+JAVA_OPSBASE="java -Dorg.apache.logging.log4j.simplelog.StatusLogger.level=OFF -cp $CLASSPATH"
 PY_OPSBASE="python -m dataclay.tool"
 
 # Basic operations
