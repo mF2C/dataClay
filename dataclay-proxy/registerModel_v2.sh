@@ -1,6 +1,7 @@
 #!/bin/bash
 TOOLSPATH=../tool/dClayTool.sh
 DCLIB=../tool/lib/dataclayclient.jar
+DCDEPS=../too/lib/dependencies
 
 until $TOOLSPATH GetDataClayID 
 do 
@@ -58,7 +59,7 @@ $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
 printMsg "Compiling and registering model"
 TMPDIR=`mktemp -d`
-javac -cp $DCLIB src/CIMI/*.java -d $TMPDIR
+javac -cp $DCLIB:$DCDEPS/* src/CIMI/*.java -d $TMPDIR
 $TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPDIR java
 rm -Rf $TMPDIR
 
