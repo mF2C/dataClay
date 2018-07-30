@@ -7,4 +7,7 @@ if [ $# -eq 2 ]; then
 	LMPORT=$2
 fi
 
-../../../tool/dClayTool.sh RegisterDataClay $LMHOST $LMPORT
+MSG=`../../../tool/dClayTool.sh RegisterDataClay $LMHOST $LMPORT | grep -i found`
+DCID=`echo $MSG | cut -d":" -f2 | cut -d" " -f2`
+printf "\n\n Info for next step (external dataClay HOST:PORT): $LMHOST:$LMPORT\n\n"
+

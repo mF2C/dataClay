@@ -1,16 +1,9 @@
 #!/bin/bash
-
-if [ -z $DATACLAY_JAR ]; then
-	DATACLAY_JAR="../../../tool/lib/dataclayclient.jar"
-fi
-if [ ! -f $DATACLAY_JAR ]; then
-	echo ""
-	echo " Warning. dataClay client lib:'$DATACLAY_JAR' not found. Did you run the register step first? "
-    exit -1
-fi
+LIBDIR=../../../tool/lib
+CLASSPATH=stubs:$LIBDIR/dataclayclient.jar:$LIBDIR/dependencies/*:$CLASSPATH
 
 mkdir -p bin
-TOEXEC="javac -cp stubs:$DATACLAY_JAR ../src/app/*.java -d bin"
+TOEXEC="javac -cp $CLASSPATH ../src/app/*.java -d bin"
 echo ""
 echo "Executing"
 echo ""
