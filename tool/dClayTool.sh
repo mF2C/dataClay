@@ -85,7 +85,7 @@ else
   if [ ! -z $UPDATE_LIB ]; then
 	rm -f $CLIENTJAR
 	rm -Rf $DEPSPATH
-	mkdir $LIBPATH
+	mkdir -p $LIBPATH
     docker cp $DOCKER_DCDEPS $DEPSPATH
     docker cp $DOCKER_DCLIB $CLIENTJAR
 	echo $DOCKER_ID > $SCRIPTPATH/.dockerid
