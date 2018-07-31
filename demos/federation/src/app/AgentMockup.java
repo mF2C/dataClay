@@ -48,8 +48,9 @@ public class AgentMockup {
 			System.out.println("Found previous agent info.");
 		} catch (Exception ex) {
 			Device myDevice = initDevice(resourceID, name, description, resourceURI);
+			myDevice.makePersistent(myId + "_device");
 			// Re-used the deviceId and also the CIMI fields for the Agent:
-			myAgent = new Agent(myId, myDevice, resourceID, name, description, resourceURI);
+			myAgent = new Agent(myId, myId + "_device", resourceID, name, description, resourceURI);
 			// Data operation: store
 			myAgent.makePersistent(myAgent.getId(), DataClay.jLOCAL);
 		}
@@ -97,17 +98,19 @@ public class AgentMockup {
 			Agent newAgent = null;
 			while (!available) {
 				try {
-					newAgent = (Agent) Agent.getByAlias(discoveredId);
+					newAgent = myAgent.getAgent(discoveredId);
 					available = true;
-					System.out.println("Mobile agent appeared!");
+					System.out.println("Mobile agent appeared! with OID " + newAgent.getID() + " from dCID " + newAgent.getExternalDataClayID());
 				} catch (Exception ex) {
 					System.out.println("Mobile agent not available yet...");
 					TimeUnit.SECONDS.sleep(1);
 				}
 			}
 
+			System.in.read();
+			
 			// Adding new child agent to leader
-			myAgent.addChild(newAgent);
+			myAgent.addChild(discoveredId);
 
 			System.out.println("Hwloc before set: " + newAgent.getHwloc());
 			System.out.println("CPUInfo before set: " + newAgent.getCPUInfo());
@@ -132,11 +135,14 @@ public class AgentMockup {
 		DataClayInstance myLeaderDM = getDataManagementConfig(message);
 		// TODO Register the dataClay instance in the leader, with all the required info
 		DataClayInstanceID dcID = registerExternalDataManagement(myLeaderDM);
-
+		System.out.println("Leader (external) dataClayID: " + dcID);
+		
 		// Data operation: execute
 		Agent myAgent = (Agent) Agent.getByAlias(myId);
-		myAgent.federate(dcID); // myAgent (and Device, etc) has been replicated in the leader
-		System.out.println("Mobile agent info federated with the leader.");
+		Device myDevice = myAgent.getDevice();
+		myDevice.federate(dcID); // myDevice of myAgent has been replicated in the leader
+		myAgent.federate(dcID); // myAgent has been replicated in the leader
+		System.out.println("Mobile agent info with OID " + myAgent.getID() + ", federated with the leader!");
 
 		System.out.println("Hwloc before set: " + myAgent.getHwloc());
 		System.out.println("CPUInfo before set: " + myAgent.getCPUInfo());
@@ -181,7 +187,7 @@ public class AgentMockup {
 	}
 
 	private static DataClayInstanceID registerExternalDataManagement(DataClayInstance externalInfo) {
-		return ClientManagementLib.registerExternalDataClay(externalInfo.getHost(), externalInfo.getPort());
+		return ClientManagementLib.registerExternalDataClay(externalInfo.getHosts()[0], externalInfo.getPorts()[0]);
 	}
 
 	private static String receiveWelcomeMessage() {

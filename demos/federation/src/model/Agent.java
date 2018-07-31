@@ -1,92 +1,99 @@
 package model;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
+import java.util.Set;
+
+import dataclay.DataClayObject;
 
 @SuppressWarnings({ "unused", "serial" })
 public class Agent extends CIMIResource {
 
-    /* Simplified version */
+	/* Simplified version */
 
-    private String id; // Agent id
-    private Device device;
-    private Map<String, Agent> children;
-    private boolean isLeader;
-    private boolean isCloud;
-    // private boolean multiCloudFederation;
-    // private AggregatedResourceInfo aggregatedInfo;
+	private String id; // Agent id
+	private String deviceAlias;
+	private Set<String> children;
+	private boolean isLeader;
+	private boolean isCloud;
+	// private boolean multiCloudFederation;
+	// private AggregatedResourceInfo aggregatedInfo;
 
-    public Agent(String id, Device myDevice, String resourceID, String resourceName, String resourceDescription,
-	    String resourceURI) {
+	public Agent(String id, String myDevice, String resourceID, String resourceName, String resourceDescription,
+			String resourceURI) {
 
-	super(resourceID, resourceName, resourceDescription, resourceURI);
-	this.id = id;
-	this.device = myDevice;
-	this.children = new HashMap<String, Agent>();
-	this.isLeader = false;
-	this.isCloud = false;
-    }
-
-    public String getId() {
-	return this.id;
-    }
-
-    public Device getDevice() {
-	return device;
-    }
-
-    public void addChild(Agent child) {
-	if (isLeader) {
-	    children.put(child.id, child);
-	    resourceUpdated();
-	} else {
-	    throw new RuntimeException("Trying to add a child to a normal agent");
+		super(resourceID, resourceName, resourceDescription, resourceURI);
+		this.id = id;
+		this.deviceAlias = myDevice;
+		this.children = new HashSet<>();
+		this.isLeader = false;
+		this.isCloud = false;
 	}
-    }
 
-    public void removeChild(Agent child) {
-	if (isLeader) {
-	    children.remove(child.id);
-	    resourceUpdated();
-	} else {
-	    throw new RuntimeException("Trying to remove a child from a normal agent");
+	public String getId() {
+		return this.id;
 	}
-    }
 
-    public boolean checkChildExists(String child) {
-	if (isLeader) {
-	    return this.children.containsKey(child);
-	} else {
-	    throw new RuntimeException("Trying to check child on a normal agent");
+	public Device getDevice() {
+		return (Device) DataClayObject.getByAlias("CIMIFED_NS.model.Device", deviceAlias);
 	}
-    }
+	
+	public Agent getAgent(final String agentID) {
+		return (Agent) DataClayObject.getByAlias("CIMIFED_NS.model.Agent", agentID);
+	}
 
-    public Agent getChild(String child) {
-	return this.children.get(child);
-    }
+	public void addChild(String child) {
+		if (isLeader) {
+			children.add(child);
+			resourceUpdated();
+		} else {
+			throw new RuntimeException("Trying to add a child to a normal agent");
+		}
+	}
 
-    public void setCloud() {
-	this.isCloud = true;
-    }
+	public void removeChild(Agent child) {
+		if (isLeader) {
+			children.remove(child.getId());
+			resourceUpdated();
+		} else {
+			throw new RuntimeException("Trying to remove a child from a normal agent");
+		}
+	}
 
-    public void setLeader() {
-	this.isLeader = true;
-    }
+	public boolean checkChildExists(String child) {
+		if (isLeader) {
+			return this.children.contains(child);
+		} else {
+			throw new RuntimeException("Trying to check child on a normal agent");
+		}
+	}
 
-    public void setHwloc(String text) {
-	this.device.setHwloc(text);
-    }
+	public Agent getChild(String child) {
+		checkChildExists(child);
+		return getAgent(child);		
+	}
 
-    public void setCPUInfo(String text) {
-	this.device.setCPUInfo(text);
-    }
+	public void setCloud() {
+		this.isCloud = true;
+	}
 
-    public String getHwloc() {
-	return this.device.getHwloc();
-    }
+	public void setLeader() {
+		this.isLeader = true;
+	}
 
-    public String getCPUInfo() {
-	return this.device.getCPUInfo();
-    }
+	public void setHwloc(String text) {
+		getDevice().setHwloc(text);
+	}
+
+	public void setCPUInfo(String text) {
+		getDevice().setCPUInfo(text);
+	}
+
+	public String getHwloc() {
+		return getDevice().getHwloc();
+	}
+
+	public String getCPUInfo() {
+		return getDevice().getCPUInfo();
+	}
 
 }
