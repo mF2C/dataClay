@@ -30,6 +30,7 @@ public class ClojureMockup {
 			DataClay.setSessionFile(args[4]);
 		}
 		DataClay.init();
+		DataClayWrapper.init();
 
 		// CREATE
 		// First create the CloudEntryPoint
@@ -85,7 +86,7 @@ public class ClojureMockup {
 		System.out.println("Device after update: " + DataClayWrapper.read("device", "12345"));
 
 		// QUERY
-		final String expression = "[:Filter [:AndExpr [:Comp [:Attribute os] [:EqOp =] [:SingleQuoteString 'Windows']]]]";
+		final String expression = "[:Filter [:AndExpr [:Comp [:Attribute \"os\"] [:EqOp \"=\"] [:SingleQuoteString \"'Windows'\"]]]]";
 
 		// "Query by owner" (ha de donar 1 resultat)
 		List<String> result = DataClayWrapper.query("device", expression, "User1", "USER");
