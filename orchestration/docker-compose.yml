@@ -25,8 +25,8 @@ services:
       - DATACLAY_ADMIN_PASSWORD=admin
       - POSTGRES_HOST=lmpostgres1
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ####################################
   #  JAVA DATA SERVICES ON DC 1      #
@@ -51,8 +51,8 @@ services:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres1
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ds2postgres1:
     image: postgres:9.5.12
@@ -74,8 +74,8 @@ services:
       - DATASERVICE_NAME=DS2
       - POSTGRES_HOST=ds2postgres1
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ####################################
   #  PYTHON DATA SERVICES ON DC 1    #
@@ -123,8 +123,8 @@ services:
       - DATACLAY_ADMIN_PASSWORD=admin
       - POSTGRES_HOST=lmpostgres2
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ####################################
   #    JAVA DATA SERVICES ON DC 2    #
@@ -149,8 +149,8 @@ services:
       - DATASERVICE_NAME=DS1
       - POSTGRES_HOST=ds1postgres2
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ####################################
   #  PYTHON DATA SERVICES ON DC 2    #
@@ -198,6 +198,6 @@ services:
       - DATACLAY_ADMIN_PASSWORD=admin
       - POSTGRES_HOST=lmpostgres_bk
     volumes:
-      - ./prop/global.properties:/usr/src/app/cfgfiles/global.properties:ro
-      - ./prop/log4j2.xml:/usr/src/app/log4j2.xml:ro
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
