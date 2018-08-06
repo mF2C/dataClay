@@ -15,7 +15,7 @@
 ;;
 
 (def +version+ "1.10-SNAPSHOT")
-(def +slipstream-version+ "3.53-SNAPSHOT")
+(def +slipstream-version+ "3.53")
 
 (defproject com.sixsq.dataclay/proxy "0.1.0-SNAPSHOT"
   :description "dataclay proxy service"

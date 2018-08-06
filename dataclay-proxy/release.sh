@@ -21,19 +21,19 @@ if [[ $# -eq 0 ]] ; then
     exit 0
 fi
 
-(cd ../orchestration/ && docker-compose up -d)
+(cd ../orchestration/ && docker-compose down && docker-compose up -d)
 
 TOOLSPATH=../tool/dClayTool.sh
 
-until $TOOLSPATH GetDataClayID 
-do 
+until [ "`$TOOLSPATH GetDataClayID 2>&1 | grep ERROR`" == "" ];
+do
     echo " --- waiting for dataclay"
     sleep 2
 done
 
 password=`echo $(uuidgen || cat /dev/urandom) | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 
-sed -i '.orig' "s/cHaNgEmE/$password/g" registerModel_v2.sh
+sed --in-place='.orig' "s/cHaNgEmE/$password/g" registerModel_v2.sh
 ./registerModel_v2.sh
 
 ./buildApp.sh
