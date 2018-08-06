@@ -44,25 +44,16 @@ DataSetForStore=$DATASET
 DataClayClientConfig=./cfgfiles/client.properties
 EOF
 
-printMsg() {
-	printf "\n******\n***** $1 \n******\n "
-}
-
-
 ##### dClayTools-based script
 
-printMsg "Register account"
 $TOOLSPATH NewAccount $USER $PASS
 
-printMsg "Create dataset and grant access to it"
 $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
-printMsg "Compiling and registering model"
 TMPDIR=`mktemp -d`
 javac -cp $DCLIB:$DCDEPS/* src/CIMI/*.java -d $TMPDIR
 $TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPDIR java
 rm -Rf $TMPDIR
 
-printMsg "Get stubs"
 mkdir -p $STUBSPATH
 $TOOLSPATH GetStubs $USER $PASS $NAMESPACE $STUBSPATH

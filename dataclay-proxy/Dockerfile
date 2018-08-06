@@ -9,12 +9,10 @@ ADD buildApp.sh /root/dataclay/
 ADD registerModel_v2.sh /root/dataclay/
 ADD run.sh /root/dataclay/
 ADD tool /root/tool
-ADD tool/lib/dataclayclient.jar /root/dataclay/
-ADD tool/lib/dependencies /root/dataclay/dependencies/
 
 ADD ./target/proxy-0.1.0-SNAPSHOT-standalone.jar /root/dataclay/proxy.jar
 
-ENV DATACLAY_JAR=/root/dataclay/dataclayclient.jar
+ENV DATACLAY_JAR=/root/tool/lib/dataclayclient.jar
 
 WORKDIR /root/dataclay
 

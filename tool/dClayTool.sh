@@ -61,8 +61,7 @@ CLASSPATH=$CLIENTJAR:$DEPSPATH/*:$CLASSPATH
 if [ ! -z $DATACLAY_JAR ]; then
   # Environment set means we are in Mare or in some already-prepared computing Environment
   # Assume everything is ok.
-  rm -f $CLIENTJAR
-  ln -s $DATACLAY_JAR $CLIENTJAR
+  ln -s $DATACLAY_JAR $CLIENTJAR 2> /dev/null
 else
   # No predefined DATACLAY_JAR, so assuming docker env
   type docker >/dev/null 2>&1 || { errorMsg "If DATACLAY_JAR is not installed, docker is required; but it is not installed. Aborting."; }
@@ -97,8 +96,6 @@ if [ ! -f $CLIENTJAR ]; then
 	errorMsg "Cannot resolve dataClay jar library. Possible causes: 
                    - DATACLAY_JAR=\"$DATACLAY_JAR\" is not defined or is not a valid path
                    - a dataClay docker environment cannot be found."
-else
-	echo "[dataClay] [tool LOG] $0 will use this dataClay lib: $CLIENTJAR"
 fi
 
 # Base ops commands
