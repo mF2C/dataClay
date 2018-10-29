@@ -202,7 +202,7 @@ public class DataClayWrapper {
 			obj = new Session(objectData);
 			break;
 		case "session-template":
-			// obj = new SessionTemplate(objectData);
+			obj = new SessionTemplate(objectData);
 			break;
 		case "user-param":
 			// obj = new UserParam(objectData);
