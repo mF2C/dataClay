@@ -10,13 +10,13 @@ public class FogArea extends CIMIResource {
 	private Device leaderDevice;
 	private int numDevices;
 	//private String ramUnits;
-	private int ramTotal;
-	private int ramMax;
-	private int ramMin;
+	private float ramTotal;
+	private float ramMax;
+	private float ramMin;
 	//private String storageUnits;
-	private int storageTotal;
-	private int storageMax;
-	private int storageMin;
+	private float storageTotal;
+	private float storageMax;
+	private float storageMin;
 	private float avgProcessingCapacityPercent;
 	private float cpuMaxPercent;
 	private float cpuMinPercent;
@@ -30,8 +30,8 @@ public class FogArea extends CIMIResource {
 	private String powerRemainingMin;
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
-	public FogArea(Device leaderDevice, int numDevices, int ramTotal, int ramMax, int ramMin,
-		        int storageTotal, int storageMax, int storageMin, float avgProcessingCapacityPercent,
+	public FogArea(Device leaderDevice, int numDevices, float ramTotal, float ramMax, float ramMin,
+		        float storageTotal, float storageMax, float storageMin, float avgProcessingCapacityPercent,
 			float cpuMaxPercent, float cpuMinPercent, int avgPhysicalCores, int physicalCoresMax, int physicalCoresMin,
 			int avgLogicalCores, int logicalCoresMax, int logicalCoresMin, String powerRemainingMax, String powerRemainingMin,
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
@@ -73,15 +73,15 @@ public class FogArea extends CIMIResource {
 	//	this.ramUnits = ramUnits;
 	//}
 	
-	public void set_ramTotal(int ramTotal) {
+	public void set_ramTotal(float ramTotal) {
 		this.ramTotal = ramTotal;
 	}
 	
-	public void set_ramMax(int ramMax) {
+	public void set_ramMax(float ramMax) {
 		this.ramMax = ramMax;
 	}
 	
-	public void set_ramMin(int ramMin) {
+	public void set_ramMin(float ramMin) {
 		this.ramMin = ramMin;
 	}
 	
@@ -89,15 +89,15 @@ public class FogArea extends CIMIResource {
 	//	this.storageUnits = storageUnits;
 	//}
 	
-	public void set_storageTotal(int storageTotal) {
+	public void set_storageTotal(float storageTotal) {
 		this.storageTotal = storageTotal;
 	}
 	
-	public void set_storageMax(int storageMax) {
+	public void set_storageMax(float storageMax) {
 		this.storageMax = storageMax;
 	}
 	
-	public void set_storageMin(int storageMin) {
+	public void set_storageMin(float storageMin) {
 		this.storageMin = storageMin;
 	}
 	
