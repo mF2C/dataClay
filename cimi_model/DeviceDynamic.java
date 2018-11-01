@@ -28,7 +28,7 @@ public class DeviceDynamic extends CIMIResource {
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
 	public DeviceDynamic(Device device, float ramFree, float ramFreePercent, 
 			int storageFree, float storageFreePercent, float cpuFreePercent, 
-			String powerRemainingStatus, int powerRemainingStatusSeconds, String ethernetAddress, 
+			String powerRemainingStatus, String powerRemainingStatusSeconds, String ethernetAddress, 
 			String wifiAddress, List<Object> ethernetThroughputInfo, List<Object> wifiThroughputInfo, Device myleaderID,  
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
@@ -91,7 +91,7 @@ public class DeviceDynamic extends CIMIResource {
 		this.powerRemainingStatus = powerRemainingStatus;
 	}
 	
-	public void set_powerRemainingStatusSeconds(int powerRemainingStatusSeconds) {
+	public void set_powerRemainingStatusSeconds(String powerRemainingStatusSeconds) {
 		this.powerRemainingStatusSeconds = powerRemainingStatusSeconds;
 	}
 	
