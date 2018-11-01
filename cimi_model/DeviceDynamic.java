@@ -23,7 +23,7 @@ public class DeviceDynamic extends CIMIResource {
 	private String wifiAddress; //TODO: This is here and in Device. I guess it should only be in one place
 	private List<Object> ethernetThroughputInfo; //TODO: The type of this field is not defined in the resource spec, so I don't know how to implement it
 	private List<Object> wifiThroughputInfo; //TODO: The type of this field is not defined in the resource spec, so I don't know how to implement it
-	private
+	private Device myleaderID;
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
 	public DeviceDynamic(Device device, float ramFree, float ramFreePercent, 
