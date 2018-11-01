@@ -14,9 +14,9 @@ public class Device extends CIMIResource {
 	private String cpuManufacturer;
 	private int physicalCores;
 	private int logicalCores;
-	private int cpuClockSpeed;
-	private int memory;
-	private int storage;
+	private String cpuClockSpeed;
+	private float memory;
+	private float storage;
 	private boolean powerPlugged;
 	private String networkingStandards;
 	private String ethernetAddress;
@@ -25,7 +25,7 @@ public class Device extends CIMIResource {
 	
 	//Constructor, with a parameter for each attribute in this class and in CIMIResource
 	public Device(String deviceID, boolean isLeader, String os, String arch, String cpuManufacturer,
-			int physicalCores, int logicalCores, int cpuClockSpeed, int memory, int storage, 
+			int physicalCores, int logicalCores, String cpuClockSpeed, float memory, float storage, 
 			boolean powerPlugged, String networkingStandards, String ethernetAddress, String wifiAddress,
 			String resourceID, String resourceName, String resourceDescription, String resourceURI) {
 		super(resourceID, resourceName, resourceDescription, resourceURI);
@@ -75,15 +75,15 @@ public class Device extends CIMIResource {
 		this.logicalCores = logicalCores;
 	}
 	
-	public void set_cpuClockSpeed(int cpuClockSpeed) {
+	public void set_cpuClockSpeed(String cpuClockSpeed) {
 		this.cpuClockSpeed = cpuClockSpeed;
 	}
 	
-	public void set_memory(int memory) {
+	public void set_memory(float memory) {
 		this.memory = memory; 
 	}
 	
-	public void set_storage(int storage) {
+	public void set_storage(float storage) {
 		this.storage = storage;
 	}
 	
