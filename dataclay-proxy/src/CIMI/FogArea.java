@@ -12,13 +12,13 @@ public class FogArea extends CIMIResource {
 	private Device leaderDevice;
 	private Integer numDevices;
 	// private String ramUnits;
-	private Integer ramTotal;
-	private Integer ramMax;
-	private Integer ramMin;
+	private Float ramTotal;
+	private Float ramMax;
+	private Float ramMin;
 	// private String storageUnits;
-	private Integer storageTotal;
-	private Integer storageMax;
-	private Integer storageMin;
+	private Float storageTotal;
+	private Float storageMax;
+	private Float storageMin;
 	private Float avgProcessingCapacityPercent;
 	private Float cpuMaxPercent;
 	private Float cpuMinPercent;
@@ -37,13 +37,13 @@ public class FogArea extends CIMIResource {
 		this.leaderDevice = (Device) objectData.get("leaderDevice");
 		this.numDevices = (int) objectData.get("numDevices");
 		// this.ramUnits = (String) objectData.get("ramUnits");
-		this.ramTotal = (int) objectData.get("ramTotal");
-		this.ramMax = (int) objectData.get("ramMax");
-		this.ramMin = (int) objectData.get("ramMin");
+		this.ramTotal = (float) objectData.get("ramTotal");
+		this.ramMax = (float) objectData.get("ramMax");
+		this.ramMin = (float) objectData.get("ramMin");
 		// this.storageUnits = (String) objectData.get("storageUnits");
-		this.storageTotal = (int) objectData.get("storageTotal");
-		this.storageMax = (int) objectData.get("storageMax");
-		this.storageMin = (int) objectData.get("storageMin");
+		this.storageTotal = (float) objectData.get("storageTotal");
+		this.storageMax = (float) objectData.get("storageMax");
+		this.storageMin = (float) objectData.get("storageMin");
 		this.avgProcessingCapacityPercent = (float) objectData.get("avgProcessingCapacityPercent");
 		this.cpuMaxPercent = (float) objectData.get("cpuMaxPercent");
 		this.cpuMinPercent = (float) objectData.get("cpuMinPercent");
@@ -70,15 +70,15 @@ public class FogArea extends CIMIResource {
 	// this.ramUnits = ramUnits;
 	// }
 
-	public void set_ramTotal(final int ramTotal) {
+	public void set_ramTotal(final float ramTotal) {
 		this.ramTotal = ramTotal;
 	}
 
-	public void set_ramMax(final int ramMax) {
+	public void set_ramMax(final float ramMax) {
 		this.ramMax = ramMax;
 	}
 
-	public void set_ramMin(final int ramMin) {
+	public void set_ramMin(final float ramMin) {
 		this.ramMin = ramMin;
 	}
 
@@ -86,15 +86,15 @@ public class FogArea extends CIMIResource {
 	// this.storageUnits = storageUnits;
 	// }
 
-	public void set_storageTotal(final int storageTotal) {
+	public void set_storageTotal(final float storageTotal) {
 		this.storageTotal = storageTotal;
 	}
 
-	public void set_storageMax(final int storageMax) {
+	public void set_storageMax(final float storageMax) {
 		this.storageMax = storageMax;
 	}
 
-	public void set_storageMin(final int storageMin) {
+	public void set_storageMin(final float storageMin) {
 		this.storageMin = storageMin;
 	}
 
@@ -197,17 +197,17 @@ public class FogArea extends CIMIResource {
 		if (data.get("numDevices") != null)
 			set_numDevices((int) data.get("numDevices"));
 		if (data.get("ramTotal") != null)
-			set_ramTotal((int) data.get("ramTotal"));
+			set_ramTotal((float) data.get("ramTotal"));
 		if (data.get("ramMax") != null)
-			set_ramMax((int) data.get("ramMax"));
+			set_ramMax((float) data.get("ramMax"));
 		if (data.get("ramMin") != null)
-			set_ramMin((int) data.get("ramMin"));
+			set_ramMin((float) data.get("ramMin"));
 		if (data.get("storageTotal") != null)
-			set_storageTotal((int) data.get("storageTotal"));
+			set_storageTotal((float) data.get("storageTotal"));
 		if (data.get("storageMax") != null)
-			set_storageMax((int) data.get("storageMax"));
+			set_storageMax((float) data.get("storageMax"));
 		if (data.get("storageMin") != null)
-			set_storageMin((int) data.get("storageMin"));
+			set_storageMin((float) data.get("storageMin"));
 		if (data.get("avgProcessingCapacityPercent") != null)
 			set_avgProcessingCapacityPercent((float) data.get("avgProcessingCapacityPercent"));
 		if (data.get("cpuMaxPercentcpuMaxPercent") != null)

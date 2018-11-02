@@ -25,7 +25,7 @@ public class DeviceDynamic extends CIMIResource {
 	// private String storageUnits;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private Integer storageFree;
+	private Float storageFree;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float storageFreePercent;
@@ -37,7 +37,7 @@ public class DeviceDynamic extends CIMIResource {
 	private String powerRemainingStatus;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private Integer powerRemainingStatusSeconds; // TODO: It is of type String in resource spec, I think it is a mistake
+	private String powerRemainingStatusSeconds; // TODO: It is of type String in resource spec, I think it is a mistake
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String ethernetAddress; // TODO: This is here and in Device. I guess it should only be in one place
@@ -69,7 +69,10 @@ public class DeviceDynamic extends CIMIResource {
 			this.ramFreePercent = BigDecimal.valueOf(d).floatValue();
 		}
 		// this.storageUnits = (String) objectData.get("storageUnits");
-		this.storageFree = (Integer) objectData.get("storageFree");
+		Double d = (Double) objectData.get("storageFree");
+		if (d != null) {
+			this.storageFree = BigDecimal.valueOf(d).floatValue();
+		}
 		d = (Double) objectData.get("storageFreePercent");
 		if (d != null) {
 			this.storageFreePercent = BigDecimal.valueOf(d).floatValue();
@@ -79,7 +82,7 @@ public class DeviceDynamic extends CIMIResource {
 			this.cpuFreePercent = BigDecimal.valueOf(d).floatValue();
 		}
 		this.powerRemainingStatus = (String) objectData.get("powerRemainingStatus");
-		this.powerRemainingStatusSeconds = (Integer) objectData.get("powerRemainingStatusSeconds");
+		this.powerRemainingStatusSeconds = (String) objectData.get("powerRemainingStatusSeconds");
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.ethernetThroughputInfo = (List<Object>) objectData.get("ethernetThroughputInfo");
@@ -112,7 +115,7 @@ public class DeviceDynamic extends CIMIResource {
 	// this.storageUnits = storageUnits;
 	// }
 
-	public void set_storageFree(final int storageFree) {
+	public void set_storageFree(final float storageFree) {
 		this.storageFree = storageFree;
 	}
 
@@ -128,7 +131,7 @@ public class DeviceDynamic extends CIMIResource {
 		this.powerRemainingStatus = powerRemainingStatus;
 	}
 
-	public void set_powerRemainingStatusSeconds(final int powerRemainingStatusSeconds) {
+	public void set_powerRemainingStatusSeconds(final String powerRemainingStatusSeconds) {
 		this.powerRemainingStatusSeconds = powerRemainingStatusSeconds;
 	}
 
@@ -147,7 +150,7 @@ public class DeviceDynamic extends CIMIResource {
 	public void set_wifiThroughputInfo(final List<Object> wifiThroughputInfo) {
 		this.wifiThroughputInfo = wifiThroughputInfo;
 	}
-	
+
 	public void set_myLeaderID(final String myLeaderID) {
 		this.myLeaderID = myLeaderID;
 	}
@@ -203,10 +206,14 @@ public class DeviceDynamic extends CIMIResource {
 			set_ramFreePercent((float) data.get("ramFreePercent"));
 		// if (data.get("storageUnits") != null) set_storageUnits((String)
 		// data.get("storageUnits"));
+		if (data.get("storageFree") != null)
+			set_storageFree((float) data.get("storageFree"));
 		if (data.get("storageFreePercent") != null)
 			set_storageFreePercent((float) data.get("storageFreePercent"));
 		if (data.get("powerRemainingStatus") != null)
 			set_powerRemainingStatus((String) data.get("powerRemainingStatus"));
+		if (data.get("powerRemainingStatusSeconds") != null)
+			set_powerRemainingStatusSeconds((String) data.get("powerRemainingStatusSeconds"));
 		if (data.get("ethernetAddress") != null)
 			set_ethernetAddress((String) data.get("ethernetAddress"));
 		if (data.get("wifiAddress") != null)

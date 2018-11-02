@@ -10,10 +10,12 @@ public class Device extends CIMIResource {
     private String processorMaker;
     private String processorArchitecture;
     private int numCPUs;
-    private int CPUClockSpeed;
+    private String CPUClockSpeed;
     private int numCores;
-    private int RAMSize;
-    private int storageSize;
+    private float RAMSize;
+    private float storageSize;
+    private String agentType;
+    private String actuatorInfo;
     private boolean limitedPower;
     private String graphicsCardInfo;
     private String CPU_info; // For the Landscaper collector
@@ -31,7 +33,7 @@ public class Device extends CIMIResource {
 
     public Device(final String deviceId, final String deviceOS, final String deviceSysArch,
 	    final String deviceProcMaker, final String deviceProcArch, final int deviceNumCPUs,
-	    final int deviceClockSpeed, final int deviceNumCores, final int deviceRAMSize, final int deviceStorageSize,
+	    final String deviceClockSpeed, final int deviceNumCores, final float deviceRAMSize, final float deviceStorageSize, final String deviceAgentType, final String deviceActuatorInfo,
 	    final boolean deviceLimitedPower, final String deviceGraphicsCard, final String resourceID,
 	    final String resourceName, final String resourceDescription, String resourceURI) {
 
@@ -47,6 +49,8 @@ public class Device extends CIMIResource {
 	this.numCores = deviceNumCores;
 	this.RAMSize = deviceRAMSize;
 	this.storageSize = deviceStorageSize;
+	this.agentType = deviceAgentType;
+	this.actuatorInfo = deviceActuatorInfo;
 	this.limitedPower = deviceLimitedPower;
 	this.graphicsCardInfo = deviceGraphicsCard;
 	this.CPU_info = null;
@@ -67,12 +71,12 @@ public class Device extends CIMIResource {
 	resourceUpdated();
     }
 
-    public void setRAMSize(int newRAMSize) {
+    public void setRAMSize(float newRAMSize) {
 	RAMSize = newRAMSize;
 	resourceUpdated();
     }
 
-    public void setStorageSize(int newStorageSize) {
+    public void setStorageSize(float newStorageSize) {
 	this.storageSize = newStorageSize;
 	resourceUpdated();
     }
