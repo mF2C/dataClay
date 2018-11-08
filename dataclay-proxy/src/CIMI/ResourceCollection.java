@@ -25,12 +25,6 @@ public class ResourceCollection extends DataClayObject implements Iterable<CIMIR
 		resources.put(id, newResource);
 	}
 
-	public void putFederated(final String id, final String className, final String newResourceAlias) {
-		final CIMIResource newResource = (CIMIResource) DataClayObject.getByAlias("CIMIjsonNS." + className,
-				newResourceAlias);
-		resources.put(id, newResource);
-	}
-
 	public void delete(final String id) {
 		resources.remove(id);
 	}

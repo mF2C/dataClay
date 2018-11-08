@@ -17,7 +17,7 @@ public class Service extends CIMIResource {
 	// cpu: String - high, medium, low
 	// memory: String - high, medium, low
 	// storage: String - high, medium, low
-	// disk: String - hihg, medium, low
+	// disk: String - high, medium, low
 	// inclinometer: boolean
 	// temperature: boolean
 	// jammer: boolean

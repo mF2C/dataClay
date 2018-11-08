@@ -58,10 +58,6 @@ public class Session extends CIMIResource {
 	public void set_redirectURI(String redirectURI) {
 		this.redirectURI = redirectURI;
 	}
-
-	public void set_username(String username) {
-		this.username = username;
-	}
 	
 	//A single getter that returns a Map with all the info in this class and in CIMIResource, called "get_classname_info"
 	public Map<String, Object> getCIMIResourceData() {
@@ -73,7 +69,6 @@ public class Session extends CIMIResource {
 		if (this.expiry != null) info.put("expiry", this.expiry);
 		if (this.method != null) info.put("method", this.method);
 		if (this.sessionTemplate != null) info.put("sessionTemplate", this.sessionTemplate);		
-		if (this.username != null) info.put("username", this.username);		
 		return info;
 	}
 	
@@ -85,7 +80,6 @@ public class Session extends CIMIResource {
 		if (data.get("roles") != null) set_roles((String) data.get("roles"));
 		if (data.get("expiry") != null) set_expiry((String) data.get("expiry"));
 		if (data.get("method") != null) set_method((String) data.get("method"));
-		if (data.get("username") != null) set_username((String) data.get("username"));
 		if (data.get("sessionTemplate") != null) set_sessionTemplate((Map<String, Object>) data.get("sessionTemplate"));
 	}
 

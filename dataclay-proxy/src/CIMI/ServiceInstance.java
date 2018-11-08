@@ -21,12 +21,16 @@ public class ServiceInstance extends CIMIResource {
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<Map<String, Object>> agents;
 	// agents is a collection of "nested" info:
-	// agent: String
 	// url: String
-	// port: int
-	// container_id: String
+	// ports: List<Integer>
 	// status: String
+	// container_id: String
+	// allow: bool
 	// num_cpus: int
+	// agent: String
+	// master_compss: bool
+	// agent_param: String
+
 
 	// Constructor
 	public ServiceInstance(final Map<String, Object> objectData) {

@@ -18,10 +18,12 @@ public class Device extends CIMIResource {
 	private String cpuManufacturer;
 	private Integer physicalCores;
 	private Integer logicalCores;
-	private Integer cpuClockSpeed;
-	private Integer memory;
-	private Integer storage;
+	private String cpuClockSpeed;
+	private Float memory;
+	private Float storage;
 	private Boolean powerPlugged;
+	private String agentType;
+	private String actuatorInfo;
 	private String networkingStandards;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
@@ -45,10 +47,12 @@ public class Device extends CIMIResource {
 		this.cpuManufacturer = (String) objectData.get("cpuManufacturer");
 		this.physicalCores = (Integer) objectData.get("physicalCores");
 		this.logicalCores = (Integer) objectData.get("logicalCores");
-		this.cpuClockSpeed = (Integer) objectData.get("cpuClockSpeed");
-		this.memory = (Integer) objectData.get("memory");
-		this.storage = (Integer) objectData.get("storage");
+		this.cpuClockSpeed = (String) objectData.get("cpuClockSpeed");
+		this.memory = getFloat(objectData.get("memory"));
+		this.storage = getFloat(objectData.get("storage"));
 		this.powerPlugged = (Boolean) objectData.get("powerPlugged");
+		this.agentType = (String) objectData.get("agentType");
+		this.actuatorInfo = (String) objectData.get("actuatorInfo");
 		this.networkingStandards = (String) objectData.get("networkingStandards");
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
@@ -84,20 +88,28 @@ public class Device extends CIMIResource {
 		this.logicalCores = logicalCores;
 	}
 
-	public void set_cpuClockSpeed(final Integer cpuClockSpeed) {
+	public void set_cpuClockSpeed(final String cpuClockSpeed) {
 		this.cpuClockSpeed = cpuClockSpeed;
 	}
 
-	public void set_memory(final Integer memory) {
+	public void set_memory(final Float memory) {
 		this.memory = memory;
 	}
 
-	public void set_storage(final Integer storage) {
+	public void set_storage(final Float storage) {
 		this.storage = storage;
 	}
 
 	public void set_powerPlugged(final Boolean powerPlugged) {
 		this.powerPlugged = powerPlugged;
+	}
+
+	public void set_agentType(final String agentType) {
+		this.agentType = agentType;
+	}
+
+	public void set_actuatorInfo(final String actuatorInfo) {
+		this.actuatorInfo = actuatorInfo;
 	}
 
 	public void set_networkingStandards(final String networkingStandards) {
@@ -111,16 +123,14 @@ public class Device extends CIMIResource {
 	public void set_wifiAddress(final String wifiAddress) {
 		this.wifiAddress = wifiAddress;
 	}
-	
+
 	public void set_hwloc(final String hwloc) {
 		this.hwloc = hwloc;
 	}
-	
+
 	public void set_cpuinfo(final String cpuinfo) {
 		this.cpuinfo = cpuinfo;
 	}
-
-
 
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "getCIMIResourceData"
@@ -149,6 +159,10 @@ public class Device extends CIMIResource {
 			info.put("storage", this.storage);
 		if (this.powerPlugged != null)
 			info.put("powerPlugged", this.powerPlugged);
+		if (this.agentType != null)
+			info.put("agentType", this.agentType);
+		if (this.actuatorInfo != null)
+			info.put("actuatorInfo", this.actuatorInfo);
 		if (this.networkingStandards != null)
 			info.put("networkingStandards", this.networkingStandards);
 		if (this.ethernetAddress != null)
@@ -179,13 +193,17 @@ public class Device extends CIMIResource {
 		if (data.get("logicalCores") != null)
 			set_logicalCores((Integer) data.get("logicalCores"));
 		if (data.get("cpuClockSpeed") != null)
-			set_cpuClockSpeed((Integer) data.get("cpuClockSpeed"));
+			set_cpuClockSpeed((String) data.get("cpuClockSpeed"));
 		if (data.get("memory") != null)
-			set_memory((int) data.get("memory"));
+			set_memory(getFloat(data.get("memory")));
 		if (data.get("storage") != null)
-			set_storage((int) data.get("storage"));
+			set_storage(getFloat(data.get("storage")));
 		if (data.get("powerPlugged") != null)
 			set_powerPlugged((Boolean) data.get("powerPlugged"));
+		if (data.get("agentType") != null)
+			set_agentType((String) data.get("agentType"));
+		if (data.get("actuatorInfo") != null)
+			set_actuatorInfo((String) data.get("actuatorInfo"));
 		if (data.get("networkingStandards") != null)
 			set_networkingStandards((String) data.get("networkingStandards"));
 		if (data.get("ethernetAddress") != null)

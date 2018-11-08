@@ -1,6 +1,5 @@
 package CIMI;
 
-import java.math.BigDecimal;
 import java.util.Map;
 
 public class ServiceOperationReport extends CIMIResource {
@@ -10,34 +9,33 @@ public class ServiceOperationReport extends CIMIResource {
 	private Float execution_time;
 
 	// Constructor
-	public ServiceOperationReport(Map<String, Object> objectData) {
+	public ServiceOperationReport(final Map<String, Object> objectData) {
 		super(objectData);
 		this.serviceInstance = (ServiceInstance) objectData.get("serviceInstance");
 
 		this.operation = (String) objectData.get("operation");
-		Double d = (Double) objectData.get("execution_time");
-		if (d != null) {
-			this.execution_time = BigDecimal.valueOf(d).floatValue();
-		}
+		this.execution_time = getFloat(objectData.get("execution_time"));
+
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_serviceInstance(ServiceInstance serviceInstance) {
+	public void set_serviceInstance(final ServiceInstance serviceInstance) {
 		this.serviceInstance = serviceInstance;
 	}
 
-	public void set_operation(String operation) {
+	public void set_operation(final String operation) {
 		this.operation = operation;
 	}
 
-	public void set_execution_time(Float execution_time) {
+	public void set_execution_time(final Float execution_time) {
 		this.execution_time = execution_time;
 	}
 
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "get_classname_info"
+	@Override
 	public Map<String, Object> getCIMIResourceData() {
-		Map<String, Object> info = super.getCIMIResourceData();
+		final Map<String, Object> info = super.getCIMIResourceData();
 		if (this.serviceInstance != null)
 			info.put("serviceInstance", this.serviceInstance);
 		if (this.operation != null)
@@ -47,14 +45,15 @@ public class ServiceOperationReport extends CIMIResource {
 		return info;
 	}
 
-	public void updateAllData(Map<String, Object> data) {
+	public void updateAllData(final Map<String, Object> data) {
 		setCIMIResourceData(data);
 		if (data.get("serviceInstance") != null)
 			set_serviceInstance((ServiceInstance) data.get("serviceInstance"));
 		if (data.get("operation") != null)
 			set_operation((String) data.get("operation"));
 		if (data.get("execution_time") != null)
-			set_execution_time((Float) data.get("execution_time"));
+			set_execution_time(getFloat(data.get("execution_time")));
+
 	}
 
 }

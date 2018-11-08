@@ -1,6 +1,5 @@
 package CIMI;
 
-import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -25,7 +24,7 @@ public class DeviceDynamic extends CIMIResource {
 	// private String storageUnits;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private Integer storageFree;
+	private Float storageFree;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Float storageFreePercent;
@@ -37,7 +36,7 @@ public class DeviceDynamic extends CIMIResource {
 	private String powerRemainingStatus;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private Integer powerRemainingStatusSeconds; // TODO: It is of type String in resource spec, I think it is a mistake
+	private String powerRemainingStatusSeconds;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String ethernetAddress; // TODO: This is here and in Device. I guess it should only be in one place
@@ -46,13 +45,11 @@ public class DeviceDynamic extends CIMIResource {
 	private String wifiAddress; // TODO: This is here and in Device. I guess it should only be in one place
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private List<?> ethernetThroughputInfo; // TODO: The type of this field is not defined in the resource spec, so I
-											// don't know how to implement it
+	private List<String> ethernetThroughputInfo;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
-	private List<?> wifiThroughputInfo; // TODO: The type of this field is not defined in the resource spec, so I don't
-										// know how to implement it
-	private String myLeaderID;
+	private List<String> wifiThroughputInfo;
+	private Device myLeaderID;
 
 	public DeviceDynamic(final Map<String, Object> objectData) {
 		super(objectData);
@@ -60,31 +57,19 @@ public class DeviceDynamic extends CIMIResource {
 		this.device = (Device) objectData.get("device");
 		// this.isLeader = (boolean) objectData.get("isLeader");
 		// this.ramUnits = (String) objectData.get("ramUnits");
-		Double d = (Double) objectData.get("ramFree");
-		if (d != null) {
-			this.ramFree = BigDecimal.valueOf(d).floatValue();
-		}
-		d = (Double) objectData.get("ramFreePercent");
-		if (d != null) {
-			this.ramFreePercent = BigDecimal.valueOf(d).floatValue();
-		}
+		this.ramFree = getFloat(objectData.get("ramFree"));
+		this.ramFreePercent = getFloat(objectData.get("ramFreePercent"));
+		this.storageFree = getFloat(objectData.get("storageFree"));
+		this.storageFreePercent = getFloat(objectData.get("storageFreePercent"));
+		this.cpuFreePercent = getFloat(objectData.get("cpuFreePercent"));
 		// this.storageUnits = (String) objectData.get("storageUnits");
-		this.storageFree = (Integer) objectData.get("storageFree");
-		d = (Double) objectData.get("storageFreePercent");
-		if (d != null) {
-			this.storageFreePercent = BigDecimal.valueOf(d).floatValue();
-		}
-		d = (Double) objectData.get("cpuFreePercent");
-		if (d != null) {
-			this.cpuFreePercent = BigDecimal.valueOf(d).floatValue();
-		}
 		this.powerRemainingStatus = (String) objectData.get("powerRemainingStatus");
-		this.powerRemainingStatusSeconds = (Integer) objectData.get("powerRemainingStatusSeconds");
+		this.powerRemainingStatusSeconds = (String) objectData.get("powerRemainingStatusSeconds");
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
-		this.ethernetThroughputInfo = (List<Object>) objectData.get("ethernetThroughputInfo");
-		this.wifiThroughputInfo = (List<Object>) objectData.get("wifiThroughputInfo");
-		this.myLeaderID = (String) objectData.get("myLeaderID");
+		this.ethernetThroughputInfo = (List<String>) objectData.get("ethernetThroughputInfo");
+		this.wifiThroughputInfo = (List<String>) objectData.get("wifiThroughputInfo");
+		this.myLeaderID = (Device) objectData.get("myLeaderID");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
@@ -112,7 +97,7 @@ public class DeviceDynamic extends CIMIResource {
 	// this.storageUnits = storageUnits;
 	// }
 
-	public void set_storageFree(final int storageFree) {
+	public void set_storageFree(final float storageFree) {
 		this.storageFree = storageFree;
 	}
 
@@ -128,7 +113,7 @@ public class DeviceDynamic extends CIMIResource {
 		this.powerRemainingStatus = powerRemainingStatus;
 	}
 
-	public void set_powerRemainingStatusSeconds(final int powerRemainingStatusSeconds) {
+	public void set_powerRemainingStatusSeconds(final String powerRemainingStatusSeconds) {
 		this.powerRemainingStatusSeconds = powerRemainingStatusSeconds;
 	}
 
@@ -140,15 +125,15 @@ public class DeviceDynamic extends CIMIResource {
 		this.wifiAddress = wifiAddress;
 	}
 
-	public void set_ethernetThroughputInfo(final List<Object> ethernetThroughputInfo) {
+	public void set_ethernetThroughputInfo(final List<String> ethernetThroughputInfo) {
 		this.ethernetThroughputInfo = ethernetThroughputInfo;
 	}
 
-	public void set_wifiThroughputInfo(final List<Object> wifiThroughputInfo) {
+	public void set_wifiThroughputInfo(final List<String> wifiThroughputInfo) {
 		this.wifiThroughputInfo = wifiThroughputInfo;
 	}
-	
-	public void set_myLeaderID(final String myLeaderID) {
+
+	public void set_myLeaderID(final Device myLeaderID) {
 		this.myLeaderID = myLeaderID;
 	}
 
@@ -198,25 +183,29 @@ public class DeviceDynamic extends CIMIResource {
 		// if (data.get("ramUnits") != null) set_ramUnits((String)
 		// data.get("ramUnits"));
 		if (data.get("ramFree") != null)
-			set_ramFree((float) data.get("ramFree"));
+			set_ramFree(getFloat(data.get("ramFree")));
 		if (data.get("ramFreePercent") != null)
-			set_ramFreePercent((float) data.get("ramFreePercent"));
+			set_ramFreePercent(getFloat(data.get("ramFreePercent")));
 		// if (data.get("storageUnits") != null) set_storageUnits((String)
 		// data.get("storageUnits"));
+		if (data.get("storageFree") != null)
+			set_storageFree(getFloat(data.get("storageFree")));
 		if (data.get("storageFreePercent") != null)
-			set_storageFreePercent((float) data.get("storageFreePercent"));
+			set_storageFreePercent(getFloat(data.get("storageFreePercent")));
 		if (data.get("powerRemainingStatus") != null)
 			set_powerRemainingStatus((String) data.get("powerRemainingStatus"));
+		if (data.get("powerRemainingStatusSeconds") != null)
+			set_powerRemainingStatusSeconds((String) data.get("powerRemainingStatusSeconds"));
 		if (data.get("ethernetAddress") != null)
 			set_ethernetAddress((String) data.get("ethernetAddress"));
 		if (data.get("wifiAddress") != null)
 			set_wifiAddress((String) data.get("wifiAddress"));
 		if (data.get("ethernetThroughputInfo") != null)
-			set_ethernetThroughputInfo((List<Object>) data.get("ethernetThroughputInfo"));
+			set_ethernetThroughputInfo((List<String>) data.get("ethernetThroughputInfo"));
 		if (data.get("wifiThroughputInfo") != null)
-			set_wifiThroughputInfo((List<Object>) data.get("wifiThroughputInfo"));
+			set_wifiThroughputInfo((List<String>) data.get("wifiThroughputInfo"));
 		if (data.get("myLeader") != null)
-			set_myLeaderID((String) data.get("myLeaderID"));
+			set_myLeaderID((Device) data.get("myLeaderID"));
 	}
 
 }

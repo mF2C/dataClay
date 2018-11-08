@@ -21,6 +21,7 @@ import CIMI.Service;
 import CIMI.ServiceInstance;
 import CIMI.ServiceOperationReport;
 import CIMI.Session;
+import CIMI.SessionTemplate;
 import CIMI.SharingModel;
 import CIMI.SlaViolation;
 import CIMI.User;
@@ -31,87 +32,58 @@ import dataclay.util.ids.DataClayInstanceID;
 
 public class DataClayWrapper {
 
+	/** Leader DataClay ID, if present. */
 	public static DataClayInstanceID leaderDC = null;
-	public static ArrayList<DataClayInstanceID> childrenDCs = new ArrayList<>();
-	public static DataClayInstanceID localDC = null;
+
+	/** All CIMI resource types in model. */
 	public static String[] resourceTypes = { "agreement", "device", "device-dynamic", "fog-area", "service",
 			"service-instance", "sharing-model", "sla-violation", "user-profile", "service-operation-report",
-			"cloud-entry-point", "email", "user", "credential", "session", "callback" };
+			"cloud-entry-point", "email", "user", "credential", "session", "session-template", "callback" };
 
-	// All this should happen during Discovery. Now simulating it before execution.
-	// Assuming a config file that contains the following:
-	// LEADER_DC=host:port
-	// CHILDREN_DC=host1:port1;host2:port2;...;hostn:portn
+	/** Suffix for aliases of Resource collections. */
+	private static final String RESOURCE_COLLECTION_ALIAS_SUFFIX = "Collection";
+
+	/**
+	 * Simulates a discovery process. All this should happen during Discovery. Now
+	 * simulating it before execution. Assuming a config file that contains the
+	 * following: LEADER_DC=host:port
+	 */
 	public static void init() {
-		final String leaderAddr = System.getenv("LEADER_DC"); // TODO: Can it be unified with some other var required by
-		// others?
-		final String childrenAddr = System.getenv("CHILDREN_DC"); // TODO: Idem
+		// TODO: When everything is integrated, 'leaderAddr' will be get from some CIMI
+		// resource representing
+		// this device, inserted by Discovery
+		final String leaderAddr = System.getenv("LEADER_DC");
 		String[] hostPort;
-
-		if ((leaderAddr != null && !leaderAddr.isEmpty()) || (childrenAddr != null && !childrenAddr.isEmpty())) {
-			localDC = ClientManagementLib.getDataClayID();
-		}
 		if (leaderAddr != null && !leaderAddr.isEmpty()) {
 			hostPort = leaderAddr.split(":");
 			// Register the dataClay instance of my leader
 			leaderDC = ClientManagementLib.registerExternalDataClay(hostPort[0], Integer.parseInt(hostPort[1]));
-			System.out.println("-- My dataClay leader is: " + leaderDC);
-		}
-		final ArrayList<ResourceCollection> collections = createLocalResourceCollections();
-		if (childrenAddr != null && !childrenAddr.isEmpty()) {
-
-			// Create shared object to sync with children
-			final String[] childrenHostPorts = childrenAddr.split(";");
-			for (final String addr : childrenHostPorts) {
-				if (addr == null) {
-					continue;
-				}
-				try {
-					hostPort = addr.split(":");
-					// Check if child is registered. If not, register it and federate collections
-					final DataClayInstanceID childDC = ClientManagementLib.registerExternalDataClay(hostPort[0],
-							Integer.parseInt(hostPort[1]));
-					System.out.println("-- I have a dataClay child: " + childDC);
-					childrenDCs.add(childDC);
-					if (collections.size() > 0) {
-						System.out.println("Federating collections to children.");
-						for (final ResourceCollection col : collections) {
-							col.federate(childDC, false);
-						}
-					}
-
-				} catch (final Exception e) {
-					e.printStackTrace();
-				}
+			if (leaderDC == null) {
+				// TODO Dani: error/excepcio...
+			} else {
+				System.out.println("-- My dataClay leader is: " + leaderDC);
 			}
 		}
+		createLocalResourceCollections();
 	}
 
-	private static ArrayList<ResourceCollection> createLocalResourceCollections() {
-		final ArrayList<ResourceCollection> result = new ArrayList<>();
+	/**
+	 * Create a Resource collection per type in current dataClay
+	 */
+	private static void createLocalResourceCollections() {
 		for (final String type : resourceTypes) {
 			if (!type.equals("cloud-entry-point")) {
 				final String className = javaize(type);
 				final ResourceCollection resources = new ResourceCollection();
 				try {
-					String suffix;
-					if (localDC == null) {
-						suffix = "";
-					} else {
-						suffix = localDC.getId().toString();
-					}
-					resources.makePersistent(className + "Collection" + suffix); // we need to add localID
-					// because
-					// these collections are
-					// shared
-					result.add(resources);
+					final String alias = className + RESOURCE_COLLECTION_ALIAS_SUFFIX;
+					resources.makePersistent(alias);
+					System.out.println("-- Created collection: " + alias);
 				} catch (final Exception e) {
-					// already registered, ok.
+					// already registered, ignore exception.
 				}
-				// addToCloudEntryPoint(type, resources);
 			}
 		}
-		return result;
 	}
 
 	/**
@@ -145,139 +117,116 @@ public class DataClayWrapper {
 		// mF2C resources
 		case "agreement":
 			obj = new Agreement(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "device":
 			obj = new Device(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "device-dynamic":
 			obj = new DeviceDynamic(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "fog-area":
 			obj = new FogArea(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "service":
 			obj = new Service(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "service-instance":
 			obj = new ServiceInstance(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "sharing-model":
 			obj = new SharingModel(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "sla-violation":
 			obj = new SlaViolation(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "user-profile":
 			obj = new UserProfile(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		case "service-operation-report":
 			obj = new ServiceOperationReport(objectData);
+			storeAndFederate(obj, type, id);
 			break;
 		// CIMI resources
 		case "cloud-entry-point":
 			obj = new CloudEntryPoint(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "email":
 			obj = new Email(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "user":
 			obj = new User(objectData);
-			break;
-		case "user-template":
-			// obj = new UserTemplate(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "credential":
 			obj = new Credential(objectData);
-			break;
-		case "credential-template":
-			// obj = new CredentialTemplate(objectData);
-			break;
-		case "configuration":
-			// obj = new Configuration(objectData);
-			break;
-		case "configuration-template":
-			// obj = new ConfigurationTemplate(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "session":
 			obj = new Session(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "session-template":
 			obj = new SessionTemplate(objectData);
-			break;
-		case "user-param":
-			// obj = new UserParam(objectData);
-			break;
-		case "user-param-template":
-			// obj = new UserParamTemplate(objectData);
+			obj.makePersistent(type + id);
 			break;
 		case "callback":
 			obj = new Callback(objectData);
+			obj.makePersistent(type + id);
 			break;
-		case "example-resource":
-			// obj = new ExampleResource(objectData);
-			break;
+		/*
+		 * case "user-template": obj = new UserTemplate(objectData); break; case
+		 * "credential-template": obj = new CredentialTemplate(objectData); break; case
+		 * "configuration": obj = new Configuration(objectData); break; case
+		 * "configuration-template": obj = new ConfigurationTemplate(objectData); break;
+		 * case "user-param": obj = new UserParam(objectData); break; case
+		 * "user-param-template": obj = new UserParamTemplate(objectData); break; case
+		 * "example-resource": obj = new ExampleResource(objectData); break;
+		 */
 		default:
-			throw new IllegalArgumentException("Invalid resource type: " + type);
+			throw new IllegalArgumentException("Unknown resource type: " + type);
 		}
-		obj.makePersistent(id); // id is the alias
-		if (leaderDC != null) {
-			obj.federate(leaderDC, false); // Non-recursive because each object is individually federated
-		}
-
 		if (!type.equals("cloud-entry-point")) {
 			ResourceCollection resources = null;
-			ResourceCollection leaderResources = null;
 			final String className = javaize(type);
-			String suffix;
-			if (localDC == null) {
-				suffix = "";
-			} else {
-				suffix = localDC.getId().toString();
-			}
 			try {
-				// Possible optimization: keep collections in a local variable to avoid
+				// TODO: Possible optimization: keep collections in a local variable to avoid
 				// "getByAlias"
-
-				resources = (ResourceCollection) ResourceCollection.getByAlias(className + "Collection" + suffix);
+				resources = (ResourceCollection) ResourceCollection
+						.getByAlias(className + RESOURCE_COLLECTION_ALIAS_SUFFIX);
 			} catch (final Exception e) {
 				/*
 				 * Version with ResourceCollections created on-the-fly, now they are all created
 				 * in the init * resources = new ResourceCollection();
-				 * resources.makePersistent(className + "Collection" + localDC.getId()); //
-				 * addToCloudEntryPoint(type, resources);
 				 */
-				System.err.println(
-						"ERROR: Resource collection '" + className + "Collection" + suffix + "' does not exist");
+				System.err.println("ERROR: Resource collection '" + className + RESOURCE_COLLECTION_ALIAS_SUFFIX
+						+ "' does not exist");
 				throw e;
 			}
-			if (leaderDC != null) {
-				try {
-					// Possible optimization: keep collections in a local variable to avoid
-					// "getByAlias"
-					leaderResources = (ResourceCollection) ResourceCollection
-							.getByAlias(className + "Collection" + leaderDC.getId());
-
-				} catch (final Exception e) {
-					/*
-					 * Version with ResourceCollections created on-the-fly, now they are all created
-					 * in the init * resources = new ResourceCollection();
-					 * resources.makePersistent(className + "Collection" + localDC.getId()); //
-					 * addToCloudEntryPoint(type, resources);
-					 */
-					System.err.println("ERROR: Resource collection '" + className + "Collection" + leaderDC.getId()
-							+ "' does not exist");
-					throw e;
-				}
-			}
+			// this executes in current dataClay (maybe children)
 			resources.put(id, obj);
-			// Execute "resources.put" in the collection of the leader (not in children
-			// because they don't need to see it)
-			if (leaderResources != null) {
-				leaderResources.runFederated(leaderDC,
-						"putFederated(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V",
-						new Object[] { id, obj.getClass().getName(), id });
-			}
 		}
+	}
+
+	private static void storeAndFederate(final CIMIResource obj, final String type, final String id) {
+		obj.makePersistent(type + id); // type+id is the alias
+		if (leaderDC != null) {
+			obj.federate(leaderDC, false); // Non-recursive because each object is individually federated
+			// The whenFederated method in CIMIResource will be executed in the leader and
+			// put obj in
+			// its corresponding resource collection
+		}
+
 	}
 
 	/**
@@ -294,6 +243,7 @@ public class DataClayWrapper {
 	 */
 	public static String read(final String type, final String id) throws IllegalArgumentException {
 		// returns json file with all the resource data
+		// TODO: Is "IllegalArgumentException" the only thing that can go wrong?
 		if (type == null)
 			throw new IllegalArgumentException("Argument 'type' is empty");
 		if (id == null)
@@ -316,6 +266,7 @@ public class DataClayWrapper {
 	 *             if type is wrong
 	 */
 	public static void delete(final String type, final String id) throws IllegalArgumentException {
+		// TODO: Is "IllegalArgumentException" the only thing that can go wrong?
 		if (type == null)
 			throw new IllegalArgumentException("Argument 'type' is empty");
 		if (id == null)
@@ -323,85 +274,67 @@ public class DataClayWrapper {
 
 		switch (type) {
 		case "agreement":
-			Agreement.deleteAlias(id);
+			Agreement.deleteAlias(type + id);
 			break;
 		case "device":
-			Device.deleteAlias(id);
+			Device.deleteAlias(type + id);
 			break;
 		case "device-dynamic":
-			DeviceDynamic.deleteAlias(id);
+			DeviceDynamic.deleteAlias(type + id);
 			break;
 		case "fog-area":
-			FogArea.deleteAlias(id);
+			FogArea.deleteAlias(type + id);
 			break;
 		case "service":
-			Service.deleteAlias(id);
+			Service.deleteAlias(type + id);
 			break;
 		case "service-instance":
-			ServiceInstance.deleteAlias(id);
+			ServiceInstance.deleteAlias(type + id);
 			break;
 		case "sharing-model":
-			SharingModel.deleteAlias(id);
+			SharingModel.deleteAlias(type + id);
 			break;
 		case "sla-violation":
-			SlaViolation.deleteAlias(id);
+			SlaViolation.deleteAlias(type + id);
 			break;
 		case "user-profile":
-			UserProfile.deleteAlias(id);
+			UserProfile.deleteAlias(type + id);
 			break;
 		case "service-operation-report":
-			ServiceOperationReport.deleteAlias(id);
+			ServiceOperationReport.deleteAlias(type + id);
 			break;
 		// CIMI resources
 		case "email":
-			Email.deleteAlias(id);
+			Email.deleteAlias(type + id);
 			break;
 		case "user":
-			User.deleteAlias(id);
-			break;
-		case "user-template":
-			// UserTemplate.deleteAlias(id);
+			User.deleteAlias(type + id);
 			break;
 		case "credential":
-			Credential.deleteAlias(id);
-			break;
-		case "credential-template":
-			// CredentialTemplate.deleteAlias(id);
-			break;
-		case "configuration":
-			// Configuration.deleteAlias(id);
-			break;
-		case "configuration-template":
-			// ConfigurationTemplate.deleteAlias(id);
+			Credential.deleteAlias(type + id);
 			break;
 		case "session":
-			Session.deleteAlias(id);
+			Session.deleteAlias(type + id);
 			break;
 		case "session-template":
-			// SessionTemplate.deleteAlias(id);
-			break;
-		case "user-param":
-			// UserParam.deleteAlias(id);
-			break;
-		case "user-param-template":
-			// UserParamTemplate.deleteAlias(id);
+			SessionTemplate.deleteAlias(type + id);
 			break;
 		case "callback":
-			Callback.deleteAlias(id);
+			Callback.deleteAlias(type + id);
 			break;
-		case "example-resource":
-			// ExampleResource.deleteAlias(id);
-			break;
+		/*
+		 * case "user-template": UserTemplate.deleteAlias(type+id); break; case
+		 * "credential-template": CredentialTemplate.deleteAlias(type+id); break; case
+		 * "configuration": Configuration.deleteAlias(type+id); break; case
+		 * "configuration-template": ConfigurationTemplate.deleteAlias(type+id); break;
+		 * case "user-param": UserParam.deleteAlias(type+id); break; case
+		 * "user-param-template": UserParamTemplate.deleteAlias(type+id); break; case
+		 * "example-resource": ExampleResource.deleteAlias(type+id); break;
+		 */
 		default:
-			throw new IllegalArgumentException("Invalid resource type: " + type);
+			throw new IllegalArgumentException("Unknown resource type: " + type);
 		}
-		String suffix;
-		if (localDC == null) {
-			suffix = "";
-		} else {
-			suffix = localDC.getId().toString();
-		}
-		final String colAlias = javaize(type) + "Collection" + suffix;
+		final String colAlias = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection.getByAlias(colAlias);
 		resources.delete(id);
 	}
@@ -432,107 +365,94 @@ public class DataClayWrapper {
 		objectData = preProcessSubObjects(type, objectData);
 		switch (type) {
 		case "agreement":
-			final Agreement agr = (Agreement) Agreement.getByAlias(id);
+			final Agreement agr = (Agreement) Agreement.getByAlias(type + id);
 			agr.updateAllData(objectData);
 			break;
 		case "device":
-			final Device dev = (Device) Device.getByAlias(id);
+			final Device dev = (Device) Device.getByAlias(type + id);
 			dev.updateAllData(objectData);
 			break;
 		case "device-dynamic":
-			final DeviceDynamic dd = (DeviceDynamic) DeviceDynamic.getByAlias(id);
+			final DeviceDynamic dd = (DeviceDynamic) DeviceDynamic.getByAlias(type + id);
 			dd.updateAllData(objectData);
 			break;
 		case "fog-area":
-			final FogArea fa = (FogArea) FogArea.getByAlias(id);
+			final FogArea fa = (FogArea) FogArea.getByAlias(type + id);
 			fa.updateAllData(objectData);
 			break;
 		case "service":
-			final Service serv = (Service) Service.getByAlias(id);
+			final Service serv = (Service) Service.getByAlias(type + id);
 			serv.updateAllData(objectData);
 			break;
 		case "service-instance":
-			final ServiceInstance si = (ServiceInstance) ServiceInstance.getByAlias(id);
+			final ServiceInstance si = (ServiceInstance) ServiceInstance.getByAlias(type + id);
 			si.updateAllData(objectData);
 			break;
 		case "sharing-model":
-			final SharingModel sm = (SharingModel) SharingModel.getByAlias(id);
+			final SharingModel sm = (SharingModel) SharingModel.getByAlias(type + id);
 			sm.updateAllData(objectData);
 			break;
 		case "sla-violation":
-			final SlaViolation sv = (SlaViolation) SlaViolation.getByAlias(id);
+			final SlaViolation sv = (SlaViolation) SlaViolation.getByAlias(type + id);
 			sv.updateAllData(objectData);
 			break;
 		case "user-profile":
-			final UserProfile up = (UserProfile) UserProfile.getByAlias(id);
+			final UserProfile up = (UserProfile) UserProfile.getByAlias(type + id);
 			up.updateAllData(objectData);
 			break;
 		case "service-operation-report":
-			final ServiceOperationReport sor = (ServiceOperationReport) ServiceOperationReport.getByAlias(id);
+			final ServiceOperationReport sor = (ServiceOperationReport) ServiceOperationReport.getByAlias(type + id);
 			sor.updateAllData(objectData);
 			break;
 		// CIMI resources
 		case "cloud-entry-point":
-			final CloudEntryPoint cep = (CloudEntryPoint) CloudEntryPoint.getByAlias(id);
+			final CloudEntryPoint cep = (CloudEntryPoint) CloudEntryPoint.getByAlias(type + id);
 			cep.updateAllData(objectData);
 			break;
 		case "email":
-			final Email em = (Email) Email.getByAlias(id);
+			final Email em = (Email) Email.getByAlias(type + id);
 			em.updateAllData(objectData);
 			break;
 		case "user":
-			final User u = (User) User.getByAlias(id);
+			final User u = (User) User.getByAlias(type + id);
 			u.updateAllData(objectData);
 			break;
-		case "user-template":
-			// final UserTemplate ut = (UserTemplate) UserTemplate.getByAlias(id);
-			// ut.updateAllData(objectData);
-			break;
 		case "credential":
-			final Credential cr = (Credential) Credential.getByAlias(id);
+			final Credential cr = (Credential) Credential.getByAlias(type + id);
 			cr.updateAllData(objectData);
 			break;
-		case "credential-template":
-			// final CredentialTemplate ct = (CredentialTemplate)
-			// CredentialTemplate.getByAlias(id);
-			// ct.updateAllData(objectData);
-			break;
-		case "configuration":
-			// final Configuration cf = (Configuration) Configuration.getByAlias(id);
-			// cf.updateAllData(objectData);
-			break;
-		case "configuration-template":
-			// final ConfigurationTemplate cft = (ConfigurationTemplate)
-			// ConfigurationTemplate.getByAlias(id);
-			// cft.updateAllData(objectData);
-			break;
 		case "session":
-			final Session s = (Session) Session.getByAlias(id);
+			final Session s = (Session) Session.getByAlias(type + id);
 			s.updateAllData(objectData);
 			break;
 		case "session-template":
-			// final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(id);
-			// st.updateAllData(objectData);
-			break;
-		case "user-param":
-			// final UserParam upar = (UserParam) UserParam.getByAlias(id);
-			// upar.updateAllData(objectData);
-			break;
-		case "user-param-template":
-			// final UserParamTemplate upt = (UserParamTemplate)
-			// UserParamTemplate.getByAlias(id);
-			// upt.updateAllData(objectData);
+			final SessionTemplate st = (SessionTemplate) SessionTemplate.getByAlias(type + id);
+			st.updateAllData(objectData);
 			break;
 		case "callback":
-			final Callback c = (Callback) Callback.getByAlias(id);
+			final Callback c = (Callback) Callback.getByAlias(type + id);
 			c.updateAllData(objectData);
 			break;
-		case "example-resource":
-			// final ExampleResource er = (ExampleResource) ExampleResource.getByAlias(id);
-			// er.updateAllData(objectData);
-			break;
+		/*
+		 * case "user-template": // final UserTemplate ut = (UserTemplate)
+		 * UserTemplate.getByAlias(type+id); // ut.updateAllData(objectData); break;
+		 * case "credential-template": // final CredentialTemplate ct =
+		 * (CredentialTemplate) // CredentialTemplate.getByAlias(type+id); //
+		 * ct.updateAllData(objectData); break; case "configuration": // final
+		 * Configuration cf = (Configuration) Configuration.getByAlias(type+id); //
+		 * cf.updateAllData(objectData); break; case "configuration-template": // final
+		 * ConfigurationTemplate cft = (ConfigurationTemplate) //
+		 * ConfigurationTemplate.getByAlias(type+id); // cft.updateAllData(objectData);
+		 * break; case "user-param": // final UserParam upar = (UserParam)
+		 * UserParam.getByAlias(type+id); // upar.updateAllData(objectData); break; case
+		 * "user-param-template": // final UserParamTemplate upt = (UserParamTemplate)
+		 * // UserParamTemplate.getByAlias(type+id); // upt.updateAllData(objectData);
+		 * break; case "example-resource": // final ExampleResource er =
+		 * (ExampleResource) // ExampleResource.getByAlias(type+id); //
+		 * er.updateAllData(objectData); break;
+		 */
 		default:
-			throw new IllegalArgumentException("Invalid resource type: " + type);
+			throw new IllegalArgumentException("Unknown resource type: " + type);
 		}
 	}
 
@@ -591,13 +511,7 @@ public class DataClayWrapper {
 				}
 			}
 		}
-		String suffix;
-		if (localDC == null) {
-			suffix = "";
-		} else {
-			suffix = localDC.getId().toString();
-		}
-		final String aliasOfCollection = javaize(type) + "Collection" + suffix;
+		final String aliasOfCollection = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 		// System.out.println("Expression: " + expressionWithAcl);
 		ResourceCollection collection = null;
 		try {
@@ -649,13 +563,7 @@ public class DataClayWrapper {
 	 */
 	public static List<String> queryURL(final String type, final String urlQuery) {
 
-		String suffix;
-		if (localDC == null) {
-			suffix = "";
-		} else {
-			suffix = localDC.getId().toString();
-		}
-		final String aliasOfCollection = javaize(type) + "Collection" + suffix;
+		final String aliasOfCollection = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 		ResourceCollection collection = null;
 		try {
 			collection = (ResourceCollection) ResourceCollection.getByAlias(aliasOfCollection);
@@ -699,16 +607,15 @@ public class DataClayWrapper {
 	private static String javaize(final String type) {
 		// First character to upper case
 		String className = capitalize(type);
-		final int slash = className.indexOf("-");
-		// I assume we only have a single slash in a resource type (all of them are like
-		// this now)
-		if (slash > 0) {
-			// Separate first and second parts, without the slash
-			final String first = className.substring(0, slash);
-			String second = className.substring(slash + 1);
+		int hyphen = className.indexOf("-");
+		while (hyphen > 0) {
+			// Separate first part, without the slash
+			final String part = className.substring(0, hyphen);
+			String nextPart = className.substring(hyphen + 1);
 			// First character of second to upper case
-			second = capitalize(second);
-			className = first.concat(second);
+			nextPart = capitalize(nextPart);
+			className = part.concat(nextPart);
+			hyphen = className.indexOf("-");
 		}
 		return className;
 	}
@@ -723,80 +630,71 @@ public class DataClayWrapper {
 		switch (type) {
 		// mF2C resources
 		case "agreement":
-			obj = (Agreement) Agreement.getByAlias(id);
+			obj = (Agreement) Agreement.getByAlias(type + id);
 			break;
 		case "device":
-			obj = (Device) Device.getByAlias(id);
+			obj = (Device) Device.getByAlias(type + id);
 			break;
 		case "device-dynamic":
-			obj = (DeviceDynamic) DeviceDynamic.getByAlias(id);
+			obj = (DeviceDynamic) DeviceDynamic.getByAlias(type + id);
 			break;
 		case "fog-area":
-			obj = (FogArea) FogArea.getByAlias(id);
+			obj = (FogArea) FogArea.getByAlias(type + id);
 			break;
 		case "service":
-			obj = (Service) Service.getByAlias(id);
+			obj = (Service) Service.getByAlias(type + id);
 			break;
 		case "service-instance":
-			obj = (ServiceInstance) ServiceInstance.getByAlias(id);
+			obj = (ServiceInstance) ServiceInstance.getByAlias(type + id);
 			break;
 		case "sharing-model":
-			obj = (SharingModel) SharingModel.getByAlias(id);
+			obj = (SharingModel) SharingModel.getByAlias(type + id);
 			break;
 		case "sla-violation":
-			obj = (SlaViolation) SlaViolation.getByAlias(id);
+			obj = (SlaViolation) SlaViolation.getByAlias(type + id);
 			break;
 		case "user-profile":
-			obj = (UserProfile) UserProfile.getByAlias(id);
+			obj = (UserProfile) UserProfile.getByAlias(type + id);
 			break;
 		case "service-operation-report":
-			obj = (ServiceOperationReport) ServiceOperationReport.getByAlias(id);
+			obj = (ServiceOperationReport) ServiceOperationReport.getByAlias(type + id);
 			break;
 		// CIMI resources
 		case "cloud-entry-point":
-			obj = (CloudEntryPoint) CloudEntryPoint.getByAlias(id);
+			obj = (CloudEntryPoint) CloudEntryPoint.getByAlias(type + id);
 			break;
 		case "email":
-			obj = (Email) Email.getByAlias(id);
+			obj = (Email) Email.getByAlias(type + id);
 			break;
 		case "user":
-			obj = (User) User.getByAlias(id);
-			break;
-		case "user-template":
-			// obj = (UserTemplate) UserTemplate.getByAlias(id);
+			obj = (User) User.getByAlias(type + id);
 			break;
 		case "credential":
-			obj = (Credential) Credential.getByAlias(id);
-			break;
-		case "credential-template":
-			// obj = (CredentialTemplate) CredentialTemplate.getByAlias(id);
-			break;
-		case "configuration":
-			// obj = (Configuration) Configuration.getByAlias(id);
-			break;
-		case "configuration-template":
-			// obj = (ConfigurationTemplate) ConfigurationTemplate.getByAlias(id);
+			obj = (Credential) Credential.getByAlias(type + id);
 			break;
 		case "session":
-			obj = (Session) Session.getByAlias(id);
+			obj = (Session) Session.getByAlias(type + id);
 			break;
 		case "session-template":
-			// obj = (SessionTemplate) SessionTemplate.getByAlias(id);
-			break;
-		case "user-param":
-			// obj = (UserParam) UserParam.getByAlias(id);
-			break;
-		case "user-param-template":
-			// obj = (UserParamTemplate) UserParamTemplate.getByAlias(id);
+			obj = (SessionTemplate) SessionTemplate.getByAlias(type + id);
 			break;
 		case "callback":
-			obj = (Callback) Callback.getByAlias(id);
+			obj = (Callback) Callback.getByAlias(type + id);
 			break;
-		case "example-resource":
-			// obj = (ExampleResource) ExampleResource.getByAlias(id);
-			break;
+		/*
+		 * case "user-template": obj = (UserTemplate) UserTemplate.getByAlias(type+id);
+		 * break; case "credential-template": obj = (CredentialTemplate)
+		 * CredentialTemplate.getByAlias(type+id); break; case "configuration": obj =
+		 * (Configuration) Configuration.getByAlias(type+id); break; case
+		 * "configuration-template": obj = (ConfigurationTemplate)
+		 * ConfigurationTemplate.getByAlias(type+id); break; case "user-param": obj =
+		 * (UserParam) UserParam.getByAlias(type+id); break; case "user-param-template":
+		 * obj = (UserParamTemplate) UserParamTemplate.getByAlias(type+id); break; case
+		 * "example-resource": obj = (ExampleResource)
+		 * ExampleResource.getByAlias(type+id); break;
+		 */
 		default:
-			throw new IllegalArgumentException("Invalid resource type: " + type);
+			throw new IllegalArgumentException("Unknown resource type: " + type);
 		}
 		return obj;
 	}
@@ -804,6 +702,7 @@ public class DataClayWrapper {
 	private static Map<String, Object> preProcessSubObjects(final String type, final Map<String, Object> objectData)
 			throws IllegalArgumentException {
 		CIMIResource obj = null;
+		CIMIResource obj2 = null;
 		switch (type) {
 		case "device-dynamic":
 			Map<String, Object> link = (Map<String, Object>) objectData.get("device");
@@ -813,6 +712,16 @@ public class DataClayWrapper {
 			if (resourceId != null) {
 				obj = getResourceAsObject(subType, subId);
 				objectData.put("device", obj);
+			}
+			link = (Map<String, Object>) objectData.get("myLeaderID");
+			if (link != null) { // this field can be null if no leader is defined
+				resourceId = (String) link.get("href");
+				subType = resourceId.substring(0, resourceId.indexOf("/"));
+				subId = resourceId.substring(resourceId.indexOf("/") + 1);
+				if (resourceId != null) {
+					obj2 = getResourceAsObject(subType, subId);
+					objectData.put("myLeaderID", obj2);
+				}
 			}
 			break;
 		case "fog-area":
@@ -850,6 +759,12 @@ public class DataClayWrapper {
 				final Map<String, String> link = new HashMap<>();
 				link.put("href", obj.get_id());
 				objectData.put("device", link);
+			}
+			obj = (CIMIResource) objectData.get("myLeaderID");
+			if (obj != null) {
+				final Map<String, String> link = new HashMap<>();
+				link.put("href", obj.get_id());
+				objectData.put("myLeaderID", link);
 			}
 			break;
 		case "fog-area":

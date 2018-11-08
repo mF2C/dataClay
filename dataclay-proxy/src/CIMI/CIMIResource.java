@@ -1,6 +1,5 @@
 package CIMI;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -129,8 +128,33 @@ public abstract class CIMIResource extends DataClayObject {
 			this.acl = (Map<String, Object>) newData.get("acl");
 		if (newData.get("href") != null)
 			this.href = (String) newData.get("href");
-		else 
+		else
 			this.href = this.id;
+	}
+
+	public Float getFloat(final Object obj) {
+		if (obj == null) {
+			return null;
+		}
+		if (obj instanceof Integer) {
+			return ((Integer) obj).floatValue();
+		} else if (obj instanceof Double) {
+			return ((Double) obj).floatValue();
+		} else if (obj instanceof Long) {
+			return ((Long) obj).floatValue();
+		} else {
+			return (Float) obj;
+		}
+	}
+
+	@Override
+	public void whenFederated() {
+		// when the object arrives to current dataClay, it is automatically added to the
+		// corresponding resource collection.
+		final String className = this.getClass().getName();
+		final ResourceCollection resources = (ResourceCollection) ResourceCollection
+				.getByAlias(className + "Collection");
+		resources.put(this.id, this);
 	}
 
 }
