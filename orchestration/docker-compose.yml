@@ -6,13 +6,13 @@ services:
   #  LOGIC MODULE ON DC 1            #
   ####################################
   lmpostgres1:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:lm-mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   logicmodule1:
-    image: "bscdataclay/logicmodule"
+    image: "bscdataclay/logicmodule:mf2c"
     depends_on:
       - lmpostgres1
     ports:
@@ -32,15 +32,16 @@ services:
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
   ds1postgres1:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   ds1java1:
-    image: "bscdataclay/dsjava"
+    image: "bscdataclay/dsjava:mf2c"
     depends_on:
       - ds1postgres1
+      - logicmodule1
     ports:
       - 2127
     env_file:
@@ -55,15 +56,16 @@ services:
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ds2postgres1:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   ds2java1:
-    image: "bscdataclay/dsjava"
+    image: "bscdataclay/dsjava:mf2c"
     depends_on:
       - ds2postgres1
+      - logicmodule1
     ports:
       - 2127
     env_file:
@@ -84,7 +86,7 @@ services:
   # Python ExecutionEnvironment (which, by default, are unused)
   # See initDC.sh shell script for more information on initialization
   ds1pythonee1:
-    image: "bscdataclay/dspython"
+    image: "bscdataclay/dspython:mf2c"
     depends_on:
       - ds1java1
     ports:
@@ -104,13 +106,13 @@ services:
   #   LOGIC MODULE ON DC 2                    #
   #############################################
   lmpostgres2:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:lm-mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   logicmodule2:
-    image: "bscdataclay/logicmodule"
+    image: "bscdataclay/logicmodule:mf2c"
     depends_on:
       - lmpostgres2
     ports:
@@ -130,15 +132,16 @@ services:
   #    JAVA DATA SERVICES ON DC 2    #
   ####################################
   ds1postgres2:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   ds1java2:
-    image: "bscdataclay/dsjava"
+    image: "bscdataclay/dsjava:mf2c"
     depends_on:
       - ds1postgres2
+      - logicmodule2
     ports:
       - 2127
     env_file:
@@ -159,7 +162,7 @@ services:
   # Python ExecutionEnvironment (which, by default, are unused)
   # See initDC.sh shell script for more information on initialization
   ds1pythonee2:
-    image: "bscdataclay/dspython"
+    image: "bscdataclay/dspython:mf2c"
     depends_on:
       - ds1java2
     ports:
@@ -179,13 +182,13 @@ services:
   #  LOGIC MODULE FOR BACKUP         #
   ####################################
   lmpostgres_bk:
-    image: postgres:9.5.12
+    image: "bscdataclay/postgres:lm-mf2c"
     env_file:
       - ./env/PG.environment
     command: -c fsync=off
 
   logicmodule_bk:
-    image: "bscdataclay/logicmodule"
+    image: "bscdataclay/logicmodule:mf2c"
     depends_on:
       - lmpostgres_bk
     ports:

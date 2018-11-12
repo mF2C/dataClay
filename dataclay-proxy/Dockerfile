@@ -8,7 +8,7 @@ ADD src /root/dataclay/src
 
 ADD waitForBackends.sh /root/dataclay/
 ADD buildApp.sh /root/dataclay/
-ADD registerModel_v2.sh /root/dataclay/
+ADD createAccountAndGetStubs.sh /root/dataclay/
 ADD run.sh /root/dataclay/
 
 ADD tool /root/tool

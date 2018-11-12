@@ -46,7 +46,7 @@
    [org.clojure/data.json]
    [ring]
    [http-kit "2.2.0"]
-   [dataClay/dataClay "0.9"]
+   [dataClay/dataClay "1.0"]
    [com.sixsq.slipstream/utils ~+slipstream-version+]]
 
   :main com.sixsq.dataclay.proxy

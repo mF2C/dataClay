@@ -33,9 +33,8 @@ done
 
 password=`echo $(uuidgen || cat /dev/urandom) | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 
-sed --in-place='.orig' "s/cHaNgEmE/$password/g" registerModel_v2.sh
-./registerModel_v2.sh
-
+sed --in-place='.orig' "s/cHaNgEmE/$password/g" createAccountAndGetStubs.sh
+./createAccountAndGetStubs.sh
 ./buildApp.sh
 
 lein do clean, uberjar
@@ -48,12 +47,12 @@ EOF
 
 cp -fr ../tool tool
 docker build -t mf2c/dataclay-proxy:${1} .
-docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
+#docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
 
 # cleanup
 mv cfgfiles/session.properties.orig cfgfiles/session.properties
 mv cfgfiles/client.properties.orig cfgfiles/client.properties
-mv registerModel_v2.sh.orig registerModel_v2.sh
+mv createAccountAndGetStubs.sh.orig createAccountAndGetStubs.sh
 
 while true;
 do

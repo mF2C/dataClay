@@ -74,13 +74,17 @@ public class DataClayWrapper {
 		for (final String type : resourceTypes) {
 			if (!type.equals("cloud-entry-point")) {
 				final String className = javaize(type);
-				final ResourceCollection resources = new ResourceCollection();
+				final String alias = className + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 				try {
-					final String alias = className + RESOURCE_COLLECTION_ALIAS_SUFFIX;
-					resources.makePersistent(alias);
-					System.out.println("-- Created collection: " + alias);
+					ResourceCollection.getByAlias(alias);
 				} catch (final Exception e) {
-					// already registered, ignore exception.
+					final ResourceCollection resources = new ResourceCollection();
+					try {
+						resources.makePersistent(alias);
+						System.out.println("-- Created collection: " + alias);
+					} catch (final Exception ex) {
+						// already registered, ignore exception.
+					}
 				}
 			}
 		}

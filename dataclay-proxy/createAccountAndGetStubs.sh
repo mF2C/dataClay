@@ -10,10 +10,7 @@ do
 done
 
 # Minimum set of required variables
-APP=cimi
 STUBSPATH="stubs"
-MODELPATH="bin/CIMI"
-
 
 ##### Checks and derived variables definition
 
@@ -23,17 +20,11 @@ if [ ! -f $TOOLSPATH ]; then
 	exit -1
 fi
 # Local variables
-if [ ! -z $1 ]; then
-	NAMESPACE=$1
-else
-	NAMESPACE="${APP}NS"
-fi
-USER=${APP}User
-PASS=cHaNgEmE
-DATASET=${APP}DS
-
+NAMESPACE="CimiNS"
+USER=CimiUser
+PASS=8b1d63c685d44471bce732c32f4888ed
+DATASET=CimiDS
 mv cfgfiles/session.properties cfgfiles/session.properties.orig
-
 cat >cfgfiles/session.properties <<EOF
 ### StorageItf.init variables
 Account=$USER
@@ -45,15 +36,7 @@ DataClayClientConfig=./cfgfiles/client.properties
 EOF
 
 ##### dClayTools-based script
-
 $TOOLSPATH NewAccount $USER $PASS
-
 $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
-
-TMPDIR=`mktemp -d`
-javac -cp $DCLIB:$DCDEPS/* src/CIMI/*.java -d $TMPDIR
-$TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPDIR java
-rm -Rf $TMPDIR
-
 mkdir -p $STUBSPATH
 $TOOLSPATH GetStubs $USER $PASS $NAMESPACE $STUBSPATH
