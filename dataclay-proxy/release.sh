@@ -33,7 +33,6 @@ done
 
 password=`echo $(uuidgen || cat /dev/urandom) | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1`
 
-sed --in-place='.orig' "s/cHaNgEmE/$password/g" createAccountAndGetStubs.sh
 ./createAccountAndGetStubs.sh
 ./buildApp.sh
 

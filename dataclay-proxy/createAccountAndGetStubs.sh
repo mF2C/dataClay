@@ -21,9 +21,9 @@ if [ ! -f $TOOLSPATH ]; then
 fi
 # Local variables
 NAMESPACE="CimiNS"
-USER=CimiUser
-PASS=8b1d63c685d44471bce732c32f4888ed
-DATASET=CimiDS
+USER=mf2c
+PASS=p4ssw0rd
+DATASET=mf2c
 mv cfgfiles/session.properties cfgfiles/session.properties.orig
 cat >cfgfiles/session.properties <<EOF
 ### StorageItf.init variables
@@ -36,7 +36,5 @@ DataClayClientConfig=./cfgfiles/client.properties
 EOF
 
 ##### dClayTools-based script
-$TOOLSPATH NewAccount $USER $PASS
-$TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 mkdir -p $STUBSPATH
 $TOOLSPATH GetStubs $USER $PASS $NAMESPACE $STUBSPATH

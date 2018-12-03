@@ -4,4 +4,4 @@ bash waitForBackends.sh
 bash createAccountAndGetStubs.sh
 bash buildApp.sh
 
-java -cp $(pwd)/stubs:$(pwd)/proxy.jar com.sixsq.dataclay.proxy
+java -Dlog4j.configurationFile=file:cfglog/log4j2.xml -cp $(pwd)/stubs:$(pwd)/proxy.jar com.sixsq.dataclay.proxy

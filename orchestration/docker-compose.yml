@@ -16,7 +16,7 @@ services:
     depends_on:
       - lmpostgres1
     ports:
-      - "11034:1034"
+      - "1034:1034"
     env_file:
       - ./env/PG.environment
       - ./env/LM.environment
@@ -79,29 +79,6 @@ services:
       - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
-  ####################################
-  #  PYTHON DATA SERVICES ON DC 1    #
-  ####################################
-
-  # Python ExecutionEnvironment (which, by default, are unused)
-  # See initDC.sh shell script for more information on initialization
-  ds1pythonee1:
-    image: "bscdataclay/dspython:mf2c"
-    depends_on:
-      - ds1java1
-    ports:
-      - 6867
-    env_file:
-      - ./env/DS.environment
-      - ./env/LM.environment
-    environment:
-      - DATASERVICE_NAME=DS1
-      - POSTGRES_HOST=ds1postgres1
-      - DEBUG=false
-      #- PYTHONVERBOSE=1
-
-
-
   #############################################
   #   LOGIC MODULE ON DC 2                    #
   #############################################
@@ -116,7 +93,7 @@ services:
     depends_on:
       - lmpostgres2
     ports:
-      - "12034:2034"
+      - "2034:2034"
     env_file:
       - ./env/PG.environment
       - ./env/LM2.environment
@@ -156,29 +133,6 @@ services:
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
   ####################################
-  #  PYTHON DATA SERVICES ON DC 2    #
-  ####################################
-
-  # Python ExecutionEnvironment (which, by default, are unused)
-  # See initDC.sh shell script for more information on initialization
-  ds1pythonee2:
-    image: "bscdataclay/dspython:mf2c"
-    depends_on:
-      - ds1java2
-    ports:
-      - 6867
-    env_file:
-      - ./env/DS.environment
-      - ./env/LM2.environment
-    environment:
-      - DATASERVICE_NAME=DS1
-      - POSTGRES_HOST=ds1postgres2
-      - DEBUG=false
-      #- PYTHONVERBOSE=1
-
-
-
-  ####################################
   #  LOGIC MODULE FOR BACKUP         #
   ####################################
   lmpostgres_bk:
@@ -192,7 +146,7 @@ services:
     depends_on:
       - lmpostgres_bk
     ports:
-      - "13034:3034"
+      - "3034:3034"
     env_file:
       - ./env/PG.environment
       - ./env/LM_BK.environment
