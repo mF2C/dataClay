@@ -10,5 +10,5 @@ DATACLAYDEPS="../tool/lib/dependencies"
 echo ""
 echo -n "Compiling ... "
 mkdir -p bin
-javac -cp stubs:bin:$DATACLAYLIB:$DATACLAYDEPS/* src/api/*.java -d bin/
+javac -cp stubs:bin:$DATACLAYLIB:$DATACLAYDEPS/* src/api/*.java src/api/exceptions/*.java -d bin/
 echo " done"

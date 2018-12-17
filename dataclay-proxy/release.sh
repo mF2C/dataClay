@@ -23,6 +23,8 @@ fi
 
 (cd ../orchestration/ && docker-compose down && docker-compose up -d)
 
+echo "dataClay is up"
+
 TOOLSPATH=../tool/dClayTool.sh
 
 until [ "`$TOOLSPATH GetDataClayID 2>&1 | grep ERROR`" == "" ];
@@ -51,7 +53,6 @@ docker build -t mf2c/dataclay-proxy:${1} .
 # cleanup
 mv cfgfiles/session.properties.orig cfgfiles/session.properties
 mv cfgfiles/client.properties.orig cfgfiles/client.properties
-mv createAccountAndGetStubs.sh.orig createAccountAndGetStubs.sh
 
 while true;
 do
