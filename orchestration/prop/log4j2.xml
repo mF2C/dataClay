@@ -8,16 +8,16 @@
 
  <Loggers>
         <!--  Client -->
-        <Logger name="ClientRuntime" level="debug" />
+        <Logger name="ClientRuntime" level="off" />
         <Logger name="ClientManagementLib" level="off"/>
       
         <!--  Runtime -->
-        <Logger name="DataClayRuntime" level="debug"/>
+        <Logger name="DataClayRuntime" level="off"/>
         <Logger name="DataClayObjectLoader" level="off"/>
         <Logger name="DataClayObject" level="off" /> <!--  This is very verbose! -->
         
         <!--  Data service -->
-        <Logger name="DataService" level="debug"/>
+        <Logger name="DataService" level="off"/>
         
         <!--  Lockers -->
         <Logger name="dataclay.util.classloaders.SyncClass" level="off"/>
@@ -29,7 +29,7 @@
         <Logger name="heap.HeapManager" level="off"/>
         
         <!--  Logic module -->
-        <Logger name="LogicModule" level="debug"/>
+        <Logger name="LogicModule" level="off"/>
         <Logger name="LMDB" level="off"/>
         <Logger name="managers.ClassManager.DB" level="off" />
         <Logger name="MetaDataService.db" level="off" />
@@ -44,8 +44,8 @@
         <Logger name="dataclay.dbhandler" level="off"/>
         <Logger name="dbhandler.PostgresConnection" level="off" />
         <Logger name="org.apache.commons.dbcp2" level="off"/>
-        <Logger name="PostgresHandler" level="debug"/>
-        <Logger name="SQLHandler" level="debug"/>
+        <Logger name="PostgresHandler" level="off"/>
+        <Logger name="SQLHandler" level="off"/>
         
         <!--  Tests -->
         <Logger name="mock.MockDataClay" level="info"/>
@@ -54,7 +54,7 @@
         <Logger name="CfgDataService" level="info"/>
         
         <!--  ROOT LOGGER -->
-    <Root level="debug">
+    <Root level="off">
       <AppenderRef ref="ConsoleAppender" />
     </Root>
   </Loggers>

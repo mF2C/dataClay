@@ -5,16 +5,9 @@ services:
   ####################################
   #  LOGIC MODULE ON DC 1            #
   ####################################
-  lmpostgres1:
-    image: "bscdataclay/postgres:lm-mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
 
   logicmodule1:
     image: "bscdataclay/logicmodule:mf2c"
-    depends_on:
-      - lmpostgres1
     ports:
       - "1034:1034"
     env_file:
@@ -31,16 +24,10 @@ services:
   ####################################
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
-  ds1postgres1:
-    image: "bscdataclay/postgres:mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
 
   ds1java1:
     image: "bscdataclay/dsjava:mf2c"
     depends_on:
-      - ds1postgres1
       - logicmodule1
     ports:
       - 2127
@@ -55,16 +42,9 @@ services:
       - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
 
-  ds2postgres1:
-    image: "bscdataclay/postgres:mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
-
   ds2java1:
     image: "bscdataclay/dsjava:mf2c"
     depends_on:
-      - ds2postgres1
       - logicmodule1
     ports:
       - 2127
@@ -82,16 +62,9 @@ services:
   #############################################
   #   LOGIC MODULE ON DC 2                    #
   #############################################
-  lmpostgres2:
-    image: "bscdataclay/postgres:lm-mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
 
   logicmodule2:
     image: "bscdataclay/logicmodule:mf2c"
-    depends_on:
-      - lmpostgres2
     ports:
       - "2034:2034"
     env_file:
@@ -108,16 +81,10 @@ services:
   ####################################
   #    JAVA DATA SERVICES ON DC 2    #
   ####################################
-  ds1postgres2:
-    image: "bscdataclay/postgres:mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
 
   ds1java2:
     image: "bscdataclay/dsjava:mf2c"
     depends_on:
-      - ds1postgres2
       - logicmodule2
     ports:
       - 2127
@@ -135,16 +102,9 @@ services:
   ####################################
   #  LOGIC MODULE FOR BACKUP         #
   ####################################
-  lmpostgres_bk:
-    image: "bscdataclay/postgres:lm-mf2c"
-    env_file:
-      - ./env/PG.environment
-    command: -c fsync=off
 
   logicmodule_bk:
     image: "bscdataclay/logicmodule:mf2c"
-    depends_on:
-      - lmpostgres_bk
     ports:
       - "3034:3034"
     env_file:
