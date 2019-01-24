@@ -1,6 +1,6 @@
 ;;
 ;; Copyright (c) 2018, SixSq Sarl
-;; 
+;;
 ;; Licensed under the Apache License, Version 2.0 (the "License");
 ;; you may not use this file except in compliance with the License.
 ;; You may obtain a copy of the License at
@@ -15,8 +15,9 @@
 ;;
 
 (ns com.sixsq.dataclay.proxy-test
-  (:require [clojure.test :refer :all]
-            [com.sixsq.dataclay.proxy :refer :all]))
+  (:require
+    [clojure.test :refer :all]
+    [com.sixsq.dataclay.proxy :refer :all]))
 
 (deftest a-test
   (testing "placeholder"
