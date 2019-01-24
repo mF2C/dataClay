@@ -28,11 +28,17 @@
   :plugins [[lein-parent "0.3.2"]
             [lein-environ "1.1.0"]]
 
-  :parent-project {:coords  [sixsq/slipstream-parent "5.3.5"]
+  :parent-project {:coords  [sixsq/slipstream-parent "5.3.19"]
                    :inherit [:min-lein-version
                              :managed-dependencies
                              :repositories
                              :deploy-repositories]}
+
+  :repositories [["dataClay" {:url       "https://raw.github.com/bsc-ssrg/dataclay-maven-mf2c-wrapper/repository"
+                              :snapshots true
+                              :releases  true
+                              :checksum  :fail
+                              :update    :daily}]]
 
   :source-paths ["src"]
 
@@ -46,7 +52,7 @@
    [org.clojure/data.json]
    [ring]
    [http-kit "2.2.0"]
-   [dataClay/dataClay "1.0"]
+   [dataclay.mf2c/wrapper "trunk"]
    [com.sixsq.slipstream/utils ~+slipstream-version+]]
 
   :main com.sixsq.dataclay.proxy
