@@ -26,7 +26,7 @@
 
 (defn add
   ([{:keys [id] :as data} options]
-   (log/info ":add function:" data options)
+   (log/debug ":add function:" data options)
    (let [[type uuid] (utils/split-id id)]
      (try
 
@@ -43,7 +43,7 @@
 
 
 (defn retrieve [id options]
-  (log/info ":retrieve function:" id options)
+  (log/debug ":retrieve function:" id options)
   (let [[type uuid] (utils/split-id id)]
     (try
 
@@ -56,7 +56,7 @@
 
 
 (defn delete [{:keys [id] :as data} options]
-  (log/info ":delete function:" id options)
+  (log/debug ":delete function:" id options)
   (let [[type uuid] (utils/split-id id)]
     (try
 
@@ -68,7 +68,7 @@
 
 
 (defn edit [{:keys [id] :as data} options]
-  (log/info ":edit function:" data options)
+  (log/debug ":edit function:" data options)
   (let [[type uuid] (utils/split-id id)]
     (try
 
@@ -83,7 +83,7 @@
 
 
 (defn query [collection-id {{:keys [filter user-name user-roles]} :cimi-params}]
-  (log/info ":query function:" collection-id user-name user-roles filter)
+  (log/debug ":query function:" collection-id user-name user-roles filter)
   (try
 
     (let [results (wrapper/query collection-id (str filter) user-name (str (first user-roles)))
@@ -93,4 +93,4 @@
       (r/wrapped-response [meta hits]))
 
     (catch Exception ex
-      (utils/rethrow ex type "undefined"))))
+      (utils/rethrow ex collection-id "undefined"))))

@@ -53,7 +53,7 @@
     (throw (response/ex-conflict id))
 
     (instance? ResourceCollectionDoesNotExistException ex)
-    (throw (response/ex-bad-request (str "resource collection for type '" type "' does not exist")))
+    (throw (response/ex-not-found type))
 
     (instance? DataClayFederationException ex)
     (let [msg (str ex)]
