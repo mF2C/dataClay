@@ -132,6 +132,4 @@
       (t/query "r" {:filter nil, :user-name "user", :user-roles "role1, role2"})
       (catch Exception ex
         (let [{:keys [status body]} (ex-data ex)]
-          (is (= 404 status))
-          (is (= "r not found" (:message body)))
-          (is (= "r" (:resource-id body))))))))
+          (is (= 405 status)))))))

@@ -18,30 +18,56 @@
   "This namespace is a simple facade around the DataClay wrapper written in
    Java. This exists solely to make testing easier."
   (:refer-clojure :exclude [read update])
+  (:require [clojure.tools.logging :as log])
   (:import
     (api DataClayWrapper)))
 
 
 (defn create
   [type uuid data]
-  (DataClayWrapper/create type uuid data))
+  (try
+    (let [response (DataClayWrapper/create type uuid data)]
+      (log/info "wrapper create response:" response)
+      response)
+    (catch Exception ex
+      (log/info "wrapper create exception:" (str ex)))))
 
 
 (defn read
   [type uuid]
-  (DataClayWrapper/read type uuid))
+  (try
+    (let [response (DataClayWrapper/read type uuid)]
+      (log/info "wrapper read response:" response)
+      response)
+    (catch Exception ex
+      (log/info "wrapper read exception:" (str ex)))))
 
 
 (defn delete
   [type uuid]
-  (DataClayWrapper/delete type uuid))
+  (try
+    (let [response (DataClayWrapper/delete type uuid)]
+      (log/info "wrapper delete response:" response)
+      response)
+    (catch Exception ex
+      (log/info "wrapper delete exception:" (str ex)))))
 
 
 (defn update
   [type uuid data]
-  (DataClayWrapper/update type uuid data))
+  (try
+    (let [response (DataClayWrapper/update type uuid data)]
+      (log/info "wrapper update response:" response)
+      response)
+    (catch Exception ex
+      (log/info "wrapper update exception:" (str ex)))))
 
 
 (defn query
   [collection-id filter user-name user-role]
-  (DataClayWrapper/query collection-id filter user-name user-role))
+  (try
+    (let [response (DataClayWrapper/query collection-id filter user-name user-role)]
+      (log/info "wrapper query response:" response)
+      response)
+    (catch Exception ex
+      (log/info "wrapper query exception:" (str ex)))))

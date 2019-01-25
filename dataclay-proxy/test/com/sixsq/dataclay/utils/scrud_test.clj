@@ -50,7 +50,7 @@
                    400 (TypeDoesNotExistException. "type")
                    404 (ObjectDoesNotExistException. "type" "id")
                    409 (ObjectAlreadyExistsException. "type" "id")
-                   404 (ResourceCollectionDoesNotExistException. "type")
+                   405 (ResourceCollectionDoesNotExistException. "type")
                    500 (DataClayFederationException. "msg"))
 
   (let [e (Exception.)]

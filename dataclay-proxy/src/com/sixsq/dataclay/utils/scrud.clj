@@ -53,7 +53,7 @@
     (throw (response/ex-conflict id))
 
     (instance? ResourceCollectionDoesNotExistException ex)
-    (throw (response/ex-not-found type))
+    (throw (response/ex-bad-method (str "method not allowed on " id)))
 
     (instance? DataClayFederationException ex)
     (let [msg (str ex)]
