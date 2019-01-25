@@ -48,7 +48,8 @@ EOF
 
 cp -fr ../tool tool
 docker build -t mf2c/dataclay-proxy:${1} .
-#docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
+docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
+docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:trunk
 
 # cleanup
 mv cfgfiles/session.properties.orig cfgfiles/session.properties
