@@ -14,8 +14,8 @@
 ;; permissions and limitations under the License.
 ;;
 
-(def +version+ "1.10-SNAPSHOT")
-(def +slipstream-version+ "3.53")
+(def +version+ "2.2-SNAPSHOT")
+(def +slipstream-version+ "3.67")
 
 (defproject com.sixsq.dataclay/proxy "0.1.0-SNAPSHOT"
   :description "dataclay proxy service"
