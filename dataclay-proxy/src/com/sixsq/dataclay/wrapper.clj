@@ -31,7 +31,8 @@
       (log/info "wrapper create response:" response)
       response)
     (catch Exception ex
-      (log/info "wrapper create exception:" (str ex)))))
+      (log/info "wrapper create exception:" (str ex))
+      (throw ex))))
 
 
 (defn read
@@ -41,7 +42,8 @@
       (log/info "wrapper read response:" response)
       response)
     (catch Exception ex
-      (log/info "wrapper read exception:" (str ex)))))
+      (log/info "wrapper read exception:" (str ex))
+      (throw ex))))
 
 
 (defn delete
@@ -51,7 +53,8 @@
       (log/info "wrapper delete response:" response)
       response)
     (catch Exception ex
-      (log/info "wrapper delete exception:" (str ex)))))
+      (log/info "wrapper delete exception:" (str ex))
+      (throw ex))))
 
 
 (defn update
@@ -61,7 +64,8 @@
       (log/info "wrapper update response:" response)
       response)
     (catch Exception ex
-      (log/info "wrapper update exception:" (str ex)))))
+      (log/info "wrapper update exception:" (str ex))
+      (throw ex))))
 
 
 (defn query
@@ -71,4 +75,5 @@
       (log/info "wrapper query response:" response)
       response)
     (catch Exception ex
-      (log/info "wrapper query exception:" (str ex)))))
+      (log/info "wrapper query exception:" (str ex))
+      (throw ex))))
