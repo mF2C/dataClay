@@ -18,7 +18,8 @@
   "This namespace is a simple facade around the DataClay wrapper written in
    Java. This exists solely to make testing easier."
   (:refer-clojure :exclude [read update])
-  (:require [clojure.tools.logging :as log])
+  (:require
+    [clojure.tools.logging :as log])
   (:import
     (api DataClayWrapper)))
 
