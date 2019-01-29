@@ -62,21 +62,7 @@
   [[fn-name & args :as argv]]
   (let [msg (str "invalid function name/signature: " fn-name)]
     (log/error msg)
-    (throw (ex-info msg (response/response-error msg)))))
-
-
-(defn dispatch
-  [[fn-name & args :as argv]]
-  (let [f (case (keyword fn-name)
-            :add scrud/add
-            :retrieve scrud/retrieve
-            :edit scrud/edit
-            :delete scrud/delete
-            :query scrud/query
-            ::invalid-signature)]
-    (if-not (= f ::invalid-signature)
-      (action-handler f argv)
-      (invalid-action-handler argv))))
+    (r/wrapped-response (response/response-error msg))))
 
 
 (defmulti scrud-action
@@ -118,7 +104,7 @@
 (defn handler [request]
   (if-let [body (request/body-string request)]
     (try
-      (-> body parse-edn #_dispatch scrud-action)
+      (-> body parse-edn scrud-action)
       (catch Exception e
         (check-exception e body)))
     (let [msg "request received without body"]
