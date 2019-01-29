@@ -14,10 +14,10 @@
 ;; permissions and limitations under the License.
 ;;
 
-(def +version+ "2.2-SNAPSHOT")
+(def +version+ "2.4")
 (def +slipstream-version+ "3.67")
 
-(defproject com.sixsq.dataclay/proxy "0.1.0-SNAPSHOT"
+(defproject com.sixsq.dataclay/proxy "2.4"
   :description "dataclay proxy service"
   :url "https://github.com/SixSq/dataClay"
 
