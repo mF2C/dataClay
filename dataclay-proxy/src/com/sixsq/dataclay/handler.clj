@@ -36,7 +36,7 @@
     (let [msg (str "error executing request: " body "\n" (str e))]
       (log/error msg)
       (.printStackTrace e)
-      (response/response-error msg))))
+      (r/wrapped-response (response/response-error msg)))))
 
 
 (defn parse-edn
