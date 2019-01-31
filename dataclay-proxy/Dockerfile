@@ -1,8 +1,6 @@
 FROM openjdk:8-jdk
 
 ADD cfgfiles /root/dataclay/cfgfiles
-#ADD stubs /root/dataclay/stubs
-ADD bin /root/dataclay/bin
 ADD cfglog /root/dataclay/cfglog
 ADD src /root/dataclay/src
 
