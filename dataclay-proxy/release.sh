@@ -25,7 +25,7 @@ fi
 #
 #echo "dataClay is up"
 #
-#TOOLSPATH=../tool/dClayTool.sh
+TOOLSPATH=../tool/dClayTool.sh
 #
 #until [ "`$TOOLSPATH GetDataClayID 2>&1 | grep ERROR`" == "" ];
 #do
@@ -46,7 +46,7 @@ HOST=logicmodule1
 TCPPORT=1034
 EOF
 
-#cp -fr ../tool tool
+cp -fr ../tool tool
 docker build -t mf2c/dataclay-proxy:${1} .
 docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
 docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:trunk
