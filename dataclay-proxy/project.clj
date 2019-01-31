@@ -25,7 +25,7 @@
             :url          "http://www.apache.org/licenses/LICENSE-2.0.txt"
             :distribution :repo}
 
-  :plugins [[lein-parent "0.3.2"]
+  :plugins [[lein-parent "0.3.5"]
             [lein-environ "1.1.0"]]
 
   :parent-project {:coords  [sixsq/slipstream-parent "5.3.19"]

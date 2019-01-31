@@ -11,7 +11,7 @@ ADD buildApp.sh /root/dataclay/
 ADD createAccountAndGetStubs.sh /root/dataclay/
 ADD run.sh /root/dataclay/
 
-ADD tool /root/tool
+#ADD tool /root/tool
 
 ADD ./target/proxy-2.4-standalone.jar /root/dataclay/proxy.jar
 
