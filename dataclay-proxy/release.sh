@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 #
 #  Copyright (c) 2018, SixSq Sarl
