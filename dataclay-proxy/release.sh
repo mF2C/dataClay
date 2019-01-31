@@ -40,5 +40,4 @@ docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:trunk
 mv cfgfiles/client.properties.orig cfgfiles/client.properties
 
 lein do clean
-ls -l *
 rm -fr tool
