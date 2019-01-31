@@ -13,7 +13,7 @@ ADD run.sh /root/dataclay/
 
 ADD tool /root/tool
 
-ADD ./target/proxy-0.1.0-SNAPSHOT-standalone.jar /root/dataclay/proxy.jar
+ADD ./target/proxy-2.4-standalone.jar /root/dataclay/proxy.jar
 
 ENV DATACLAY_JAR=/root/tool/lib/dataclayclient.jar
 
