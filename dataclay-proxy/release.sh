@@ -38,7 +38,7 @@ TOOLSPATH=../tool/dClayTool.sh
 #./createAccountAndGetStubs.sh
 #./buildApp.sh
 
-lein do clean, uberjar
+lein do clean, test, uberjar
 
 mv cfgfiles/client.properties cfgfiles/client.properties.orig
 cat >cfgfiles/client.properties <<EOF
