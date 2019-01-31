@@ -14,10 +14,10 @@
 ;; permissions and limitations under the License.
 ;;
 
-(def +version+ "1.10-SNAPSHOT")
-(def +slipstream-version+ "3.53")
+(def +version+ "2.4")
+(def +slipstream-version+ "3.67")
 
-(defproject com.sixsq.dataclay/proxy "0.1.0-SNAPSHOT"
+(defproject com.sixsq.dataclay/proxy "2.4"
   :description "dataclay proxy service"
   :url "https://github.com/SixSq/dataClay"
 
@@ -25,7 +25,7 @@
             :url          "http://www.apache.org/licenses/LICENSE-2.0.txt"
             :distribution :repo}
 
-  :plugins [[lein-parent "0.3.2"]
+  :plugins [[lein-parent "0.3.5"]
             [lein-environ "1.1.0"]]
 
   :parent-project {:coords  [sixsq/slipstream-parent "5.3.19"]
@@ -42,7 +42,7 @@
 
   :source-paths ["src"]
 
-  :resource-paths ["bin" "stubs" "cfglog"]
+  :resource-paths ["cfglog"]
 
   :pom-location "target/"
 

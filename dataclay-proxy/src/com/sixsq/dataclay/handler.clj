@@ -36,7 +36,7 @@
     (let [msg (str "error executing request: " body "\n" (str e))]
       (log/error msg)
       (.printStackTrace e)
-      (response/response-error msg))))
+      (r/wrapped-response (response/response-error msg)))))
 
 
 (defn parse-edn
@@ -49,30 +49,62 @@
         (throw (ex-info msg (response/response-error msg)))))))
 
 
-(defn dispatch
-  [[fn-name & args :as edn-body]]
-  (let [f (case (keyword fn-name)
-            :add scrud/add
-            :retrieve scrud/retrieve
-            :edit scrud/edit
-            :delete scrud/delete
-            :query scrud/query
-            ::invalid-signature)]
-    (if-not (= f ::invalid-signature)
-      (try
-        (log/info "dispatching dataclay function: " fn-name args)
-        (apply f args)
-        (catch Exception e
-          (check-exception e edn-body)))
-      (let [msg (str "invalid function name/signature: " fn-name)]
-        (log/error msg)
-        (throw (ex-info msg (response/response-error msg)))))))
+(defn action-handler
+  [f [fn-name & args :as argv]]
+  (try
+    (log/info "dispatching dataclay function: " fn-name args)
+    (apply f args)
+    (catch Exception e
+      (check-exception e argv))))
+
+
+(defn invalid-action-handler
+  [[fn-name & args :as argv]]
+  (let [msg (str "invalid function name/signature: " fn-name)]
+    (log/error msg)
+    (r/wrapped-response (response/response-error msg))))
+
+
+(defmulti scrud-action
+          "Perform a SCRUD action by dispatching on the first value of the
+           argument vector."
+          first)
+
+
+(defmethod scrud-action :default
+  [argv]
+  (invalid-action-handler argv))
+
+
+(defmethod scrud-action :add
+  [argv]
+  (action-handler scrud/add argv))
+
+
+(defmethod scrud-action :retrieve
+  [argv]
+  (action-handler scrud/retrieve argv))
+
+
+(defmethod scrud-action :edit
+  [argv]
+  (action-handler scrud/edit argv))
+
+
+(defmethod scrud-action :delete
+  [argv]
+  (action-handler scrud/delete argv))
+
+
+(defmethod scrud-action :query
+  [argv]
+  (action-handler scrud/query argv))
 
 
 (defn handler [request]
   (if-let [body (request/body-string request)]
     (try
-      (-> body parse-edn dispatch)
+      (-> body parse-edn scrud-action)
       (catch Exception e
         (check-exception e body)))
     (let [msg "request received without body"]

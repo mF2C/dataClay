@@ -1,5 +1,5 @@
 ;;
-;; Copyright (c) 2018, SixSq Sarl
+;; Copyright (c) 2019, SixSq Sarl
 ;;
 ;; Licensed under the Apache License, Version 2.0 (the "License");
 ;; you may not use this file except in compliance with the License.
@@ -14,11 +14,16 @@
 ;; permissions and limitations under the License.
 ;;
 
-(ns com.sixsq.dataclay.proxy-test
+(ns com.sixsq.dataclay.utils.json-test
   (:require
     [clojure.test :refer :all]
-    [com.sixsq.dataclay.proxy :refer :all]))
+    [com.sixsq.dataclay.utils.json :as t]))
 
-(deftest a-test
-  (testing "placeholder"
-    (is (= 1 1))))
+
+(deftest check-roundtrip
+
+  (let [initial-value {:id "resource/123", :int 1, :bool true, :float 1.0, :nil nil}
+        final-value (-> initial-value
+                        t/edn->json
+                        t/json->edn)]
+    (is (= initial-value final-value))))
