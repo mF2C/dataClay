@@ -42,7 +42,7 @@
 
   :source-paths ["src"]
 
-  :resource-paths ["bin" "stubs" "cfglog"]
+  :resource-paths ["cfglog"]
 
   :pom-location "target/"
 
