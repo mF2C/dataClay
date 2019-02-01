@@ -50,6 +50,7 @@
   [[org.clojure/clojure]
    [org.clojure/tools.logging]
    [org.clojure/data.json]
+   [camel-snake-kebab "0.4.0"]
    [ring]
    [http-kit "2.2.0"]
    [dataclay.mf2c/wrapper "trunk"]
