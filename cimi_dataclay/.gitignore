@@ -1,2 +1,5 @@
-target
-bin
+/execClasses/
+/psql_dump.sql
+/stubs/
+/dataClayMf2cStubs.jar
+*.sqlite

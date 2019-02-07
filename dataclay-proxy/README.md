@@ -8,18 +8,11 @@ and DataClay.
 To build the Docker image which contains the DataClay proxy service,
 you'll find the `release.sh` script which will:
  
- 1. deploy DataClay
- 2. wait for it to be ready
- 3. generate a random user password
- 4. run registerModel
- 5. run buildApp
- 6. build an uberjar with for the proxy
- 7. adapt the cfgfiles to user the DC container service name:port, and
-    update the user password
- 8. build the Docker image, adding all the created and modified files
+ 1. build an uberjar with for the proxy
+ 2. build the Docker image, adding all the created and modified files
     into the image
- 9. tag the created image to latest
- 10. cleanup the local environment
+ 3. tag the created image to latest
+ 4. cleanup the local environment
 
 The script accepts the Docker image tag as an argument, so all you
 have to do from this directory is:

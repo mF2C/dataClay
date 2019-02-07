@@ -1,0 +1,88 @@
+
+
+----------------------------------
+Building dataClay trunk dockers
+----------------------------------
+
+Mf2c dockers extend dataClay trunk dockers, therefore
+we need to build them first. 
+
+Currently, the script release.sh is also building dataClay
+trunk dockers:
+
+	bscdataclay/postgres:trunk
+	bscdataclay/logicmodule:trunk
+	bscdataclay/logicmodule:trunk-openjdk8
+	bscdataclay/dsjava:trunk
+	bscdataclay/dsjava:trunk-openjdk8
+	bscdataclay/dspython:trunk
+	bscdataclay/dspython:trunk-py3.6
+	bscdataclay/dspython:trunk-py2.7
+
+----------------------------------
+Building Mf2c dockers
+----------------------------------
+
+The script release.sh also will do the following: 
+
+1. Build dataClay trunk dockers: 
+	-> Compile and create a new dataClay JAR
+	-> Create new dockers with tag trunk
+2. Start dataClay 
+3. Register CIMI account, contracts, namespaces and datacontracts
+4. Register model located in model/ folder 
+5. Get stubs of the model created
+6. Create a JAR called dataClayMf2cStubs.jar 
+7. Retrieve execution classes from a execution environment docker 
+into execClasses folder
+8. Call export_federate_model.sh to: 
+	-> Retrieve psql.dump from logicmodule postgres or 
+	retrieve sqlite file from logicmodule docker
+* NOTE: dockerfiles use psql.dump and execClasses folder 
+to create docker images with already created stuff * 
+9. Build new dockers: 
+
+	bscdataclay/postgres:mf2c
+	bscdataclay/postgres:lm-mf2c (postgres with model)
+	bscdataclay/logicmodule:mf2c
+	bscdataclay/logicmodule:mf2c-openjdk8
+	bscdataclay/dsjava:mf2c
+	bscdataclay/dsjava:mf2c-openjdk8
+	bscdataclay/dspython:mf2c
+	bscdataclay/dspython:mf2c-py3.6
+	bscdataclay/dspython:mf2c-py2.7
+
+----------------------------------
+Push to DockerHub
+----------------------------------
+
+The script release.sh, if we specify --push will push trunk and mf2c dockers
+into DockerHub. It is very important to push them together since mf2c dockers extend trunk dockers. 
+
+----------------------------------
+DataClayWrapper maven
+----------------------------------
+
+The script release.sh also pushes dependencies in maven. It is necessary to clone remote maven github repositories first.
+To do it manually, follow steps to publish dataclay.mf2c.wrapper in Maven: 
+
+1. Clone following repositories in local locations: 
+
+https://github.com/bsc-ssrg/dataclay-maven.git
+https://github.com/bsc-ssrg/dataclay-maven-m2fc-wrapper.git
+
+2. Call script maven_install_trunk.sh to install dataclay trunk in GitHub 
+maven repository. You need to provide the JAR (usually in ../scripts/export/jars/dataClay_last.jar)
+and the cloned repository location of dataclay-maven-trunk 
+
+Example: maven_install_trunk.sh ../scripts/export/jars/dataClay_last.jar ~/dataclay-maven/
+ 
+3. Call script maven_install_mf2c_wrapper.sh to install dataclay mf2c wrapper in GitHub 
+maven repository. You need to provide the stus jar and the cloned repository location of dataclay-maven-mf2c-wrapper
+The script will use stubs using pom-stubs-wrapper.xml
+The script will build the wrapper following ./wrapper/pom.xml
+
+Example: maven_install_mf2c_wrapper.sh ./dataClayMf2cStubs.jar ~/dataclay-maven-mf2c-wrapper/
+
+4. Commit and push changes in the repositories
+

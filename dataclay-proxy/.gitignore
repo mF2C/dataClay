@@ -15,3 +15,5 @@ pom.xml.asc
 
 bin
 stubs
+/.classpath
+/.project
