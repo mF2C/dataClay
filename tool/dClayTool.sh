@@ -51,17 +51,31 @@ SUPPORTEDLANGS="python | java"
 SUPPORTEDDSETS="public | private"
 
 # Classpaths
+SEPPARATOR=":"
 SCRIPTPATH="$(cd "$(dirname "$0")" && pwd -P)"
+if [[ "$OSTYPE" == "cygwin" ]]; then
+        # POSIX compatibility layer and Linux environment emulation for Windows
+        SEPPARATOR=";"
+        SCRIPTPATH=$(echo "$SCRIPTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+elif [[ "$OSTYPE" == "msys" ]]; then
+        # Lightweight shell and GNU utilities compiled for Windows (part of MinGW)
+        SEPPARATOR=";"
+        SCRIPTPATH=$(echo "$SCRIPTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+elif [[ "$OSTYPE" == "win32" ]]; then
+        # I'm not sure this can happen.
+        SEPPARATOR=";"
+        SCRIPTPATH=$(echo "$SCRIPTPATH" | sed -e 's/^\///' -e 's/\//\\/g' -e 's/^./\0:/')
+fi
 LIBPATH=$SCRIPTPATH/lib
-CLIENTJAR=$LIBPATH/dataclayclient.jar
-DEPSPATH=$LIBPATH/dependencies
-CLASSPATH=$CLIENTJAR:$DEPSPATH/*:$CLASSPATH
+CLIENTJAR=$SCRIPTPATH/dataclayclient.jar
+CLASSPATH=${CLIENTJAR}${SEPPARATOR}${LIBPATH}/*${SEPPARATOR}${CLASSPATH}
 
 
 if [ ! -z $DATACLAY_JAR ]; then
   # Environment set means we are in Mare or in some already-prepared computing Environment
   # Assume everything is ok.
-  ln -s $DATACLAY_JAR $CLIENTJAR 2> /dev/null
+  rm -f $CLIENTJAR
+  ln -s $DATACLAY_JAR $CLIENTJAR
 else
   # No predefined DATACLAY_JAR, so assuming docker env
   type docker >/dev/null 2>&1 || { errorMsg "If DATACLAY_JAR is not installed, docker is required; but it is not installed. Aborting."; }
@@ -69,26 +83,25 @@ else
   if [ -z $DOCKER_BASE ]; then
 	errorMsg "Could not inspect a running logicmodule docker."  
   fi
-  DOCKER_DCDEPS="$DOCKER_BASE:/usr/src/dataclay/lib"
-  DOCKER_DCLIB="$DOCKER_BASE:/usr/src/dataclay/dataclay.jar"
+  DOCKER_DCLIB="$DOCKER_BASE:/usr/src/dataclay/lib"
+  DOCKER_DCJAR="$DOCKER_BASE:/usr/src/dataclay/dataclay.jar"
   touch $SCRIPTPATH/.dockerid
-
   # In case of using dockers, try to find lib there 
   DOCKER_ID=`docker inspect -f "{{.Id}}" $DOCKER_BASE`
   if [ ! -f $CLIENTJAR ]; then
     UPDATE_LIB=1
+  elif [ -z "$(ls -A $LIBPATH)" ]; then
+  	UPDATE_LIB=1
   elif [ -z "`grep $DOCKER_ID $SCRIPTPATH/.dockerid`" ]; then
 	UPDATE_LIB=1
   fi
-
   if [ ! -z $UPDATE_LIB ]; then
 	rm -f $CLIENTJAR
-	rm -Rf $DEPSPATH
-	mkdir -p $LIBPATH
-    docker cp $DOCKER_DCDEPS $DEPSPATH
-    docker cp $DOCKER_DCLIB $CLIENTJAR
+	rm -Rf $LIBPATH
+    docker cp $DOCKER_DCLIB "$SCRIPTPATH"
+    docker cp $DOCKER_DCJAR "$CLIENTJAR"
 	echo $DOCKER_ID > $SCRIPTPATH/.dockerid
-	echo "[dataClay] [tool LOG] Retrieved $CLIENTJAR from $DOCKER_DCLIB"
+	echo "[dataClay] [tool LOG] Retrieved $CLIENTJAR from $DOCKER_DCJAR"
   fi
 fi
 
@@ -135,7 +148,6 @@ if [ -z $1 ]; then
 fi
 OPERATION=$1
 
-
 case $OPERATION in
 	'-h' | '--help' | '?' | 'help')
 		usage
@@ -167,7 +179,7 @@ case $OPERATION in
 		;;
 	'NewModel')
 		FOLDER=$5
-		if [ $# -ne 6 ]; then
+		if [ $# -lt 6 ]; then
 			errorMsg "Missing arguments. Usage: NewModel <user_name> <user_pass> <namespace_name> <class_path> <$SUPPORTEDLANGS>"
 		fi
 		if [ ! -d $FOLDER ]; then
@@ -177,12 +189,19 @@ case $OPERATION in
 			'java')
 				$NEW_NAMESPACE $2 $3 $4 java
 				if [ $? -ge 0 ]; then
-					$JAVA_NEW_MODEL $2 $3 $4 $5
+					INIT_PARAMS="$2 $3 $4 $5"
+					if [ $# -gt 6 ]; then
+						INIT_PARAMS="$INIT_PARAMS ${@:7}"
+					fi
+					$JAVA_NEW_MODEL $INIT_PARAMS
 				fi
 				;;
 			'python')
 				$NEW_NAMESPACE $2 $3 $4 python
 				if [ $? -ge 0 ]; then
+					if [ $# -gt 6 ]; then
+						errorMsg "Prefetching is only supported in Java applications."
+					fi
 					$PY_NEW_MODEL $2 $3 $4 $5
 				fi
 				;;
