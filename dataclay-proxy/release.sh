@@ -18,8 +18,25 @@ if [[ $# -eq 0 ]] ; then
     echo 'Please pass the Docker image tag version as an argument'
     exit 0
 fi
+# update project.clj versioning
+if [ -f project.clj.orig ]; then
+	mv project.clj.orig project.clj #sanity check
+fi
+cp project.clj project.clj.orig
+sed -i "s/dataclay.mf2c\/wrapper \"trunk\"/dataclay.mf2c\/wrapper \"${1}\"/g" project.clj
+sed -i "s/def +version+ \"trunk\"/def +version+ \"${1}\"/g" project.clj
+sed -i "s/defproject com.sixsq.dataclay\/proxy \"trunk\"/defproject com.sixsq.dataclay\/proxy \"${1}\"/g" project.clj
+
 lein do clean, test, uberjar
+# copy to proxy.jar so Docker build can find it 
+cp target/proxy-${1}-standalone.jar proxy.jar
+
 docker build -t mf2c/dataclay-proxy:${1} .
 docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
 docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:trunk
 lein do clean
+
+# Cleaning
+mv project.clj.orig project.clj
+rm proxy.jar
+

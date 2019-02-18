@@ -32,32 +32,50 @@ function usage {
 }
 
 function docker-push-mf2c {
-	TAG=mf2c
-	docker push bscdataclay/logicmodule:${TAG}
-	docker push bscdataclay/logicmodule:${TAG}-openjdk8
-	docker push bscdataclay/dsjava:${TAG}
-	docker push bscdataclay/dsjava:${TAG}-openjdk8
+	TAG=$1
+	docker push mf2c/dataclay-logicmodule:${TAG}
+	docker push mf2c/dataclay-dsjava:${TAG}
+	docker push mf2c/dataclay-logicmodule:latest
+	docker push mf2c/dataclay-dsjava:latest
+	docker push bscdataclay/logicmodule:mf2c
+	docker push bscdataclay/dsjava:mf2c
+	
 }  
 
 function maven_install_wrapper { 
 	JARPATH=$1
+	VERSION=$2
+	if [ -f $SCRIPTDIR/wrapper/pom.xml.orig ]; then
+		mv $SCRIPTDIR/wrapper/pom.xml.orig $SCRIPTDIR/wrapper/pom.xml #sanity check
+	fi
+	cp $SCRIPTDIR/wrapper/pom.xml $SCRIPTDIR/wrapper/pom.xml.orig
+	sed -i "s/trunk/$VERSION/g" $SCRIPTDIR/wrapper/pom.xml
+	sed -i '/<dependency>/ {
+		:start
+		N
+		/<\/dependency>$/!b start
+		/<artifactId>dataclay<\/artifactId>/ {
+		s/\(<version>\)'"$VERSION"'\(<\/version>\)/\1trunk\2/
+		}
+	}' $SCRIPTDIR/wrapper/pom.xml
+	
 	echo "Installing dataclay mf2c stubs in m2 repository "
 	mvn install:install-file \
 	   -Dfile=$JARPATH \
 	   -DgroupId=dataclay.mf2c \
 	   -DartifactId=stubs \
-	   -Dversion=trunk \
+	   -Dversion=$VERSION \
 	   -Dpackaging=jar \
 	   -DpomFile=$SCRIPTDIR/pom-stubs-wrapper.xml \
 	   -DcreateChecksum=true
 	
-	if [ $# -eq 1 ]; then
+	if [ $# -eq 2 ]; then
 		echo "Installing dataclay mf2c stubs local repository"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
 		   -DgroupId=dataclay.mf2c \
 		   -DartifactId=stubs \
-		   -Dversion=trunk \
+		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
 		   -DpomFile=$SCRIPTDIR/pom-stubs-wrapper.xml \
 		   -DcreateChecksum=true
@@ -67,26 +85,26 @@ function maven_install_wrapper {
 		mvn package javadoc:jar
 		popd
 		
-		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-trunk.jar
+		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
 		echo "Installing dataclay mf2c wrapper local repository"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
 		   -DgroupId=dataclay.mf2c \
 		   -DartifactId=wrapper \
-		   -Dversion=trunk \
+		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
 		   -DpomFile=$SCRIPTDIR/wrapper/pom.xml \
-		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-trunk-javadoc.jar \
+		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}-javadoc.jar \
 		   -DcreateChecksum=true
 		   
-	elif [ $# -eq 2 ]; then
-		LOCALREPOSITORY=$2
+	elif [ $# -eq 3 ]; then
+		LOCALREPOSITORY=$3
 		echo "Installing dataclay mf2c stubs local repository $LOCALREPOSITORY"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
 		   -DgroupId=dataclay.mf2c \
 		   -DartifactId=stubs \
-		   -Dversion=trunk \
+		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
 		   -DlocalRepositoryPath=$LOCALREPOSITORY \
 		   -DpomFile=$SCRIPTDIR/pom-stubs-wrapper.xml \
@@ -97,19 +115,22 @@ function maven_install_wrapper {
 		mvn package javadoc:jar
 		popd
 		
-		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-trunk.jar
+		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
 		echo "Installing dataclay mf2c wrapper local repository $LOCALREPOSITORY"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
 		   -DgroupId=dataclay.mf2c \
 		   -DartifactId=wrapper \
-		   -Dversion=trunk \
+		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
 		   -DlocalRepositoryPath=$LOCALREPOSITORY \
 		   -DpomFile=$SCRIPTDIR/wrapper/pom.xml \
-		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-trunk-javadoc.jar \
+		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}-javadoc.jar \
 		   -DcreateChecksum=true
 	fi
+	
+	mv $SCRIPTDIR/wrapper/pom.xml.orig $SCRIPTDIR/wrapper/pom.xml
+	
 }
 
 
@@ -155,7 +176,7 @@ if [ "$#" -eq 3 ]; then
 		echo "[ERROR] Repository provided $DATACLAY_MF2C_MAVEN_REPO do not refer to proper GitHub $URL_DATACLAY_MF2C_MAVEN_REPO. Aborting"
 		exit -1
 	else 
-		echo "Going to install dataclay maven mf2c trunk in $DATACLAY_MF2C_MAVEN_REPO"
+		echo "Going to install dataclay maven mf2c ${PROXY_TAG} in $DATACLAY_MF2C_MAVEN_REPO"
 	fi
 	popd
 fi
@@ -213,28 +234,34 @@ docker-compose down
 popd
 
 # Now we can build the docker images 
-echo " ===== Building docker bscdataclay/dsjava:mf2c-openjdk8 ====="
-docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileDSMf2c -t bscdataclay/dsjava:mf2c-openjdk8 .
+echo " ===== Building docker mf2c/dataclay-dsjava:${PROXY_TAG} ====="
+docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileDSMf2c -t mf2c/dataclay-dsjava:${PROXY_TAG} .
 
-echo " ===== Building docker bscdataclay/logicmodule:mf2c-openjdk8 ====="
-docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileLMMf2c -t bscdataclay/logicmodule:mf2c-openjdk8 .
+echo " ===== Building docker mf2c/dataclay-logicmodule:${PROXY_TAG} ====="
+docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileLMMf2c -t mf2c/dataclay-logicmodule:${PROXY_TAG} .
 
-echo " ===== Building docker bscdataclay/logicmodule:mf2c  ====="
-docker tag bscdataclay/logicmodule:mf2c-openjdk8 bscdataclay/logicmodule:mf2c 
+echo " ===== Building docker mf2c/dataclay-logicmodule:latest  ====="
+docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:latest 
 
-echo " ===== Building docker bscdataclay/dsjava:mf2c ====="
-docker tag bscdataclay/dsjava:mf2c-openjdk8 bscdataclay/dsjava:mf2c
+echo " ===== Building docker mf2c/dataclay-dsjava:latest ====="
+docker tag mf2c/dataclay-dsjava:${PROXY_TAG} mf2c/dataclay-dsjava:latest 
+
+echo " ===== Building docker bscdataclay/logicmodule:mf2c   ====="
+docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} bscdataclay/logicmodule:mf2c 
+
+echo " ===== Building docker bscdataclay/dsjava:mf2c  ====="
+docker tag mf2c/dataclay-dsjava:${PROXY_TAG} bscdataclay/dsjava:mf2c 
 
 if [ "$PUSH" = true ] ; then
 	echo " ===== Pushing dockers dataclay mf2c dockers DockerHub ====="
-	docker-push-mf2c
+	docker-push-mf2c ${PROXY_TAG}
 else 
 	echo " ===== NOT Pushing any docker into DockerHub ====="
 fi
 
 if [ "$PUSH" = true ] ; then
-	echo " ===== Installing dataClay mf2c wrapper trunk ====="
-	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $DATACLAY_MF2C_MAVEN_REPO
+	echo " ===== Installing dataClay mf2c wrapper $PROXY_TAG ====="
+	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG $DATACLAY_MF2C_MAVEN_REPO
 
 	echo " ===== Pushing  dataClay maven mf2c wrapper into GitHub ====="
 	pushd $DATACLAY_MF2C_MAVEN_REPO
@@ -243,8 +270,8 @@ if [ "$PUSH" = true ] ; then
 	git push origin repository
 	popd
 else 
-	echo " ===== Installing dataClay mf2c wrapper trunk ====="
-	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR
+	echo " ===== Installing dataClay mf2c wrapper $PROXY_TAG ====="
+	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG
 	echo " ===== NOT Pushing  dataClay maven mf2c wrapper into GitHub ====="
 fi
 

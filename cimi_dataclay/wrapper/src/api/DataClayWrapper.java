@@ -1,7 +1,6 @@
 package api;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public class DataClayWrapper {
 		final String leaderAddr = System.getenv("LEADER_DC");
 		if (leaderAddr != null && !leaderAddr.isEmpty()) {
 			// No discovery in this case, environment variable indicates leader for testing
-			String leaderIP = leaderAddr.split(":")[0];
+			final String leaderIP = leaderAddr.split(":")[0];
 			connectToLeaderDataClay(leaderIP); 
 		}
 		createLocalResourceCollections();
@@ -127,9 +126,8 @@ public class DataClayWrapper {
 		if (data == null)
 			throw new IllegalArgumentException("Argument 'data' is empty");
 
-		Map<String, Object> objectData = new JSONObject(data).toMap();
+		final Map<String, Object> objectData = new JSONObject(data).toMap();
 		//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-		objectData = preProcessSubObjects(type, objectData);
 		
 		CIMIResource obj = null;
 		switch (type) {
@@ -138,7 +136,7 @@ public class DataClayWrapper {
 		case "agent":
 			obj = new Agent(objectData);
 			store(obj, type, id);
-			String leaderAddr = (String) objectData.get("leaderIP");
+			final String leaderAddr = (String) objectData.get("leaderIP");
 			// Agent resource must be the first one created in the tests!!
 			if (leaderAddr != null && !leaderAddr.isEmpty()) {
 				connectToLeaderDataClay((String) objectData.get("leaderIP"));
@@ -245,13 +243,13 @@ public class DataClayWrapper {
 			// this executes in current dataClay (maybe children)
 			resources.put(id, obj);
 		}
-		} catch (Exception e) { 
+		} catch (final Exception e) { 
 			e.printStackTrace();
 			throw e;
 		}
 	}
 
-	private static void connectToLeaderDataClay(String leaderIP) throws DataClayFederationException {
+	private static void connectToLeaderDataClay(final String leaderIP) throws DataClayFederationException {
 		// Register the dataClay instance of my leader
 		leaderDC = ClientManagementLib.registerExternalDataClay(leaderIP, LOGICMODULE_PORT);
 		if (leaderDC == null) {
@@ -265,7 +263,7 @@ public class DataClayWrapper {
 			throws ObjectAlreadyExistsException, DataClayFederationException {
 		try {
 			obj.makePersistent(type + id); // type+id is the alias
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ObjectAlreadyExistsException(type, id);
 		}
 		if (leaderDC != null) {
@@ -273,7 +271,7 @@ public class DataClayWrapper {
 				obj.federate(leaderDC, false); // Non-recursive because each object is individually federated
 				// The whenFederated method in CIMIResource will be executed in the leader and
 				// put obj in its corresponding resource collection
-			} catch (Exception e) {
+			} catch (final Exception e) {
 				throw new DataClayFederationException("Could not federate object '" + id + "' of type '" + type + "'");
 			}
 		}
@@ -284,7 +282,7 @@ public class DataClayWrapper {
 			throws ObjectAlreadyExistsException {
 		try {
 			obj.makePersistent(type + id); // type+id is the alias
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ObjectAlreadyExistsException(type, id);
 		}
 	}
@@ -315,11 +313,10 @@ public class DataClayWrapper {
 	
 			//Throws TypeDoesNotExistException, ObjectDoesNotExistException
 			final CIMIResource obj = getResourceAsObject(type, id);
-			Map<String, Object> info = obj.getCIMIResourceData();
-			info = postProcessSubObjects(type, info);
+			final Map<String, Object> info = obj.getCIMIResourceData();
 			final JSONObject json = new JSONObject(info);
 			return json.toString();
-		} catch (Exception e) { 
+		} catch (final Exception e) { 
 			e.printStackTrace();
 			throw e;
 		}
@@ -415,14 +412,14 @@ public class DataClayWrapper {
 			default:
 				throw new TypeDoesNotExistException(type);
 			}
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ObjectDoesNotExistException(type, id);
 		}
 		final String colAlias = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 		try {
 			final ResourceCollection resources = ResourceCollection.getByAlias(colAlias);
 			resources.delete(id);
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ResourceCollectionDoesNotExistException(type);
 		}
 	}
@@ -454,15 +451,14 @@ public class DataClayWrapper {
 				throw new IllegalArgumentException("Argument 'data' is empty");
 	
 			final JSONObject json = new JSONObject(updatedData);
-			Map<String, Object> objectData = json.toMap();
+			final Map<String, Object> objectData = json.toMap();
 			//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-			objectData = preProcessSubObjects(type, objectData);
 		
 			switch (type) {
 			case "agent":
 				final Agent ag = Agent.getByAlias(type + id);
 				ag.updateAllData(objectData);
-				String updatedLeader = (String) objectData.get("leaderIP");
+				final String updatedLeader = (String) objectData.get("leaderIP");
 				if (updatedLeader !=null && !updatedLeader.isEmpty()) {
 					//TODO whatever we need to do, i.e 
 					//register new dC, federate all other resources?, unfederate previous??
@@ -564,9 +560,9 @@ public class DataClayWrapper {
 			default:
 				throw new TypeDoesNotExistException(type);
 			}
-		} catch (ObjectNotRegisteredException e) {
+		} catch (final ObjectNotRegisteredException e) {
 			throw new ObjectDoesNotExistException(type, id);
-		} catch (Exception e) { 
+		} catch (final Exception e) { 
 			e.printStackTrace();
 			throw e;
 		}
@@ -642,22 +638,20 @@ public class DataClayWrapper {
 			if (expressionWithAcl != null) {
 				final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
 				for (final CIMIResource obj : resultSet) {
-					Map<String, Object> info = obj.getCIMIResourceData();
-					info = postProcessSubObjects(type, info);
+					final Map<String, Object> info = obj.getCIMIResourceData();
 					final JSONObject json = new JSONObject(info);
 					result.add(json.toString());
 				}
 			} else {
 				final Map<String, CIMIResource> resources = collection.getResources();
 				for (final CIMIResource obj : resources.values()) {
-					Map<String, Object> info = obj.getCIMIResourceData();
-					info = postProcessSubObjects(type, info);
+					final Map<String, Object> info = obj.getCIMIResourceData();
 					final JSONObject json = new JSONObject(info);
 					result.add(json.toString());
 				}
 			}
 			return result;
-		} catch (Exception e) { 
+		} catch (final Exception e) { 
 			e.printStackTrace();
 			throw e;
 		}
@@ -692,13 +686,12 @@ public class DataClayWrapper {
 				resultSet.add((CIMIResource) curElement);
 			}
 			for (final CIMIResource obj : resultSet) {
-				Map<String, Object> info = obj.getCIMIResourceData();
-				info = postProcessSubObjects(type, info);
+				final Map<String, Object> info = obj.getCIMIResourceData();
 				final JSONObject json = new JSONObject(info);
 				result.add(json.toString());
 			}
 			return result;
-		} catch (Exception e) { 
+		} catch (final Exception e) { 
 			e.printStackTrace();
 			throw e;
 		}
@@ -820,105 +813,9 @@ public class DataClayWrapper {
 				throw new TypeDoesNotExistException(type);
 			}
 			return obj;
-		} catch (Exception e) {
+		} catch (final Exception e) {
 			throw new ObjectDoesNotExistException(type, id);
 		}
-	}
-
-	private static Map<String, Object> preProcessSubObjects(final String type, final Map<String, Object> objectData)
-	throws TypeDoesNotExistException, ObjectDoesNotExistException {
-		CIMIResource obj = null;
-		CIMIResource obj2 = null;
-		
-		switch (type) {
-		case "device-dynamic":
-			Map<String, Object> link = (Map<String, Object>) objectData.get("device");
-			String resourceId = (String) link.get("href");
-			String subType = resourceId.substring(0, resourceId.indexOf("/"));
-			String subId = resourceId.substring(resourceId.indexOf("/") + 1);
-			if (resourceId != null) {
-				//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-				obj = getResourceAsObject(subType, subId);
-				objectData.put("device", obj);
-			}
-			link = (Map<String, Object>) objectData.get("myLeaderID");
-			if (link != null) { // this field can be null if no leader is defined
-				resourceId = (String) link.get("href");
-				subType = resourceId.substring(0, resourceId.indexOf("/"));
-				subId = resourceId.substring(resourceId.indexOf("/") + 1);
-				if (resourceId != null) {
-					//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-					obj2 = getResourceAsObject(subType, subId);
-					objectData.put("myLeaderID", obj2);
-				}
-			}
-			break;
-		case "fog-area":
-			link = (Map<String, Object>) objectData.get("leaderDevice");
-			resourceId = (String) link.get("href");
-			subType = resourceId.substring(0, resourceId.indexOf("/"));
-			subId = resourceId.substring(resourceId.indexOf("/") + 1);
-			if (resourceId != null) {
-				//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-				obj = getResourceAsObject(subType, subId);
-				objectData.put("leaderDevice", obj);
-			}
-			break;
-		case "service-operation-report":
-			link = (Map<String, Object>) objectData.get("serviceInstance");
-			resourceId = (String) link.get("href");
-			subType = resourceId.substring(0, resourceId.indexOf("/"));
-			subId = resourceId.substring(resourceId.indexOf("/") + 1);
-			if (resourceId != null) {
-				//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-				obj = getResourceAsObject(subType, subId);
-				objectData.put("serviceInstance", obj);
-			}
-			break;
-		default:
-			break;
-		}
-		return objectData;
-	}
-
-	private static Map<String, Object> postProcessSubObjects(final String type, final Map<String, Object> objectData) {
-		CIMIResource obj;
-		switch (type) {
-		case "device-dynamic":
-			obj = (CIMIResource) objectData.get("device");
-			if (obj != null) {
-				final Map<String, String> link = new HashMap<>();
-				link.put("href", obj.get_id());
-				objectData.put("device", link);
-			}
-			obj = (CIMIResource) objectData.get("myLeaderID");
-			if (obj != null) {
-				final Map<String, String> link = new HashMap<>();
-				link.put("href", obj.get_id());
-				objectData.put("myLeaderID", link);
-			}
-			break;
-		case "fog-area":
-			obj = (CIMIResource) objectData.get("leaderDevice");
-			if (obj != null) {
-				final Map<String, String> link = new HashMap<>();
-				link.put("href", obj.get_id());
-				objectData.put("leaderDevice", link);
-			}
-			break;
-		case "service-operation-report":
-			obj = (CIMIResource) objectData.get("serviceInstance");
-			if (obj != null) {
-				final Map<String, String> link = new HashMap<>();
-				link.put("href", obj.get_id());
-				objectData.put("serviceInstance", link);
-			}
-			break;
-		default:
-			break;
-		}
-		return objectData;
-
 	}
 
 }

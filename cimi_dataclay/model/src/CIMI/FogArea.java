@@ -9,7 +9,7 @@ public class FogArea extends CIMIResource {
 	// type.
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
-	private Device leaderDevice;
+	private Map<String, Object> leaderDevice;
 	private Integer numDevices;
 	// private String ramUnits;
 	private Float ramTotal;
@@ -34,7 +34,7 @@ public class FogArea extends CIMIResource {
 	// Constructor
 	public FogArea(final Map<String, Object> objectData) {
 		super(objectData);
-		this.leaderDevice = (Device) objectData.get("leaderDevice");
+		this.leaderDevice = (Map<String, Object>) objectData.get("leaderDevice");
 		this.numDevices = (int) objectData.get("numDevices");
 		// this.ramUnits = (String) objectData.get("ramUnits");
 		final Double d = (Double) objectData.get("ramTotal");
@@ -59,7 +59,7 @@ public class FogArea extends CIMIResource {
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_leaderDevice(final Device leaderDevice) {
+	public void set_leaderDevice(final Map<String, Object> leaderDevice) {
 		this.leaderDevice = leaderDevice;
 	}
 
@@ -194,7 +194,7 @@ public class FogArea extends CIMIResource {
 	public void updateAllData(final Map<String, Object> data) {
 		super.setCIMIResourceData(data);
 		if (data.get("leaderDevice") != null)
-			set_leaderDevice((Device) data.get("leaderDevice"));
+			set_leaderDevice((Map<String, Object>) data.get("leaderDevice"));
 		if (data.get("numDevices") != null)
 			set_numDevices((int) data.get("numDevices"));
 		if (data.get("ramTotal") != null)

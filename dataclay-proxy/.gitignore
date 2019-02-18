@@ -17,3 +17,4 @@ bin
 stubs
 /.classpath
 /.project
+/project.clj.orig

@@ -4,14 +4,14 @@ import java.util.Map;
 
 public class ServiceOperationReport extends CIMIResource {
 
-	private ServiceInstance serviceInstance;
+	private Map<String, Object> serviceInstance;
 	private String operation;
 	private Float execution_time;
 
 	// Constructor
 	public ServiceOperationReport(final Map<String, Object> objectData) {
 		super(objectData);
-		this.serviceInstance = (ServiceInstance) objectData.get("serviceInstance");
+		this.serviceInstance = (Map<String, Object>) objectData.get("serviceInstance");
 
 		this.operation = (String) objectData.get("operation");
 		this.execution_time = getFloat(objectData.get("execution_time"));
@@ -19,7 +19,7 @@ public class ServiceOperationReport extends CIMIResource {
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_serviceInstance(final ServiceInstance serviceInstance) {
+	public void set_serviceInstance(final Map<String, Object> serviceInstance) {
 		this.serviceInstance = serviceInstance;
 	}
 
@@ -48,7 +48,7 @@ public class ServiceOperationReport extends CIMIResource {
 	public void updateAllData(final Map<String, Object> data) {
 		setCIMIResourceData(data);
 		if (data.get("serviceInstance") != null)
-			set_serviceInstance((ServiceInstance) data.get("serviceInstance"));
+			set_serviceInstance((Map<String, Object>) data.get("serviceInstance"));
 		if (data.get("operation") != null)
 			set_operation((String) data.get("operation"));
 		if (data.get("execution_time") != null)

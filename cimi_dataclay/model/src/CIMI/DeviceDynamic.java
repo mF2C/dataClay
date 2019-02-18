@@ -12,7 +12,7 @@ public class DeviceDynamic extends CIMIResource {
 	// type.
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
-	private Device device;
+	private Map<String, Object> device;
 	// private boolean isLeader;
 	// private String ramUnits;
 	@Replication.InMaster
@@ -49,12 +49,12 @@ public class DeviceDynamic extends CIMIResource {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<String> wifiThroughputInfo;
-	private Device myLeaderID;
+	private Map<String, Object> myLeaderID;
 
 	public DeviceDynamic(final Map<String, Object> objectData) {
 		super(objectData);
 
-		this.device = (Device) objectData.get("device");
+		this.device = (Map<String, Object>) objectData.get("device");
 		// this.isLeader = (boolean) objectData.get("isLeader");
 		// this.ramUnits = (String) objectData.get("ramUnits");
 		this.ramFree = getFloat(objectData.get("ramFree"));
@@ -69,11 +69,11 @@ public class DeviceDynamic extends CIMIResource {
 		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.ethernetThroughputInfo = (List<String>) objectData.get("ethernetThroughputInfo");
 		this.wifiThroughputInfo = (List<String>) objectData.get("wifiThroughputInfo");
-		this.myLeaderID = (Device) objectData.get("myLeaderID");
+		this.myLeaderID = (Map<String, Object>) objectData.get("myLeaderID");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_device(final Device device) {
+	public void set_device(final Map<String, Object> device) {
 		this.device = device;
 	}
 
@@ -133,7 +133,7 @@ public class DeviceDynamic extends CIMIResource {
 		this.wifiThroughputInfo = wifiThroughputInfo;
 	}
 
-	public void set_myLeaderID(final Device myLeaderID) {
+	public void set_myLeaderID(final Map<String, Object> myLeaderID) {
 		this.myLeaderID = myLeaderID;
 	}
 
@@ -177,7 +177,7 @@ public class DeviceDynamic extends CIMIResource {
 	public void updateAllData(final Map<String, Object> data) {
 		super.setCIMIResourceData(data);
 		if (data.get("device") != null)
-			set_device((Device) data.get("device"));
+			set_device((Map<String, Object>) data.get("device"));
 		// if (data.get("isLeader") != null) set_isLeader((boolean)
 		// data.get("isLeader"));
 		// if (data.get("ramUnits") != null) set_ramUnits((String)
@@ -205,7 +205,7 @@ public class DeviceDynamic extends CIMIResource {
 		if (data.get("wifiThroughputInfo") != null)
 			set_wifiThroughputInfo((List<String>) data.get("wifiThroughputInfo"));
 		if (data.get("myLeaderID") != null)
-			set_myLeaderID((Device) data.get("myLeaderID"));
+			set_myLeaderID((Map<String, Object>) data.get("myLeaderID"));
 	}
 
 }
