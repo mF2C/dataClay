@@ -11,7 +11,6 @@ import CIMI.Agreement;
 import CIMI.CIMIResource;
 import CIMI.Callback;
 import CIMI.CloudEntryPoint;
-import CIMI.Credential;
 import CIMI.Device;
 import CIMI.DeviceDynamic;
 import CIMI.Email;
@@ -21,12 +20,13 @@ import CIMI.ResourceCollection;
 import CIMI.Service;
 import CIMI.ServiceInstance;
 import CIMI.ServiceOperationReport;
-import CIMI.Session;
 import CIMI.SessionTemplate;
 import CIMI.SharingModel;
 import CIMI.SlaViolation;
 import CIMI.User;
 import CIMI.UserProfile;
+import CIMI.Session;
+import CIMI.Credential;
 import api.exceptions.DataClayFederationException;
 import api.exceptions.ObjectAlreadyExistsException;
 import api.exceptions.ObjectDoesNotExistException;
@@ -439,8 +439,9 @@ public class DataClayWrapper {
 	 * 			if argument 'type' is not a known resource type
 	 * @throws ObjectDoesNotExistException
 	 * 			if the object to be updated cannot be found
+	 * @return JSON representation of dataClay object modified
 	 */
-	public static void update(final String type, final String id, final String updatedData)
+	public static String update(final String type, final String id, final String updatedData)
 			throws IllegalArgumentException, TypeDoesNotExistException, ObjectDoesNotExistException {
 		try {
 			if (type == null)
@@ -453,7 +454,7 @@ public class DataClayWrapper {
 			final JSONObject json = new JSONObject(updatedData);
 			final Map<String, Object> objectData = json.toMap();
 			//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-		
+
 			switch (type) {
 			case "agent":
 				final Agent ag = Agent.getByAlias(type + id);
@@ -560,6 +561,8 @@ public class DataClayWrapper {
 			default:
 				throw new TypeDoesNotExistException(type);
 			}
+			
+			return read(type, id);
 		} catch (final ObjectNotRegisteredException e) {
 			throw new ObjectDoesNotExistException(type, id);
 		} catch (final Exception e) { 
