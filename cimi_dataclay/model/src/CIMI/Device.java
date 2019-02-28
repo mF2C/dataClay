@@ -26,16 +26,16 @@ public class Device extends CIMIResource {
 	private String actuatorInfo;
 	private String networkingStandards;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String ethernetAddress;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String wifiAddress;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String hwloc;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String cpuinfo;
 
 	public Device(final Map<String, Object> objectData) {
@@ -57,6 +57,7 @@ public class Device extends CIMIResource {
 		this.ethernetAddress = (String) objectData.get("ethernetAddress");
 		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.hwloc = (String) objectData.get("hwloc");
+		this.cpuinfo = (String) objectData.get("cpuinfo");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")

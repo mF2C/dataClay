@@ -10,6 +10,7 @@ public class Agent extends CIMIResource {
 	private String deviceID;
 	private String leaderID;
 	private String leaderIP;
+	private String backupIP;
 	private Boolean authenticated;
 	private Boolean connected;
 	
@@ -18,6 +19,7 @@ public class Agent extends CIMIResource {
 		this.deviceID = (String) objectData.get("deviceID");
 		this.leaderID = (String) objectData.get("leaderID");
 		this.leaderIP = (String) objectData.get("leaderIP");
+		this.backupIP = (String) objectData.get("backupIP");
 		this.authenticated = (Boolean) objectData.get("authenticated");
 		this.connected = (Boolean) objectData.get("connected");
 	}
@@ -34,6 +36,21 @@ public class Agent extends CIMIResource {
 	public void set_leaderIP(final String leaderIP) {
 		this.leaderIP = leaderIP;
 	}
+	
+	
+	public String get_leaderIP() {
+		return this.leaderIP;
+	}
+	
+	public void set_backupIP(final String backupIP) {
+		this.backupIP = backupIP;
+	}
+	
+	
+	public String get_backupIP() {
+		return this.backupIP;
+	}
+	
 	
 	public void set_authenticated(final Boolean authenticated) {
 		this.authenticated = authenticated;

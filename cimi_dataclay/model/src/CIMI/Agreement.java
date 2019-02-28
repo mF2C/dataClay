@@ -12,10 +12,10 @@ public class Agreement extends CIMIResource {
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String state; // "started", "stopped" or "terminated"
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Map<String, Object> details;
 	// details is a nested field
 	// id: String
@@ -28,7 +28,7 @@ public class Agreement extends CIMIResource {
 	// guarantees: List<Map<String, String>> - another nested field: name,
 	// constraint
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private Map<String, Object> assessment; // opt
 	// assessment is a nested field
 	// first_execution: String

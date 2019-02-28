@@ -11,6 +11,7 @@ import CIMI.Agreement;
 import CIMI.CIMIResource;
 import CIMI.Callback;
 import CIMI.CloudEntryPoint;
+import CIMI.Credential;
 import CIMI.Device;
 import CIMI.DeviceDynamic;
 import CIMI.Email;
@@ -20,13 +21,12 @@ import CIMI.ResourceCollection;
 import CIMI.Service;
 import CIMI.ServiceInstance;
 import CIMI.ServiceOperationReport;
+import CIMI.Session;
 import CIMI.SessionTemplate;
 import CIMI.SharingModel;
 import CIMI.SlaViolation;
 import CIMI.User;
 import CIMI.UserProfile;
-import CIMI.Session;
-import CIMI.Credential;
 import api.exceptions.DataClayFederationException;
 import api.exceptions.ObjectAlreadyExistsException;
 import api.exceptions.ObjectDoesNotExistException;
@@ -41,6 +41,9 @@ public class DataClayWrapper {
 	/** Leader DataClay ID, if present. */
 	public static DataClayInstanceID leaderDC = null;
 
+	/** Backup DataClay ID, if present. */
+	public static DataClayInstanceID backupDC = null;
+	
 	/** All CIMI resource types in model. */
 	public static String[] resourceTypes = { "agent", "agreement", "device", "device-dynamic", "fog-area", "service",
 			"service-instance", "sharing-model", "sla-violation", "user-profile", "service-operation-report",
@@ -60,11 +63,27 @@ public class DataClayWrapper {
 	 *             Error while connecting to the dataClay in the leader
 	 */
 	public static void init() throws DataClayFederationException {
-		final String leaderAddr = System.getenv("LEADER_DC");
+		String leaderAddr = System.getenv("LEADER_DC");
 		if (leaderAddr != null && !leaderAddr.isEmpty()) {
 			// No discovery in this case, environment variable indicates leader for testing
-			final String leaderIP = leaderAddr.split(":")[0];
-			connectToLeaderDataClay(leaderIP); 
+			leaderDC = connectToExternalDataClay(leaderAddr);
+			System.out.println("-- My dataClay leader is: " + leaderDC);
+		}
+		// check that there is an agent with leader defined 
+		try {
+			final Agent curAgent = Agent.getByAlias("agent");
+			leaderAddr = curAgent.get_leaderIP();
+			if (leaderAddr != null && !leaderAddr.isEmpty()) {
+				leaderDC = connectToExternalDataClay(leaderAddr); 
+				System.out.println("-- My dataClay leader is: " + leaderDC);
+			}
+			final String backupAddr = curAgent.get_backupIP();
+			if (backupAddr != null && !backupAddr.isEmpty()) {
+				backupDC = connectToExternalDataClay(backupAddr); 
+				System.out.println("-- My dataClay backup is: " + backupDC);
+			}
+		} catch (final Exception e) { 
+			//ignore, agent not defined yet
 		}
 		createLocalResourceCollections();
 	}
@@ -135,11 +154,18 @@ public class DataClayWrapper {
 		// mF2C resources
 		case "agent":
 			obj = new Agent(objectData);
-			store(obj, type, id);
+			store(obj, type, ""); //alias is just "agent"
 			final String leaderAddr = (String) objectData.get("leaderIP");
 			// Agent resource must be the first one created in the tests!!
 			if (leaderAddr != null && !leaderAddr.isEmpty()) {
-				connectToLeaderDataClay((String) objectData.get("leaderIP"));
+				leaderDC = connectToExternalDataClay((String) objectData.get("leaderIP"));
+				System.out.println("-- My dataClay leader is: " + leaderDC);
+			}
+			final String backupAddr = (String) objectData.get("backupIP");
+			// Agent resource must be the first one created in the tests!!
+			if (backupAddr != null && !backupAddr.isEmpty()) {
+				backupDC = connectToExternalDataClay((String) objectData.get("backupIP"));
+				System.out.println("-- My dataClay backup is: " + backupDC);
 			}
 			break;
 		case "agreement":
@@ -249,14 +275,20 @@ public class DataClayWrapper {
 		}
 	}
 
-	private static void connectToLeaderDataClay(final String leaderIP) throws DataClayFederationException {
+	private static DataClayInstanceID connectToExternalDataClay(final String theip) throws DataClayFederationException {
 		// Register the dataClay instance of my leader
-		leaderDC = ClientManagementLib.registerExternalDataClay(leaderIP, LOGICMODULE_PORT);
-		if (leaderDC == null) {
+		String ip = theip;
+		int port = LOGICMODULE_PORT;
+		if (theip.contains(":")) { 
+			final String[] addr = theip.split(":");
+			ip = addr[0];
+			port = Integer.valueOf(addr[1]);
+		} 
+		final DataClayInstanceID id = ClientManagementLib.registerExternalDataClay(ip, port);
+		if (id == null) {
 			throw new DataClayFederationException("Could not connect to the leader dataClay");
-		} else {
-			System.out.println("-- My dataClay leader is: " + leaderDC);
 		}
+		return id;
 	}
 
 	private static void storeAndFederate(final CIMIResource obj, final String type, final String id) 
@@ -271,6 +303,14 @@ public class DataClayWrapper {
 				obj.federate(leaderDC, false); // Non-recursive because each object is individually federated
 				// The whenFederated method in CIMIResource will be executed in the leader and
 				// put obj in its corresponding resource collection
+			} catch (final Exception e) {
+				throw new DataClayFederationException("Could not federate object '" + id + "' of type '" + type + "'");
+			}
+		}
+		
+		if (backupDC != null) {
+			try {
+				obj.federate(backupDC, false);
 			} catch (final Exception e) {
 				throw new DataClayFederationException("Could not federate object '" + id + "' of type '" + type + "'");
 			}

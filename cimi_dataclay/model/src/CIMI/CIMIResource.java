@@ -15,7 +15,7 @@ public abstract class CIMIResource extends DataClayObject {
 	private String resourceURI;
 	private String created;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String updated;
 	private Map<String, Object> acl;
 	// owner: Map
@@ -148,16 +148,55 @@ public abstract class CIMIResource extends DataClayObject {
 	}
 
 	@Override
+	public void whenUnfederated() {
+		// when the object arrives to current dataClay, it is automatically added to the
+		// corresponding resource collection.
+
+		// first part of the class name, in execution runtime, is the namespace
+		final String completeClassName = this.getClass().getName();
+		final String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
+		final ResourceCollection resources = (ResourceCollection) ResourceCollection
+				.getByAlias(className + "Collection");
+		resources.delete(this.id);
+	}
+	
+	@Override
 	public void whenFederated() {
 		// when the object arrives to current dataClay, it is automatically added to the
 		// corresponding resource collection.
-		
+
 		// first part of the class name, in execution runtime, is the namespace
 		final String completeClassName = this.getClass().getName();
-		String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
+		final String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection
 				.getByAlias(className + "Collection");
 		resources.put(this.id, this);
+
+		// PROPAGATE
+		final Agent agent = Agent.getByAlias("agent");
+			
+		// to leader
+		propagate(agent.get_leaderIP());
+
+		// to backup
+		propagate(agent.get_backupIP());
+
+
+	}
+
+	private void propagate(final String ip) { 
+		final String addr = ip;
+		if (addr != null && !addr.isEmpty()) {
+			System.out.println("Refederating to " + addr);
+			String addrIP = addr;
+			int port = 1034;
+			if (addrIP.contains(":")) { 
+				final String[] addrSplit = addr.split(":");
+				addrIP = addrSplit[0];
+				port = Integer.valueOf(addrSplit[1]);
+			} 
+			this.federate(super.getExternalDataClayID(addrIP, port));
+		}
 	}
 
 }

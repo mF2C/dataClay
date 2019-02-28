@@ -20,10 +20,10 @@ public class ServiceInstance extends CIMIResource {
 	private String service_type;
 	private String agreement;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String status;
 	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToSlaves", clazz = "dataclay.util.replication.SequentialConsistency")
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<Map<String, Object>> agents;
 	// agents is a collection of "nested" info:
 	// agent: String (resource link)
