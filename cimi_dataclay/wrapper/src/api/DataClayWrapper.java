@@ -17,6 +17,7 @@ import CIMI.DeviceDynamic;
 import CIMI.Email;
 import CIMI.Event;
 import CIMI.FogArea;
+import CIMI.QosModel;
 import CIMI.ResourceCollection;
 import CIMI.Service;
 import CIMI.ServiceInstance;
@@ -47,7 +48,8 @@ public class DataClayWrapper {
 	/** All CIMI resource types in model. */
 	public static String[] resourceTypes = { "agent", "agreement", "device", "device-dynamic", "fog-area", "service",
 			"service-instance", "sharing-model", "sla-violation", "user-profile", "service-operation-report",
-			"cloud-entry-point", "email", "user", "credential", "session", "session-template", "callback", "event" };
+			"cloud-entry-point", "email", "user", "credential", "session", "session-template", "callback", 
+			"event", "qos-model" };
 
 	/** Suffix for aliases of Resource collections. */
 	private static final String RESOURCE_COLLECTION_ALIAS_SUFFIX = "Collection";
@@ -239,6 +241,10 @@ public class DataClayWrapper {
 			break;
 		case "event":
 			obj = new Event(objectData);
+			store(obj, type, id);
+			break;
+		case "qos-model":
+			obj = new QosModel(objectData);
 			store(obj, type, id);
 			break;
 		/*
@@ -438,7 +444,10 @@ public class DataClayWrapper {
 				Callback.deleteAlias(type + id);
 				break;
 			case "event":
-				Callback.deleteAlias(type + id);
+				Event.deleteAlias(type + id);
+				break;
+			case "qos-model":
+				QosModel.deleteAlias(type + id);
 				break;
 			/*
 			 * case "user-template": UserTemplate.deleteAlias(type+id); break; case
@@ -580,6 +589,10 @@ public class DataClayWrapper {
 				final Event e = Event.getByAlias(type + id);
 				e.updateAllData(objectData);
 				break;
+			case "qos-model":
+				final QosModel q = QosModel.getByAlias(type + id);
+				q.updateAllData(objectData);
+				break;
 			/*
 			 * case "user-template": // final UserTemplate ut = (UserTemplate)
 			 * UserTemplate.getByAlias(type+id); // ut.updateAllData(objectData); break;
@@ -670,7 +683,8 @@ public class DataClayWrapper {
 				}
 			}
 			final String aliasOfCollection = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
-			// System.out.println("Expression: " + expressionWithAcl);
+			System.out.println("Alias: " + aliasOfCollection);
+			System.out.println("Expression: " + expressionWithAcl);
 			ResourceCollection collection = null;
 			try {
 				collection = ResourceCollection.getByAlias(aliasOfCollection);
@@ -839,6 +853,9 @@ public class DataClayWrapper {
 				break;
 			case "event":
 				obj = Event.getByAlias(type + id);
+				break;
+			case "qos-model":
+				obj = QosModel.getByAlias(type + id);
 				break;
 			/*
 			 * case "user-template": obj = (UserTemplate) UserTemplate.getByAlias(type+id);
