@@ -75,7 +75,7 @@
       (->> data
            json/edn->json
            (wrapper/update type uuid)
-           r/wrapped-response
+           json/json->edn
            r/wrapped-response)                              ;; FIXME: Is this doubling correct?
 
       (catch Exception ex
