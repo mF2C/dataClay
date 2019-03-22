@@ -93,12 +93,9 @@
   ;; testing 'success'
   (with-redefs [wrapper/update (fn [type uuid data] data)]
     (let [{:keys [status body]} (t/edit {:id "resource/123", :new "item"} nil)
-          dataclay-response (edn/read-string body)
-          updated-status (:status dataclay-response)
-          updated-resource (edn/read-string (:body dataclay-response))]
+          dataclay-response (edn/read-string body)]
       (is (= 200 status))
-      (is (= 200 updated-status))
-      (is (= {:id "resource/123", :new "item"} (json/json->edn updated-resource)))))
+      (is (= {:id "resource/123", :new "item"} (json/json->edn dataclay-response)))))
 
   ;; one representative exception to test, others tested in lower-level method
   (with-redefs [wrapper/update (fn [type uuid data] (throw (ObjectDoesNotExistException. "type" "id")))]
