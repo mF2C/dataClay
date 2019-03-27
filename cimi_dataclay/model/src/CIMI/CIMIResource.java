@@ -177,11 +177,7 @@ public abstract class CIMIResource extends DataClayObject {
 			
 		// to leader
 		propagate(agent.get_leader_ip());
-
-		// to backup
-		propagate(agent.get_backup_ip());
-
-
+		
 	}
 
 	private void propagate(final String ip) { 
