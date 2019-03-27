@@ -8,11 +8,11 @@ public class Agent extends CIMIResource {
 	// type.
 	// If it contains nested info, it is implemented as a Map<String, Object>
 	// where String is the field name, and Object is the value
-	private String deviceID;
-	private String deviceIP;
-	private String leaderID;
-	private String leaderIP;
-	private String backupIP;
+	private String device_id;
+	private String device_ip;
+	private String leader_id;
+	private String leader_ip;
+	private String backup_ip;
 	private Boolean authenticated;
 	private Boolean connected;
 	private Boolean isLeader;
@@ -20,11 +20,11 @@ public class Agent extends CIMIResource {
 	
 	public Agent(final Map<String, Object> objectData) {
 		super(objectData);
-		this.deviceID = (String) objectData.get("deviceID");
-		this.deviceIP = (String) objectData.get("deviceIP");
-		this.leaderID = (String) objectData.get("leaderID");
-		this.leaderIP = (String) objectData.get("leaderIP");
-		this.backupIP = (String) objectData.get("backupIP");
+		this.device_id = (String) objectData.get("device_id");
+		this.device_ip = (String) objectData.get("device_ip");
+		this.leader_id = (String) objectData.get("leader_id");
+		this.leader_ip = (String) objectData.get("leader_ip");
+		this.backup_ip = (String) objectData.get("backup_ip");
 		this.authenticated = (Boolean) objectData.get("authenticated");
 		this.connected = (Boolean) objectData.get("connected");
 		this.isLeader = (Boolean) objectData.get("isLeader");
@@ -32,34 +32,34 @@ public class Agent extends CIMIResource {
 	}
 	
 	// Setters (a setter for each property called "set_propertyname")
-	public void set_deviceID(final String deviceID) {
-		this.deviceID = deviceID;
+	public void set_device_id(final String device_id) {
+		this.device_id = device_id;
 	}
 	
-	public void set_deviceIP(final String deviceIP) {
-		this.deviceIP = deviceIP;
+	public void set_device_ip(final String device_ip) {
+		this.device_ip = device_ip;
 	}
 	
-	public void set_leaderID(final String leaderID) {
-		this.leaderID = leaderID;
+	public void set_leader_id(final String leader_id) {
+		this.leader_id = leader_id;
 	}
 	
-	public void set_leaderIP(final String leaderIP) {
-		this.leaderIP = leaderIP;
-	}
-	
-	
-	public String get_leaderIP() {
-		return this.leaderIP;
-	}
-	
-	public void set_backupIP(final String backupIP) {
-		this.backupIP = backupIP;
+	public void set_leader_ip(final String leader_ip) {
+		this.leader_ip = leader_ip;
 	}
 	
 	
-	public String get_backupIP() {
-		return this.backupIP;
+	public String get_leader_ip() {
+		return this.leader_ip;
+	}
+	
+	public void set_backup_ip(final String backup_ip) {
+		this.backup_ip = backup_ip;
+	}
+	
+	
+	public String get_backup_ip() {
+		return this.backup_ip;
 	}
 	
 	
@@ -86,14 +86,14 @@ public class Agent extends CIMIResource {
 	@Override
 	public Map<String, Object> getCIMIResourceData() {
 		final Map<String, Object> info = super.getCIMIResourceData();
-		if (this.deviceID != null)
-			info.put("deviceID", this.deviceID);
-		if (this.deviceIP != null)
-			info.put("deviceIP", this.deviceIP);
-		if (this.leaderID != null)
-			info.put("leaderID", this.leaderID);
-		if (this.leaderIP != null)
-			info.put("leaderAddress", this.leaderIP);
+		if (this.device_id != null)
+			info.put("device_id", this.device_id);
+		if (this.device_ip != null)
+			info.put("device_ip", this.device_ip);
+		if (this.leader_id != null)
+			info.put("leader_id", this.leader_id);
+		if (this.leader_ip != null)
+			info.put("leaderAddress", this.leader_ip);
 		if (this.authenticated != null)
 			info.put("authenticated", this.authenticated);
 		if (this.connected != null)
@@ -107,20 +107,20 @@ public class Agent extends CIMIResource {
 	
 	public void updateAllData(final Map<String, Object> data) {
 		super.setCIMIResourceData(data);
-		if (data.get("deviceID") != null)
-			set_deviceID((String) data.get("deviceID"));
-		if (data.get("leaderID") != null)
-			set_leaderID((String) data.get("leaderID"));
-		if (data.get("leaderIP") != null)
-			set_leaderIP((String) data.get("leaderIP"));
+		if (data.get("device_id") != null)
+			set_device_id((String) data.get("device_id"));
+		if (data.get("leader_id") != null)
+			set_leader_id((String) data.get("leader_id"));
+		if (data.get("leader_ip") != null)
+			set_leader_ip((String) data.get("leader_ip"));
 		if (data.get("authenticated") != null)
 			set_authenticated((Boolean) data.get("authenticated"));
 		if (data.get("connected") != null)
 			set_connected((Boolean) data.get("connected"));
 		if (data.get("isLeader") != null)
 			set_isLeader((Boolean) data.get("isLeader"));
-		if (data.get("deviceIP") != null)
-			set_deviceIP((String) data.get("deviceIP"));
+		if (data.get("device_ip") != null)
+			set_device_ip((String) data.get("device_ip"));
 		if (data.get("childrenIPs") != null)
 			set_childrenIPs((ArrayList<String>) data.get("childrenIPs"));
 	}	
