@@ -75,6 +75,7 @@
       (->> data
            json/edn->json
            (wrapper/update type uuid)
+           response/json-response
            r/wrapped-response)
 
       (catch Exception ex
