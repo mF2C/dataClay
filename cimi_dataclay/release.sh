@@ -45,6 +45,7 @@ function docker-push-mf2c {
 function maven_install_wrapper { 
 	JARPATH=$1
 	VERSION=$2
+	rm -rf $SCRIPTDIR/wrapper/target
 	if [ -f $SCRIPTDIR/wrapper/pom.xml.orig ]; then
 		mv $SCRIPTDIR/wrapper/pom.xml.orig $SCRIPTDIR/wrapper/pom.xml #sanity check
 	fi

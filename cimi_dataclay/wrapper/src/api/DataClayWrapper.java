@@ -74,12 +74,12 @@ public class DataClayWrapper {
 		// check that there is an agent with leader defined 
 		try {
 			final Agent curAgent = Agent.getByAlias("agent");
-			leaderAddr = curAgent.get_leaderIP();
+			leaderAddr = curAgent.get_leader_ip();
 			if (leaderAddr != null && !leaderAddr.isEmpty()) {
 				leaderDC = connectToExternalDataClay(leaderAddr); 
 				System.out.println("-- My dataClay leader is: " + leaderDC);
 			}
-			final String backupAddr = curAgent.get_backupIP();
+			final String backupAddr = curAgent.get_backup_ip();
 			if (backupAddr != null && !backupAddr.isEmpty()) {
 				backupDC = connectToExternalDataClay(backupAddr); 
 				System.out.println("-- My dataClay backup is: " + backupDC);
@@ -683,10 +683,10 @@ public class DataClayWrapper {
 				}
 			}
 			final String aliasOfCollection = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
-			System.out.println("Alias: " + aliasOfCollection);
-			System.out.println("Expression: " + expressionWithAcl);
+			System.out.println("[Query] Collection alias: " + aliasOfCollection);
+			System.out.println("[Query] Expression: " + expressionWithAcl);
 			ResourceCollection collection = null;
-			try {
+			try { 
 				collection = ResourceCollection.getByAlias(aliasOfCollection);
 			} catch (final ObjectNotRegisteredException e) {
 				throw new ResourceCollectionDoesNotExistException(type);
