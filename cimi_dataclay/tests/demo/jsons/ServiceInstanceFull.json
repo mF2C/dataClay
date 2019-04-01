@@ -1,0 +1,32 @@
+[{
+    "id": "service-instance/service-instance",
+    "resourceURI": "ServiceInstanceTypeURI",
+    "created": "201804181541",
+    "updated": "201804181541",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+  "user": "User",
+  "service": "Service",
+  "agreement": "Agreement",
+  "status": "Status",
+  "agents": [{
+                "agent_param": "not-defined",
+                "num_cpus": 1,
+                "master_compss": true,
+                "ports": [46100, 46101, 46102, 46103],
+                "agent": {
+                        "href": "agent/default-value"
+                },
+                "status": "started",
+                "url": "192.168.252.41",
+                "allow": true,
+                "container_id": "370c68ce8d6e496a386141192163b65f702a78096349f13a2fc8126203b1af6d"
+        }]
+}]

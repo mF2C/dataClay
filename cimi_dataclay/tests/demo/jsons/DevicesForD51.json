@@ -1,0 +1,43 @@
+[{
+    "id": "device/12345",
+    "resourceURI": "DeviceTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+      "os": "Linux",
+      "arch": "ARM",
+      "memory": 4,
+      "storage": 10,
+      "physicalCores": 8,
+      "logicalCores": 16
+},
+{
+    "id": "device/54321",
+    "resourceURI": "DeviceTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User2",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+      "os": "Linux",
+      "arch": "ARM",
+      "memory": 1,
+      "storage": 2,
+      "physicalCores": 4,
+      "logicalCores": 8
+}
+]

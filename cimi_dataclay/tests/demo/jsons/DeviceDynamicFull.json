@@ -1,0 +1,30 @@
+[{
+    "id": "device-dynamic/device-dynamic",
+    "name":"DD Name",
+    "description": "DD Description",
+    "resourceURI": "DeviceDynamicTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+    "device": {"href" : "device/device"},
+    "ramFree": 0.4,
+    "ramFreePercent": 100.0,
+    "storageFree": 9001000.1,
+    "storageFreePercent": 50.2,
+    "cpuFreePercent": 25.0,
+    "powerRemainingStatus": "Power remaining status",
+    "powerRemainingStatusSeconds": "Power remaining status seconds",
+	"ethernetAddress": "Ethernet addr",
+	"wifiAddress": "Wifi addr",
+	"ethernetThroughputInfo": ["Ethernet", "throughput", "info"],
+	"wifiThroughputInfo": ["Wifi throughput info"],
+	"myLeaderID": {"href" : "device/device"}
+ }]

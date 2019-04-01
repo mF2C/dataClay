@@ -5,7 +5,7 @@ import java.util.Map;
 public class ServiceOperationReport extends CIMIResource {
 
 	private String compute_node_id;
-	private String requesting_application_id;
+	private Map<String, Object> requesting_application_id;
 	private String operation_name;
 	private String operation_id;
 	private String start_time;
@@ -18,7 +18,7 @@ public class ServiceOperationReport extends CIMIResource {
 		super(objectData);
 
 		this.compute_node_id = (String) objectData.get("compute_node_id");
-		this.requesting_application_id = (String) objectData.get("requesting_application_id");
+		this.requesting_application_id = (Map<String, Object>) objectData.get("requesting_application_id");
 
 		this.operation_name = (String) objectData.get("operation_name");
 		this.operation_id = (String) objectData.get("operation_id");
@@ -35,7 +35,7 @@ public class ServiceOperationReport extends CIMIResource {
 		this.compute_node_id = compute_node_id;
 	}
 	
-	public void set_requesting_application_id(final String requesting_application_id) {
+	public void set_requesting_application_id(final Map<String, Object> requesting_application_id) {
 		this.requesting_application_id = requesting_application_id;
 	}
 	
@@ -92,7 +92,7 @@ public class ServiceOperationReport extends CIMIResource {
 		if (data.get("compute_node_id") != null)
 			set_compute_node_id((String)data.get("compute_node_id"));
 		if (data.get("requesting_application_id") != null)
-			set_requesting_application_id((String)data.get("requesting_application_id"));
+			set_requesting_application_id((Map<String, Object>)data.get("requesting_application_id"));
 		if (data.get("operation_name") != null)
 			set_operation_name((String) data.get("operation_name"));
 		if (data.get("operation_id") != null)

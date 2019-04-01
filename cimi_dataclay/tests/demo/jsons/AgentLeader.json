@@ -1,0 +1,32 @@
+[{
+    "id" : "agent/agent",
+    "name" : "Leader",
+    "description": "This is the leader agent for the federation test",
+    "resourceURI": "AgentTypeURI",
+    "created" : "2018-05-22T11:34:56.959Z",
+    "updated" : "2018-05-22T15:25:02.057Z",
+    "acl" : {
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
+      "rules" : [ {
+        "principal" : "USER",
+        "right" : "MODIFY",
+        "type" : "ROLE"
+      }, {
+        "principal" : "ADMIN",
+        "right" : "ALL",
+        "type" : "ROLE"
+      } ]
+    },
+    "device_id" : "device/0000",
+    "leader_id": "",
+    "leader_ip": "leader_ip_here",
+    "backup_ip": "backup_ip_here",
+    "authenticated": true,
+    "connected": true, 
+    "device_ip" : "",
+    "isLeader": true,
+    "childrenIPs": [ "" ]
+}]

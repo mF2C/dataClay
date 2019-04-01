@@ -1,0 +1,35 @@
+[{
+    "id": "device/device",
+    "name": "Device Name",
+    "description": "Device Description",
+    "resourceURI": "DeviceTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+     },
+     "deviceID": "myDeviceID",
+     "isLeader": true,
+     "os": "Linux",
+     "arch": "ARM",
+     "cpuManufacturer": "Manufacturer",
+     "physicalCores": 4,
+     "logicalCores": 24,
+     "cpuClockSpeed": "Clock speed",
+     "memory": 1.2,
+     "storage": 3.4,
+     "powerPlugged": false,
+     "agentType": "Agent type",
+     "actuatorInfo": "Actuator info",
+     "networkingStandards": "Networking standards",
+     "ethernetAddress": "Ethernet addr",
+     "wifiAddress": "Wifi addr",
+     "hwloc": "Hwloc",
+     "cpuinfo": "CPU info"
+ }]

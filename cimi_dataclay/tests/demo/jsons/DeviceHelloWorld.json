@@ -1,0 +1,19 @@
+[{
+    "id": "device/12345",
+    "deviceID": "123",
+    "isLeader": false,
+    "os": "Linux-4.13.0-38-generic-x86_64-with-debian-8.10",
+    "arch": "x86_64",
+    "cpuManufacturer": "Intel(R) Core(TM) i7-8550U CPU @ 1.80GHz",
+    "physicalCores": 4,
+    "logicalCores": 8,
+    "cpuClockSpeed": "1.8000 GHz",
+    "memory": 7874.2109375,
+    "storage": 234549.5078125,
+    "powerPlugged": true,
+    "networkingStandards": "['eth0', 'lo']",
+    "ethernetAddress": "[snic(family=<AddressFamily.AF_INET: 2>, address='192.168.1.2', netmask='255.255.255.0', broadcast='192.168.1.255', ptp=None), snic(family=<AddressFamily.AF_PACKET: 17>, address='02:42:ac:11:00:03', netmask=None, broadcast='ff:ff:ff:ff:ff:ff', ptp=None)]",
+    "wifiAddress": "Empty",
+    "agentType": "normal",
+    "actuatorInfo": "test"
+}]

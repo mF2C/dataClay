@@ -1,0 +1,216 @@
+version: '2'
+
+services:
+  ####################################
+  #  LOGIC MODULE ON DC 1            #
+  ####################################
+
+  logicmodule1:
+    image: mf2c/dataclay-logicmodule:latest
+    ports:
+      - "1034:1034"
+      # Debugging port
+      - 18000:8000
+    env_file:
+      - ./env/LM.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+      - POSTGRES_HOST=lmpostgres1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n",
+              "dataclay.logic.server.LogicModuleSrv"]
+
+  ####################################
+  #  JAVA DATA SERVICES ON DC 1      #
+  ####################################
+
+  ds1java1:
+    image: mf2c/dataclay-dsjava:latest
+    ports:
+      # Debugging port
+      - 28000:8000
+    depends_on:
+      - "logicmodule1"
+    env_file:
+      - ./env/DS.environment
+      - ./env/LM.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n",
+              "dataclay.dataservice.server.DataServiceSrv"]
+
+  #############################################
+  #   LOGIC MODULE ON DC 2                    #
+  #############################################
+
+  logicmodule2:
+    image: mf2c/dataclay-logicmodule:latest
+    ports:
+      - "2034:2034"
+    env_file:
+      - ./env/LM2.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8100,server=y,suspend=n",
+              "dataclay.logic.server.LogicModuleSrv"]
+
+  ####################################
+  #    JAVA DATA SERVICES ON DC 2    #
+  ####################################
+
+  ds1java2:
+    image: mf2c/dataclay-dsjava:latest
+    depends_on:
+      - "logicmodule2"
+    env_file:
+      - ./env/DS.environment
+      - ./env/LM2.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8100,server=y,suspend=n",
+              "dataclay.dataservice.server.DataServiceSrv"]
+
+
+  ####################################
+  #  LOGIC MODULE ON DC 3            #
+  ####################################
+
+  logicmodule3:
+    image: mf2c/dataclay-logicmodule:latest
+    ports:
+      - "4034:4034"
+    env_file:
+      - ./env/LM3.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.logic.server.LogicModuleSrv"]
+
+  ####################################
+  #  JAVA DATA SERVICES ON DC 3      #
+  ####################################
+
+  ds1java3:
+    image: mf2c/dataclay-dsjava:latest
+    depends_on:
+      - "logicmodule3"
+    env_file:
+      - ./env/DS.environment
+      - ./env/LM3.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.dataservice.server.DataServiceSrv"]
+              
+   ####################################
+  #  LOGIC MODULE ON BACKUP        #
+  ####################################
+
+  logicmodule4:
+    image: mf2c/dataclay-logicmodule:latest
+    ports:
+      - "5034:5034"
+    env_file:
+      - ./env/LM4.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.logic.server.LogicModuleSrv"]
+
+  ####################################
+  #  JAVA DATA SERVICES ON BACKUP      #
+  ####################################
+
+  ds1java4:
+    image: mf2c/dataclay-dsjava:latest
+    depends_on:
+      - "logicmodule4"
+    env_file:
+      - ./env/DS.environment
+      - ./env/LM4.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.dataservice.server.DataServiceSrv"]
+
+  ####################################
+  #  GRANDPARENT LOGIC MODULE        #
+  ####################################
+
+  logicmodule5:
+    image: mf2c/dataclay-logicmodule:latest
+    ports:
+      - "6034:6034"
+    env_file:
+      - ./env/LM5.environment
+    environment:
+      - DATACLAY_ADMIN_USER=admin
+      - DATACLAY_ADMIN_PASSWORD=admin
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.logic.server.LogicModuleSrv"]
+
+  ####################################
+  #  GRANDPARENT JAVA DATA SERVICES      #
+  ####################################
+
+  ds1java5:
+    image: mf2c/dataclay-dsjava:latest
+    depends_on:
+      - "logicmodule5"
+    env_file:
+      - ./env/DS.environment
+      - ./env/LM5.environment
+    environment:
+      - DATASERVICE_NAME=DS1
+    volumes:
+      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+
+    command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
+              "-agentlib:jdwp=transport=dt_socket,address=8400,server=y,suspend=n",
+              "dataclay.dataservice.server.DataServiceSrv"]
+              
+ 

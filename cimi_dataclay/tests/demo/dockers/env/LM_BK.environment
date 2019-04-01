@@ -1,0 +1,14 @@
+# Default admin user
+DATACLAY_ADMIN_USER=admin
+
+# Default admin pass
+DATACLAY_ADMIN_PASSWORD=admin
+
+# Needed both by LogicModule and DataService
+LOGICMODULE_PORT_TCP=3034
+
+# Not required by LogicModule per se, but EnvLoader prefers to have it
+LOGICMODULE_HOST=logicmodule_bk
+#LOGICMODULE_HOST=127.0.0.1
+
+DB_HANDLER_TYPE_FOR_LOGICMODULE=POSTGRES

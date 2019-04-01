@@ -1,0 +1,36 @@
+[{
+    "id": "fog-area/fog-area",
+    "name": "Fog Area Name",
+    "description": "Fog Area Description",
+    "resourceURI": "FogAreaTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+     },
+     "leaderDevice": {"href" : "device/device"},
+     "numDevices": 1,
+     "ramTotal": 1.2,
+     "ramMax": 2.3,
+     "ramMin": 3.4,
+     "storageTotal": 4.5,
+     "storageMax": 5.6,
+     "storageMin": 6.7,
+     "avgProcessingCapacityPercent": 7.8,
+     "cpuMaxPercent": 8.9,
+     "cpuMinPercent": 9.0,
+     "avgPhysicalCores": 12,
+     "physicalCoresMax": 21,
+     "physicalCoresMin": 0,
+     "avgLogicalCores": 23,
+     "logicalCoresMax": 32,
+     "logicalCoresMin": 1,
+     "powerRemainingMax": "Power remaining max",
+     "powerRemainingMin": "Power remaining min"
+ }]

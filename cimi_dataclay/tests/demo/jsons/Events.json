@@ -1,0 +1,31 @@
+
+[{
+    "id" : "event/event",
+    "name" : "Event 01",
+    "description": "Event Description",
+    "resourceURI": "EventTypeURI",
+    "created" : "2018-05-22T11:34:56.959Z",
+    "updated" : "2018-05-22T15:25:02.057Z",
+    "acl" : {
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
+      "rules" : [ {
+        "principal" : "USER",
+        "right" : "MODIFY",
+        "type" : "ROLE"
+      }, {
+        "principal" : "ADMIN",
+        "right" : "ALL",
+        "type" : "ROLE"
+      } ]
+    },
+    "timestamp" : "2018-05-22T11:34:56.959Z",
+    "content" : {
+      "resource" : "device/1111",
+      "state" : "state"
+    },
+    "type" : "event type",
+    "severity": "event severity"
+}]
