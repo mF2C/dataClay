@@ -25,6 +25,7 @@ import CIMI.ServiceOperationReport;
 import CIMI.Session;
 import CIMI.SessionTemplate;
 import CIMI.SharingModel;
+import CIMI.SlaTemplate;
 import CIMI.SlaViolation;
 import CIMI.User;
 import CIMI.UserProfile;
@@ -247,6 +248,10 @@ public class DataClayWrapper {
 			obj = new QosModel(objectData);
 			store(obj, type, id);
 			break;
+		case "sla-template":
+			obj = new SlaTemplate(objectData);
+			storeAndFederate(obj, type, id);
+			break;
 		/*
 		 * case "user-template": obj = new UserTemplate(objectData); break; case
 		 * "credential-template": obj = new CredentialTemplate(objectData); break; case
@@ -449,6 +454,9 @@ public class DataClayWrapper {
 			case "qos-model":
 				QosModel.deleteAlias(type + id);
 				break;
+			case "sla-template":
+				SlaTemplate.deleteAlias(type + id);
+				break;
 			/*
 			 * case "user-template": UserTemplate.deleteAlias(type+id); break; case
 			 * "credential-template": CredentialTemplate.deleteAlias(type+id); break; case
@@ -592,6 +600,10 @@ public class DataClayWrapper {
 			case "qos-model":
 				final QosModel q = QosModel.getByAlias(type + id);
 				q.updateAllData(objectData);
+				break;
+			case "sla-template":
+				final SlaTemplate t = SlaTemplate.getByAlias(type + id);
+				t.updateAllData(objectData);
 				break;
 			/*
 			 * case "user-template": // final UserTemplate ut = (UserTemplate)
