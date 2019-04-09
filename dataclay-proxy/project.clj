@@ -28,17 +28,28 @@
   :plugins [[lein-parent "0.3.5"]
             [lein-environ "1.1.0"]]
 
-  :parent-project {:coords  [sixsq/slipstream-parent "5.3.19"]
-                   :inherit [:min-lein-version
-                             :managed-dependencies
-                             :repositories
-                             :deploy-repositories]}
+ ; :parent-project {:coords  [sixsq/slipstream-parent "5.3.19"]
+ ;                  :inherit [:min-lein-version
+ ;                            :managed-dependencies
+ ;                            :repositories
+ ;                            :deploy-repositories]}
+
+  :parent-project {:coords  [sixsq.nuvla/parent "6.2.0"]
+                   :inherit [:plugins
+                             :min-lein-version
+                             :managed-dependencies]}
 
   :repositories [["dataClay" {:url       "https://raw.github.com/bsc-ssrg/dataclay-maven-mf2c-wrapper/repository"
                               :snapshots true
                               :releases  true
                               :checksum  :fail
-                              :update    :daily}]]
+                              :update    :daily}]
+
+  		["nuvla-releases" {:url           "https://sixsq-build-artifacts-legacy.s3.amazonaws.com"
+                      :snapshots     false
+                      :sign-releases false
+                      :checksum      :fail
+                      :update        :daily}]]
 
   :source-paths ["src"]
 
