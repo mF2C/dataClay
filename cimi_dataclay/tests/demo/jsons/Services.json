@@ -39,6 +39,7 @@
     "exec": "uc1.jar",
     "exec_type": "compss",
     "exec_ports": [8080, 8081],
-    "category": 2
+    "category": 2, 
+    "sla_templates": [ { "href": "sla-template/sla-template" } ]
   }
 ]

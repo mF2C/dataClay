@@ -22,6 +22,7 @@ public class Service extends CIMIResource {
 	private ArrayList<String> req_resource; 
 	private ArrayList<String> opt_resource; 
 	private Integer category;
+	private ArrayList<Map<String, Object>> sla_templates; 
 	
 	// Constructor
 	public Service(final Map<String, Object> objectData) {
@@ -39,6 +40,7 @@ public class Service extends CIMIResource {
 		this.req_resource = (ArrayList<String>) objectData.get("req_resource");
 		this.opt_resource = (ArrayList<String>) objectData.get("opt_resource");
 		this.category = (Integer) objectData.get("category");
+		this.sla_templates = (ArrayList<Map<String, Object>>) objectData.get("sla_templates");
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
@@ -93,6 +95,10 @@ public class Service extends CIMIResource {
 	public void set_category(final Integer category) {
 		this.category = category;
 	}
+	
+	public void set_sla_templates(final ArrayList<Map<String, Object>> sla_templates) {
+		this.sla_templates = sla_templates;
+	}
 
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "getCIMIResourceData"
@@ -125,6 +131,8 @@ public class Service extends CIMIResource {
 			info.put("opt_resource", this.opt_resource);
 		if (this.category != null)
 			info.put("category", this.category);
+		if (this.sla_templates != null)
+			info.put("sla_templates", this.sla_templates);
 		return info;
 	}
 
@@ -156,6 +164,8 @@ public class Service extends CIMIResource {
 			set_opt_resource((ArrayList<String>) data.get("opt_resource"));
 		if (data.get("category") != null)
 			set_category((Integer) data.get("category"));
+		if (data.get("sla_templates") != null)
+			set_sla_templates((ArrayList<Map<String, Object>>) data.get("sla_templates"));
 	}
 
 }

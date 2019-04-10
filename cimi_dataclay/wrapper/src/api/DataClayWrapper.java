@@ -50,7 +50,7 @@ public class DataClayWrapper {
 	public static String[] resourceTypes = { "agent", "agreement", "device", "device-dynamic", "fog-area", "service",
 			"service-instance", "sharing-model", "sla-violation", "user-profile", "service-operation-report",
 			"cloud-entry-point", "email", "user", "credential", "session", "session-template", "callback", 
-			"event", "qos-model" };
+			"event", "qos-model", "sla-template" };
 
 	/** Suffix for aliases of Resource collections. */
 	private static final String RESOURCE_COLLECTION_ALIAS_SUFFIX = "Collection";
@@ -868,6 +868,9 @@ public class DataClayWrapper {
 				break;
 			case "qos-model":
 				obj = QosModel.getByAlias(type + id);
+				break;
+			case "sla-template":
+				obj = SlaTemplate.getByAlias(type + id);
 				break;
 			/*
 			 * case "user-template": obj = (UserTemplate) UserTemplate.getByAlias(type+id);
