@@ -149,13 +149,10 @@ public class DataClayWrapper {
 			throw new IllegalArgumentException("Argument 'data' is empty");
 
 		final Map<String, Object> objectData = new JSONObject(data).toMap();
-		//Throws TypeDoesNotExistException, ObjectDoesNotExistException
-		
-		CIMIResource obj = null;
-		switch (type) {
-		//Throws ObjectAlreadyExistException, DataClayFederationException
-		// mF2C resources
-		case "agent":
+		final Class<?> resourceType = Class.forName("CIMI." + javaize(type));
+		CIMIResource obj = (CIMIResource) resourceType.getConstructor(Map.class).newInstance(objectData);
+
+		if (type.equals("agent")) {
 			obj = new Agent(objectData);
 			store(obj, type, ""); //alias is just "agent"
 			final String leaderAddr = (String) objectData.get("leaderIP");
@@ -170,7 +167,8 @@ public class DataClayWrapper {
 				backupDC = connectToExternalDataClay((String) objectData.get("backupIP"));
 				System.out.println("-- My dataClay backup is: " + backupDC);
 			}
-			break;
+		}
+		
 		case "agreement":
 			obj = new Agreement(objectData);
 			storeAndFederate(obj, type, id);

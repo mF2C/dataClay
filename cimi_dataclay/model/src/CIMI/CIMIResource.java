@@ -1,23 +1,25 @@
 package CIMI;
 
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import dataclay.DataClayObject;
 import dataclay.util.replication.Replication;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public abstract class CIMIResource extends DataClayObject {
-	private String id;
-	private String name;
-	private String description;
-	private String resourceURI;
-	private String created;
+	String id;
+	String name;
+	String description;
+	String resourceURI;
+	String created;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	private String updated;
-	private Map<String, Object> acl;
+	String updated;
+	Map<String, Object> acl;
 	// owner: Map
 	// principal: String
 	// type: String
@@ -26,14 +28,12 @@ public abstract class CIMIResource extends DataClayObject {
 	// type: String
 	// right: String
 	// Aux fields to implement the filter more easily:
-	@SuppressWarnings("unused")
-	private String owner;
-	@SuppressWarnings("unused")
-	private String permissions;
-	private String href;
+	String owner;
+	String permissions;
 
 	public CIMIResource(final Map<String, Object> resourceData) {
-		setCIMIResourceData(resourceData);
+		// Set all fields
+		updateAllData(resourceData);
 		if (acl != null) {
 			final Map<String, Object> ownerValue = (Map<String, Object>) acl.get("owner");
 			this.owner = (String) ownerValue.get("principal");
@@ -48,91 +48,34 @@ public abstract class CIMIResource extends DataClayObject {
 		}
 	}
 
-	public String get_id() {
-		return id;
-	}
-
-	public String get_name() {
-		return name;
-	}
-
-	public void set_name(final String name) {
-		this.name = name;
-	}
-
-	public String get_created() {
-		return created;
-	}
-
-	public void set_created(final String created) {
-		this.created = created;
-	}
-
-	public String get_updated() {
-		return updated;
-	}
-
-	public void set_updated(final String updated) {
-		this.updated = updated;
-	}
-
-	public String get_description() {
-		return description;
-	}
-
-	public void set_description(final String newDescription) {
-		this.description = newDescription;
-	}
-
-	public String get_resourceURI() {
-		return resourceURI;
-	}
-
-	public void set_resourceURI(final String newResourceURI) {
-		this.resourceURI = newResourceURI;
-	}
-
+	/**
+	 * Get all cimi resource data
+	 * @return Resource data representation for JSON
+	 */
 	public Map<String, Object> getCIMIResourceData() {
 		final Map<String, Object> info = new HashMap<>();
-		if (this.id != null)
-			info.put("id", this.id);
-		if (this.name != null)
-			info.put("name", this.name);
-		if (this.description != null)
-			info.put("description", this.description);
-		if (this.resourceURI != null)
-			info.put("resourceURI", this.resourceURI);
-		if (this.created != null)
-			info.put("created", this.created);
-		if (this.updated != null)
-			info.put("updated", this.updated);
-		if (this.acl != null)
-			info.put("acl", this.acl);
+		for (final Field declaredField : this.getClass().getDeclaredFields()) { 
+			final String fieldName = declaredField.getName();
+			info.put(fieldName, getFieldValue(fieldName));
+		}
+		
 		return info;
 	}
 
-	public void setCIMIResourceData(final Map<String, Object> newData) {
-		if (newData.get("id") != null)
-			this.id = (String) newData.get("id");
-		if (newData.get("name") != null)
-			this.name = (String) newData.get("name");
-		if (newData.get("description") != null)
-			this.description = (String) newData.get("description");
-		if (newData.get("resourceURI") != null)
-			this.resourceURI = (String) newData.get("resourceURI");
-		if (newData.get("created") != null)
-			this.created = (String) newData.get("created");
-		if (newData.get("updated") != null)
-			this.updated = (String) newData.get("updated");
-		if (newData.get("acl") != null)
-			this.acl = (Map<String, Object>) newData.get("acl");
-		if (newData.get("href") != null)
-			this.href = (String) newData.get("href");
-		else
-			this.href = this.id;
+	public void updateAllData(final Map<String, Object> resourceData) {
+		for (final Entry<String, Object> entry : resourceData.entrySet()) { 
+			final String key = entry.getKey();
+			final Object value = entry.getValue();
+			setFieldValue(key, value);
+		}
 	}
 
-	public Float getFloat(final Object obj) {
+	/**
+	 * Cast parameter to float if needed
+	 * @param obj parameter to cast
+	 * @return Float type representation of parameter provided
+	 */
+	public Float castToFloat(final Object obj) {
 		if (obj == null) {
 			return null;
 		}
@@ -144,6 +87,52 @@ public abstract class CIMIResource extends DataClayObject {
 			return ((Long) obj).floatValue();
 		} else {
 			return (Float) obj;
+		}
+	}
+	
+	/**
+	 * Set field with name provided and value specified
+	 * @param fieldName Field to set
+	 * @param newvalue Value to set
+	 */
+	public void setFieldValue(final String fieldName, final Object newvalue) { 
+		try { 
+			Object fieldValue = newvalue;
+			final Field declaredField = this.getClass().getField(fieldName);
+			final boolean accessible = declaredField.isAccessible();
+			if (declaredField.getType().equals(Float.class)) { 
+				// Cast to Float since JSON have double or other types 
+				fieldValue = castToFloat(fieldValue);
+			}
+			declaredField.setAccessible(true);
+			declaredField.set(this, fieldValue);
+			declaredField.setAccessible(accessible);
+		} catch (final Exception e) { 				
+			throw new RuntimeException("Could not set field " + fieldName 
+					+ " for class " + this.getClass().getName() + ". Check if defined.");
+		}
+	}
+	
+	/**
+	 * Get value of field with name provided
+	 * @param fieldName Field name
+	 * @return Field value
+	 */
+	public Object getFieldValue(final String fieldName) { 
+		try {
+			final Field declaredField = this.getClass().getField(fieldName);
+			final boolean accessible = declaredField.isAccessible();
+			declaredField.setAccessible(true);
+			Object fieldValue = declaredField.get(this);
+			if (declaredField.getType().equals(Float.class)) { 
+				// Cast to Float since JSON have double or other types 
+				fieldValue = castToFloat(fieldValue);
+			}
+			declaredField.setAccessible(accessible);
+			return fieldValue;
+		} catch (final Exception e) { 				
+			throw new RuntimeException("Could not get field " + fieldName 
+					+ " for class " + this.getClass().getName() + ". Check if defined.");
 		}
 	}
 
@@ -159,7 +148,7 @@ public abstract class CIMIResource extends DataClayObject {
 				.getByAlias(className + "Collection");
 		resources.delete(this.id);
 	}
-	
+
 	@Override
 	public void whenFederated() {
 		// when the object arrives to current dataClay, it is automatically added to the
@@ -174,10 +163,10 @@ public abstract class CIMIResource extends DataClayObject {
 
 		// PROPAGATE
 		final Agent agent = Agent.getByAlias("agent");
-			
+
 		// to leader
-		propagate(agent.get_leader_ip());
-		
+		propagate((String) agent.getFieldValue("leader_ip"));
+
 	}
 
 	private void propagate(final String ip) { 
