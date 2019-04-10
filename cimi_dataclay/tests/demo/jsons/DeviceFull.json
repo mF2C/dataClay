@@ -24,12 +24,8 @@
      "cpuClockSpeed": "Clock speed",
      "memory": 1.2,
      "storage": 3.4,
-     "powerPlugged": false,
      "agentType": "Agent type",
-     "actuatorInfo": "Actuator info",
      "networkingStandards": "Networking standards",
-     "ethernetAddress": "Ethernet addr",
-     "wifiAddress": "Wifi addr",
      "hwloc": "Hwloc",
      "cpuinfo": "CPU info"
  }]

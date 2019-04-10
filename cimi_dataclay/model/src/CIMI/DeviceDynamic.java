@@ -1,5 +1,6 @@
 package CIMI;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -49,7 +50,15 @@ public class DeviceDynamic extends CIMIResource {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private List<String> wifiThroughputInfo;
-	private Map<String, Object> myLeaderID;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	private String actuatorInfo;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	private Boolean powerPlugged;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	private ArrayList<Map<String, Object>> sensors; 
 
 	public DeviceDynamic(final Map<String, Object> objectData) {
 		super(objectData);
@@ -69,7 +78,11 @@ public class DeviceDynamic extends CIMIResource {
 		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.ethernetThroughputInfo = (List<String>) objectData.get("ethernetThroughputInfo");
 		this.wifiThroughputInfo = (List<String>) objectData.get("wifiThroughputInfo");
-		this.myLeaderID = (Map<String, Object>) objectData.get("myLeaderID");
+		this.actuatorInfo = (String) objectData.get("actuatorInfo");
+		this.powerPlugged = (Boolean) objectData.get("powerPlugged");
+		this.sensors = (ArrayList<Map<String, Object>>) objectData.get("sensors");
+
+
 	}
 
 	// Setters (a setter for each property called "set_propertyname")
@@ -133,10 +146,6 @@ public class DeviceDynamic extends CIMIResource {
 		this.wifiThroughputInfo = wifiThroughputInfo;
 	}
 
-	public void set_myLeaderID(final Map<String, Object> myLeaderID) {
-		this.myLeaderID = myLeaderID;
-	}
-
 	// A single getter that returns a Map with all the info in this class and in
 	// CIMIResource, called "getCIMIResourceData"
 	@Override
@@ -169,8 +178,12 @@ public class DeviceDynamic extends CIMIResource {
 			info.put("ethernetThroughputInfo", this.ethernetThroughputInfo);
 		if (this.wifiThroughputInfo != null)
 			info.put("wifiThroughputInfo", this.wifiThroughputInfo);
-		if (this.myLeaderID != null)
-			info.put("myLeaderID", this.myLeaderID);
+		if (this.actuatorInfo != null)
+			info.put("actuatorInfo", this.actuatorInfo);
+		if (this.powerPlugged != null)
+			info.put("powerPlugged", this.powerPlugged);
+		if (this.sensors != null)
+			info.put("sensors", this.sensors);
 		return info;
 	}
 
@@ -204,8 +217,12 @@ public class DeviceDynamic extends CIMIResource {
 			set_ethernetThroughputInfo((List<String>) data.get("ethernetThroughputInfo"));
 		if (data.get("wifiThroughputInfo") != null)
 			set_wifiThroughputInfo((List<String>) data.get("wifiThroughputInfo"));
-		if (data.get("myLeaderID") != null)
-			set_myLeaderID((Map<String, Object>) data.get("myLeaderID"));
+		if (data.get("actuatorInfo") != null)
+			this.actuatorInfo = (String) data.get("actuatorInfo");
+		if (data.get("powerPlugged") != null)
+			this.powerPlugged = (Boolean) data.get("powerPlugged");
+		if (data.get("sensors") != null)
+			this.sensors = (ArrayList<Map<String, Object>>) data.get("sensors");
 	}
 
 }

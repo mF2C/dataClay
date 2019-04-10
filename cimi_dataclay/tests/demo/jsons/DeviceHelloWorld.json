@@ -11,9 +11,5 @@
     "memory": 7874.2109375,
     "storage": 234549.5078125,
     "powerPlugged": true,
-    "networkingStandards": "['eth0', 'lo']",
-    "ethernetAddress": "[snic(family=<AddressFamily.AF_INET: 2>, address='192.168.1.2', netmask='255.255.255.0', broadcast='192.168.1.255', ptp=None), snic(family=<AddressFamily.AF_PACKET: 17>, address='02:42:ac:11:00:03', netmask=None, broadcast='ff:ff:ff:ff:ff:ff', ptp=None)]",
-    "wifiAddress": "Empty",
-    "agentType": "normal",
-    "actuatorInfo": "test"
+    "networkingStandards": "['eth0', 'lo']"
 }]

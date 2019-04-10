@@ -21,16 +21,8 @@ public class Device extends CIMIResource {
 	private String cpuClockSpeed;
 	private Float memory;
 	private Float storage;
-	private Boolean powerPlugged;
 	private String agentType;
-	private String actuatorInfo;
 	private String networkingStandards;
-	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	private String ethernetAddress;
-	@Replication.InMaster
-	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	private String wifiAddress;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	private String hwloc;
@@ -50,12 +42,8 @@ public class Device extends CIMIResource {
 		this.cpuClockSpeed = (String) objectData.get("cpuClockSpeed");
 		this.memory = getFloat(objectData.get("memory"));
 		this.storage = getFloat(objectData.get("storage"));
-		this.powerPlugged = (Boolean) objectData.get("powerPlugged");
 		this.agentType = (String) objectData.get("agentType");
-		this.actuatorInfo = (String) objectData.get("actuatorInfo");
 		this.networkingStandards = (String) objectData.get("networkingStandards");
-		this.ethernetAddress = (String) objectData.get("ethernetAddress");
-		this.wifiAddress = (String) objectData.get("wifiAddress");
 		this.hwloc = (String) objectData.get("hwloc");
 		this.cpuinfo = (String) objectData.get("cpuinfo");
 	}
@@ -101,28 +89,12 @@ public class Device extends CIMIResource {
 		this.storage = storage;
 	}
 
-	public void set_powerPlugged(final Boolean powerPlugged) {
-		this.powerPlugged = powerPlugged;
-	}
-
 	public void set_agentType(final String agentType) {
 		this.agentType = agentType;
 	}
 
-	public void set_actuatorInfo(final String actuatorInfo) {
-		this.actuatorInfo = actuatorInfo;
-	}
-
 	public void set_networkingStandards(final String networkingStandards) {
 		this.networkingStandards = networkingStandards;
-	}
-
-	public void set_ethernetAddress(final String ethernetAddress) {
-		this.ethernetAddress = ethernetAddress;
-	}
-
-	public void set_wifiAddress(final String wifiAddress) {
-		this.wifiAddress = wifiAddress;
 	}
 
 	public void set_hwloc(final String hwloc) {
@@ -158,18 +130,10 @@ public class Device extends CIMIResource {
 			info.put("memory", this.memory);
 		if (this.storage != null)
 			info.put("storage", this.storage);
-		if (this.powerPlugged != null)
-			info.put("powerPlugged", this.powerPlugged);
 		if (this.agentType != null)
 			info.put("agentType", this.agentType);
-		if (this.actuatorInfo != null)
-			info.put("actuatorInfo", this.actuatorInfo);
 		if (this.networkingStandards != null)
 			info.put("networkingStandards", this.networkingStandards);
-		if (this.ethernetAddress != null)
-			info.put("ethernetAddress", this.ethernetAddress);
-		if (this.wifiAddress != null)
-			info.put("wifiAddress", this.wifiAddress);
 		if (this.hwloc != null)
 			info.put("hwloc", this.hwloc);
 		if (this.cpuinfo != null)
@@ -199,18 +163,10 @@ public class Device extends CIMIResource {
 			set_memory(getFloat(data.get("memory")));
 		if (data.get("storage") != null)
 			set_storage(getFloat(data.get("storage")));
-		if (data.get("powerPlugged") != null)
-			set_powerPlugged((Boolean) data.get("powerPlugged"));
 		if (data.get("agentType") != null)
 			set_agentType((String) data.get("agentType"));
-		if (data.get("actuatorInfo") != null)
-			set_actuatorInfo((String) data.get("actuatorInfo"));
 		if (data.get("networkingStandards") != null)
 			set_networkingStandards((String) data.get("networkingStandards"));
-		if (data.get("ethernetAddress") != null)
-			set_ethernetAddress((String) data.get("ethernetAddress"));
-		if (data.get("wifiAddress") != null)
-			set_wifiAddress((String) data.get("wifiAddress"));
 		if (data.get("hwloc") != null)
 			set_hwloc((String) data.get("hwloc"));
 		if (data.get("cpuinfo") != null)
