@@ -40,6 +40,7 @@ public class ClojureMockup {
 		final String events = readFile(args[16]);
 		final String qos = readFile(args[17]);
 		final String slatemplate = readFile(args[18]);
+		final String slaviolation = readFile(args[19]);
 
 		DataClay.init();
 		DataClayWrapper.init();
@@ -191,6 +192,7 @@ public class ClojureMockup {
 		create_from_json_string(events);
 		create_from_json_string(qos);
 		create_from_json_string(slatemplate);
+		create_from_json_string(slaviolation);
 
 		// READS
 		System.out.println("********* READING ***********");
@@ -204,6 +206,8 @@ public class ClojureMockup {
 		DataClayWrapper.read("service-instance", "service-instance");
 		DataClayWrapper.read("service-operation-report", "service-operation-report");
 		DataClayWrapper.read("credential", "credential");
+		DataClayWrapper.read("sla-violation", "sla-violation");
+
 		System.out.println(DataClayWrapper.read("event", "event"));
 		System.out.println(DataClayWrapper.read("qos-model", "qos-model"));
 		System.out.println(DataClayWrapper.read("sla-template", "sla-template"));
