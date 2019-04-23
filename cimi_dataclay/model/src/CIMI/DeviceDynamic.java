@@ -6,6 +6,7 @@ import java.util.Map;
 import dataclay.util.replication.Replication;
 
 @SuppressWarnings({"serial" })
+@ReplicateInLeader
 public class DeviceDynamic extends CIMIResource {
 
 	/** 
@@ -27,15 +28,12 @@ public class DeviceDynamic extends CIMIResource {
 	 * a new docker image with your changes/new resource model. 
 	 **/
 	Map<String, Object> device;
-	// private boolean isLeader;
-	// private String ramUnits;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Float ramFree;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Float ramFreePercent;
-	// private String storageUnits;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Float storageFree;
@@ -53,10 +51,10 @@ public class DeviceDynamic extends CIMIResource {
 	String powerRemainingStatusSeconds;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	String ethernetAddress;
+	String ethernetAddress; // TODO: This is here and in Device. I guess it should only be in one place
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	String wifiAddress; 
+	String wifiAddress; // TODO: This is here and in Device. I guess it should only be in one place
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	List<String> ethernetThroughputInfo;

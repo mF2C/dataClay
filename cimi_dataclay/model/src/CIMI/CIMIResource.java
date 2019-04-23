@@ -11,6 +11,7 @@ import dataclay.util.replication.Replication;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public abstract class CIMIResource extends DataClayObject {
+
 	String id;
 	String name;
 	String description;
@@ -19,6 +20,7 @@ public abstract class CIMIResource extends DataClayObject {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String updated;
+
 	Map<String, Object> acl;
 	// owner: Map
 	// principal: String
@@ -58,7 +60,7 @@ public abstract class CIMIResource extends DataClayObject {
 			final String fieldName = declaredField.getName();
 			info.put(fieldName, getFieldValue(fieldName));
 		}
-		
+
 		return info;
 	}
 
@@ -89,51 +91,81 @@ public abstract class CIMIResource extends DataClayObject {
 			return (Float) obj;
 		}
 	}
-	
+
 	/**
 	 * Set field with name provided and value specified
 	 * @param fieldName Field to set
 	 * @param newvalue Value to set
 	 */
 	public void setFieldValue(final String fieldName, final Object newvalue) { 
-		try { 
-			Object fieldValue = newvalue;
-			final Field declaredField = this.getClass().getField(fieldName);
-			final boolean accessible = declaredField.isAccessible();
-			if (declaredField.getType().equals(Float.class)) { 
-				// Cast to Float since JSON have double or other types 
-				fieldValue = castToFloat(fieldValue);
+
+		Object fieldValue = newvalue;
+		Class<?> currentClass = this.getClass(); 
+		boolean found = false;
+		while (!currentClass.equals(DataClayObject.class) && !found) {
+			try { 
+				final Field declaredField = currentClass.getDeclaredField(fieldName);
+				final boolean accessible = declaredField.isAccessible();
+				if (declaredField.getType().equals(Float.class)) { 
+					// Cast to Float since JSON have double or other types 
+					fieldValue = castToFloat(fieldValue);
+				}
+				declaredField.setAccessible(true);
+				declaredField.set(this, fieldValue);
+				declaredField.setAccessible(accessible);
+				found = true;
+			} catch (final NoSuchFieldException e) { 				
+				currentClass = currentClass.getSuperclass();
+			} catch (final IllegalArgumentException e) {
+				throw new RuntimeException("Could not set field " + fieldName 
+						+ " for class " + this.getClass().getName() + ": type mismatch, check JSON provided or field type defined.");
+			} catch (final IllegalAccessException e) {
+				throw new RuntimeException("Could not set field " + fieldName 
+						+ " for class " + this.getClass().getName() + ": internal error.");
 			}
-			declaredField.setAccessible(true);
-			declaredField.set(this, fieldValue);
-			declaredField.setAccessible(accessible);
-		} catch (final Exception e) { 				
+		}
+		if (!found) { 
 			throw new RuntimeException("Could not set field " + fieldName 
 					+ " for class " + this.getClass().getName() + ". Check if defined.");
 		}
 	}
-	
+
 	/**
 	 * Get value of field with name provided
 	 * @param fieldName Field name
 	 * @return Field value
 	 */
 	public Object getFieldValue(final String fieldName) { 
-		try {
-			final Field declaredField = this.getClass().getField(fieldName);
-			final boolean accessible = declaredField.isAccessible();
-			declaredField.setAccessible(true);
-			Object fieldValue = declaredField.get(this);
-			if (declaredField.getType().equals(Float.class)) { 
-				// Cast to Float since JSON have double or other types 
-				fieldValue = castToFloat(fieldValue);
+		Class<?> currentClass = this.getClass(); 
+		boolean found = false;
+		Object fieldValue = null;
+		while (!currentClass.equals(DataClayObject.class) && !found) {
+			try {
+				final Field declaredField = currentClass.getDeclaredField(fieldName);
+				final boolean accessible = declaredField.isAccessible();
+				declaredField.setAccessible(true);
+				fieldValue = declaredField.get(this);
+				if (declaredField.getType().equals(Float.class)) { 
+					// Cast to Float since JSON have double or other types 
+					fieldValue = castToFloat(fieldValue);
+				}
+				declaredField.setAccessible(accessible);
+				found = true;
+			} catch (final NoSuchFieldException e) { 				
+				currentClass = currentClass.getSuperclass();
+			} catch (final IllegalArgumentException e) {
+				throw new RuntimeException("Could not set field " + fieldName 
+						+ " for class " + this.getClass().getName() + ": type mismatch, check JSON provided or field type defined.");
+			} catch (final IllegalAccessException e) {
+				throw new RuntimeException("Could not set field " + fieldName 
+						+ " for class " + this.getClass().getName() + ": internal error.");
 			}
-			declaredField.setAccessible(accessible);
-			return fieldValue;
-		} catch (final Exception e) { 				
+		}
+		if (!found) {				
 			throw new RuntimeException("Could not get field " + fieldName 
 					+ " for class " + this.getClass().getName() + ". Check if defined.");
 		}
+		return fieldValue;
 	}
 
 	@Override

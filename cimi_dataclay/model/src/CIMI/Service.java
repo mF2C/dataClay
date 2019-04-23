@@ -37,6 +37,8 @@ public class Service extends CIMIResource {
 	ArrayList<String> req_resource; 
 	ArrayList<String> opt_resource; 
 	Integer category;
+	ArrayList<Map<String, Object>> sla_templates; 
+
 	
 	// Constructor
 	public Service(final Map<String, Object> objectData) {

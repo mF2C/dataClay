@@ -22,7 +22,7 @@ public class SlaViolation extends CIMIResource {
 	 * 5) Once finished, please do a Pull request and after testing and verifications dataClay will publish 
 	 * a new docker image with your changes/new resource model. 
 	 **/
-	String agreement_id;
+	Map<String, Object> agreement_id;
 	String guarantee;
 	String datetime;
 	String constraint;
