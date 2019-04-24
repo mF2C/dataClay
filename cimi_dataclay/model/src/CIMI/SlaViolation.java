@@ -4,6 +4,7 @@ import java.util.Map;
 
 @SuppressWarnings({ "serial" })
 public class SlaViolation extends CIMIResource {
+
 	/** 
 	 * ==== READ THIS! ====
 	 * An attribute for each field in the CIMI resource spec, with the same name and type.
@@ -33,6 +34,5 @@ public class SlaViolation extends CIMIResource {
 	public SlaViolation(final Map<String, Object> objectData) {
 		super(objectData);
 	}
-
 
 }

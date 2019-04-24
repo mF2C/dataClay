@@ -758,6 +758,7 @@ public class DataClayWrapper {
 		CIMIResource obj = null;
 		Class<?> resourceType;
 		try {
+
 			final String alias = type + id;
 			resourceType = Class.forName("CIMI." + javaize(type));
 			obj = (CIMIResource) resourceType.getDeclaredMethod("getByAlias", new Class<?>[] {String.class})

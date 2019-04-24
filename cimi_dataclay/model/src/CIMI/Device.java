@@ -48,6 +48,7 @@ public class Device extends CIMIResource {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String hwloc;
+
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String cpuinfo;
@@ -55,4 +56,5 @@ public class Device extends CIMIResource {
 	public Device(final Map<String, Object> objectData) {
 		super(objectData);
 	}
+
 }

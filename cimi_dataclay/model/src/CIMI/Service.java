@@ -6,6 +6,7 @@ import java.util.Map;
 @SuppressWarnings({"serial" })
 public class Service extends CIMIResource {
 
+
 	/** 
 	 * ==== READ THIS! ====
 	 * An attribute for each field in the CIMI resource spec, with the same name and type.

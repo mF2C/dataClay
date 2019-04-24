@@ -27,6 +27,8 @@
     "disk": 2048,
     "req_resource": ["resource1", "resource2"],
     "opt_resource": ["resource3"],
-    "category": 1
+    "category": 1, 
+        "sla_templates": [ { "href": "sla-template/sla-template" } ]
+   
   }
 ]
