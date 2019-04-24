@@ -61,7 +61,6 @@ public class DeviceDynamic extends CIMIResource {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	List<String> wifiThroughputInfo;
-	Map<String, Object> myLeaderID;
 
 	public DeviceDynamic(final Map<String, Object> objectData) {
 		super(objectData);

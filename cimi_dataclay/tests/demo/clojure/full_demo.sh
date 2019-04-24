@@ -29,7 +29,7 @@ ${JSONDIR}/DeviceFull.json ${JSONDIR}/DeviceDynamicFull.json \
 ${JSONDIR}/EmailFull.json ${JSONDIR}/FogAreaFull.json \
 ${JSONDIR}/ServiceFull.json \ ${JSONDIR}/ServiceInstanceFull.json \
 ${JSONDIR}/ServiceOperationReportFull.json ${JSONDIR}/CredentialFull.json ${JSONDIR}/Events.json \
-${JSONDIR}/QosModel.json
+${JSONDIR}/QosModel.json ${JSONDIR}/SlaTemplate.json ${JSONDIR}/SlaViolation.json
 
 retVal=$?
 if [ $retVal -ne 0 ]; then

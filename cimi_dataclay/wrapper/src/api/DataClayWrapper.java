@@ -1,6 +1,5 @@
 package api;
 
-import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +20,7 @@ import CIMI.Email;
 import CIMI.Event;
 import CIMI.FogArea;
 import CIMI.QosModel;
+import CIMI.ReplicateInLeader;
 import CIMI.ResourceCollection;
 import CIMI.Service;
 import CIMI.ServiceInstance;
@@ -54,7 +54,10 @@ public class DataClayWrapper {
 
 	/** LogicModule port. */
 	private static final int LOGICMODULE_PORT = 1034;
-	
+
+	/** All instances of following types must be federated to leader. */
+	private static Set<Class<?>> typesToFederate;
+
 	/**
 	 * Simulates a discovery process if LEADER_DC=host:port environment variable is set. 
 	 * In any case, it creates the required resource collections in the agent.
@@ -92,12 +95,16 @@ public class DataClayWrapper {
 	 * Create a Resource collection per type in current dataClay
 	 */
 	private static void createLocalResourceCollections() {
-		
+
 		// get all types in CIMI package
-		 final Reflections reflections = new Reflections("CIMI");
-		 final Set<Class<? extends CIMIResource>> allClasses = 
-		     reflections.getSubTypesOf(CIMIResource.class);
+		final Reflections reflections = new Reflections("CIMI");
+		final Set<Class<? extends CIMIResource>> allClasses = 
+				reflections.getSubTypesOf(CIMIResource.class);
+		typesToFederate = reflections.getTypesAnnotatedWith(ReplicateInLeader.class);
+
 		System.out.println("-- Found subtypes: " + allClasses.size());
+		System.out.println("-- Types to federate : " + typesToFederate);
+
 		for (final Class<?> type : allClasses) {
 			if (!type.equals(CloudEntryPoint.class) && !type.isAnnotation()) {
 				final String className = type.getName();
@@ -144,65 +151,68 @@ public class DataClayWrapper {
 			ObjectDoesNotExistException, ObjectAlreadyExistsException,
 			ResourceCollectionDoesNotExistException, DataClayFederationException {
 		try {
-		if (type == null)
-			throw new IllegalArgumentException("Argument 'type' is empty");
-		if (id == null)
-			throw new IllegalArgumentException("Argument 'id' is empty");
-		if (data == null)
-			throw new IllegalArgumentException("Argument 'data' is empty");
+			if (type == null)
+				throw new IllegalArgumentException("Argument 'type' is empty");
+			if (id == null)
+				throw new IllegalArgumentException("Argument 'id' is empty");
+			if (data == null)
+				throw new IllegalArgumentException("Argument 'data' is empty");
 
-		final Map<String, Object> objectData = new JSONObject(data).toMap();
-		CIMIResource obj;
-		if (type.equals("agent")) {
-			obj = new Agent(objectData);
-			store(obj, type, ""); //alias is just "agent"
-			final String leaderAddr = (String) objectData.get("leader_ip");
-			// Agent resource must be the first one created in the tests!!
-			if (leaderAddr != null && !leaderAddr.isEmpty()) {
-				leaderDC = connectToExternalDataClay((String) objectData.get("leaderIP"));
-				System.out.println("-- My dataClay leader is: " + leaderDC);
+			final Map<String, Object> objectData = new JSONObject(data).toMap();
+			CIMIResource obj;
+			Class<?> resourceType = null;
+			if (type.equals("agent")) {
+				obj = new Agent(objectData);
+				store(obj, type, ""); //alias is just "agent"
+				
+				// Check current IP 
+				final String currentDataClayIP = (String) objectData.get("device_ip");
+				if (currentDataClayIP != null && !currentDataClayIP.isEmpty()) {
+					publishMyIP(currentDataClayIP);
+					System.out.println("-- My IP is: " + currentDataClayIP);
+				}
+				final String leaderAddr = (String) objectData.get("leader_ip");
+				// Agent resource must be the first one created in the tests!!
+				if (leaderAddr != null && !leaderAddr.isEmpty()) {
+					leaderDC = connectToExternalDataClay(leaderAddr);
+					System.out.println("-- My dataClay leader is: " + leaderDC);
+				}
+				final String backupAddr = (String) objectData.get("backup_ip");
+				// Agent resource must be the first one created in the tests!!
+				if (backupAddr != null && !backupAddr.isEmpty()) {
+					backupDC = connectToExternalDataClay(backupAddr);
+					System.out.println("-- My dataClay backup is: " + backupDC);
+				}
+			} else { 
+				try { 
+					final String className = "CIMI." + javaize(type);
+					resourceType = Class.forName(className);
+					System.out.println("Found class " + className);
+					obj = (CIMIResource) resourceType.getConstructor(Map.class).newInstance(objectData);
+				} catch (final Exception e) {
+					e.printStackTrace();
+					throw new TypeDoesNotExistException(type);
+				}
 			}
-			final String backupAddr = (String) objectData.get("backup_ip");
-			// Agent resource must be the first one created in the tests!!
-			if (backupAddr != null && !backupAddr.isEmpty()) {
-				backupDC = connectToExternalDataClay((String) objectData.get("backupIP"));
-				System.out.println("-- My dataClay backup is: " + backupDC);
+			
+			
+			
+			if (!type.equals("cloud-entry-point")) {
+				ResourceCollection resources = null;
+				final String className = javaize(type);
+				try {
+					resources = ResourceCollection
+							.getByAlias(className + RESOURCE_COLLECTION_ALIAS_SUFFIX);
+				} catch (final Exception e) {
+					/*
+					 * Version with ResourceCollections created on-the-fly, now they are all created
+					 * in the init * resources = new ResourceCollection();
+					 */
+					throw new ResourceCollectionDoesNotExistException(type);
+				}
+				// this executes in current dataClay (maybe children)
+				resources.put(id, obj);
 			}
-		} else { 
-			try { 
-				final Class<?> resourceType = Class.forName("CIMI." + javaize(type));
-				obj = (CIMIResource) resourceType.getConstructor(Map.class).newInstance(objectData);
-			} catch (final Exception e) {
-				throw new TypeDoesNotExistException(type);
-			}
-		}
-		try { 
-			final String className = javaize(type);
-			final Class<?> currentType = Class.forName(className);
-			System.out.println("Found class " + className);
-			final Annotation[] ats = currentType.getAnnotations();
-			for (final Annotation at : ats) { 
-				System.out.println("Found annotation " + at.toString());
-			}
-		} catch (final Exception e) {
-			throw new TypeDoesNotExistException(type);
-		}
-		if (!type.equals("cloud-entry-point")) {
-			ResourceCollection resources = null;
-			final String className = javaize(type);
-			try {
-				resources = ResourceCollection
-						.getByAlias(className + RESOURCE_COLLECTION_ALIAS_SUFFIX);
-			} catch (final Exception e) {
-				/*
-				 * Version with ResourceCollections created on-the-fly, now they are all created
-				 * in the init * resources = new ResourceCollection();
-				 */
-				throw new ResourceCollectionDoesNotExistException(type);
-			}
-			// this executes in current dataClay (maybe children)
-			resources.put(id, obj);
-		}
 		} catch (final Exception e) { 
 			e.printStackTrace();
 			//throw e;
@@ -224,6 +234,24 @@ public class DataClayWrapper {
 		}
 		return id;
 	}
+	
+	/**
+	 * Configure dataclay to give provided address in case external dataClays require to know how
+	 * to access current dataClay
+	 * @param hostname Hostname to be published (given to external dataClays)
+	 * @param port Port to be published
+	 */
+	private static void publishMyIP(final String theip) throws DataClayFederationException {
+		// Register the dataClay instance of my leader
+		String ip = theip;
+		int port = LOGICMODULE_PORT;
+		if (theip.contains(":")) { 
+			final String[] addr = theip.split(":");
+			ip = addr[0];
+			port = Integer.valueOf(addr[1]);
+		} 
+		ClientManagementLib.publishAddress(ip, port);
+	}
 
 	private static void storeAndFederate(final CIMIResource obj, final String type, final String id) 
 			throws ObjectAlreadyExistsException, DataClayFederationException {
@@ -241,7 +269,7 @@ public class DataClayWrapper {
 				throw new DataClayFederationException("Could not federate object '" + id + "' of type '" + type + "'");
 			}
 		}
-		
+
 		if (backupDC != null) {
 			try {
 				obj.federate(backupDC, false);
@@ -251,7 +279,7 @@ public class DataClayWrapper {
 		}
 
 	}
-	
+
 	private static void store(final CIMIResource obj, final String type, final String id) 
 			throws ObjectAlreadyExistsException {
 		try {
@@ -277,14 +305,14 @@ public class DataClayWrapper {
 	 * 			if the object requested cannot be found
 	 */
 	public static String read(final String type, final String id) throws IllegalArgumentException, 
-		TypeDoesNotExistException, ObjectDoesNotExistException {
+	TypeDoesNotExistException, ObjectDoesNotExistException {
 		try {
 			// returns json file with all the resource data
 			if (type == null)
 				throw new IllegalArgumentException("Argument 'type' is empty");
 			if (id == null)
 				throw new IllegalArgumentException("Argument 'id' is empty");
-	
+
 			//Throws TypeDoesNotExistException, ObjectDoesNotExistException
 			final CIMIResource obj = getResourceAsObject(type, id);
 			final Map<String, Object> info = obj.getCIMIResourceData();
@@ -312,7 +340,7 @@ public class DataClayWrapper {
 	 * 			if the resource collection for 'type' could not be found
 	 */
 	public static void delete(final String type, final String id) throws IllegalArgumentException, 
-		TypeDoesNotExistException, ObjectDoesNotExistException, ResourceCollectionDoesNotExistException {
+	TypeDoesNotExistException, ObjectDoesNotExistException, ResourceCollectionDoesNotExistException {
 		if (type == null)
 			throw new IllegalArgumentException("Argument 'type' is empty");
 		if (id == null)
@@ -352,7 +380,7 @@ public class DataClayWrapper {
 			case "service-operation-report":
 				ServiceOperationReport.deleteAlias(type + id);
 				break;
-			// CIMI resources
+				// CIMI resources
 			case "email":
 				Email.deleteAlias(type + id);
 				break;
@@ -380,15 +408,15 @@ public class DataClayWrapper {
 			case "sla-template":
 				SlaTemplate.deleteAlias(type + id);
 				break;
-			/*
-			 * case "user-template": UserTemplate.deleteAlias(type+id); break; case
-			 * "credential-template": CredentialTemplate.deleteAlias(type+id); break; case
-			 * "configuration": Configuration.deleteAlias(type+id); break; case
-			 * "configuration-template": ConfigurationTemplate.deleteAlias(type+id); break;
-			 * case "user-param": UserParam.deleteAlias(type+id); break; case
-			 * "user-param-template": UserParamTemplate.deleteAlias(type+id); break; case
-			 * "example-resource": ExampleResource.deleteAlias(type+id); break;
-			 */
+				/*
+				 * case "user-template": UserTemplate.deleteAlias(type+id); break; case
+				 * "credential-template": CredentialTemplate.deleteAlias(type+id); break; case
+				 * "configuration": Configuration.deleteAlias(type+id); break; case
+				 * "configuration-template": ConfigurationTemplate.deleteAlias(type+id); break;
+				 * case "user-param": UserParam.deleteAlias(type+id); break; case
+				 * "user-param-template": UserParamTemplate.deleteAlias(type+id); break; case
+				 * "example-resource": ExampleResource.deleteAlias(type+id); break;
+				 */
 			default:
 				throw new TypeDoesNotExistException(type);
 			}
@@ -430,7 +458,7 @@ public class DataClayWrapper {
 				throw new IllegalArgumentException("Argument 'id' is empty");
 			if (updatedData == null)
 				throw new IllegalArgumentException("Argument 'data' is empty");
-	
+
 			final JSONObject json = new JSONObject(updatedData);
 			final Map<String, Object> objectData = json.toMap();
 			//Throws TypeDoesNotExistException, ObjectDoesNotExistException
@@ -487,7 +515,7 @@ public class DataClayWrapper {
 				final ServiceOperationReport sor = ServiceOperationReport.getByAlias(type + id);
 				sor.updateAllData(objectData);
 				break;
-			// CIMI resources
+				// CIMI resources
 			case "cloud-entry-point":
 				final CloudEntryPoint cep = CloudEntryPoint.getByAlias(type + id);
 				cep.updateAllData(objectData);
@@ -528,28 +556,28 @@ public class DataClayWrapper {
 				final SlaTemplate t = SlaTemplate.getByAlias(type + id);
 				t.updateAllData(objectData);
 				break;
-			/*
-			 * case "user-template": // final UserTemplate ut = (UserTemplate)
-			 * UserTemplate.getByAlias(type+id); // ut.updateAllData(objectData); break;
-			 * case "credential-template": // final CredentialTemplate ct =
-			 * (CredentialTemplate) // CredentialTemplate.getByAlias(type+id); //
-			 * ct.updateAllData(objectData); break; case "configuration": // final
-			 * Configuration cf = (Configuration) Configuration.getByAlias(type+id); //
-			 * cf.updateAllData(objectData); break; case "configuration-template": // final
-			 * ConfigurationTemplate cft = (ConfigurationTemplate) //
-			 * ConfigurationTemplate.getByAlias(type+id); // cft.updateAllData(objectData);
-			 * break; case "user-param": // final UserParam upar = (UserParam)
-			 * UserParam.getByAlias(type+id); // upar.updateAllData(objectData); break; case
-			 * "user-param-template": // final UserParamTemplate upt = (UserParamTemplate)
-			 * // UserParamTemplate.getByAlias(type+id); // upt.updateAllData(objectData);
-			 * break; case "example-resource": // final ExampleResource er =
-			 * (ExampleResource) // ExampleResource.getByAlias(type+id); //
-			 * er.updateAllData(objectData); break;
-			 */
+				/*
+				 * case "user-template": // final UserTemplate ut = (UserTemplate)
+				 * UserTemplate.getByAlias(type+id); // ut.updateAllData(objectData); break;
+				 * case "credential-template": // final CredentialTemplate ct =
+				 * (CredentialTemplate) // CredentialTemplate.getByAlias(type+id); //
+				 * ct.updateAllData(objectData); break; case "configuration": // final
+				 * Configuration cf = (Configuration) Configuration.getByAlias(type+id); //
+				 * cf.updateAllData(objectData); break; case "configuration-template": // final
+				 * ConfigurationTemplate cft = (ConfigurationTemplate) //
+				 * ConfigurationTemplate.getByAlias(type+id); // cft.updateAllData(objectData);
+				 * break; case "user-param": // final UserParam upar = (UserParam)
+				 * UserParam.getByAlias(type+id); // upar.updateAllData(objectData); break; case
+				 * "user-param-template": // final UserParamTemplate upt = (UserParamTemplate)
+				 * // UserParamTemplate.getByAlias(type+id); // upt.updateAllData(objectData);
+				 * break; case "example-resource": // final ExampleResource er =
+				 * (ExampleResource) // ExampleResource.getByAlias(type+id); //
+				 * er.updateAllData(objectData); break;
+				 */
 			default:
 				throw new TypeDoesNotExistException(type);
 			}
-			
+
 			return read(type, id);
 		} catch (final ObjectNotRegisteredException e) {
 			throw new ObjectDoesNotExistException(type, id);
@@ -730,8 +758,10 @@ public class DataClayWrapper {
 		CIMIResource obj = null;
 		Class<?> resourceType;
 		try {
+			final String alias = type + id;
 			resourceType = Class.forName("CIMI." + javaize(type));
-			obj = (CIMIResource) resourceType.getDeclaredMethod("getByAlias", String.class).invoke(null, type + id);
+			obj = (CIMIResource) resourceType.getDeclaredMethod("getByAlias", new Class<?>[] {String.class})
+					.invoke(null, new Object[] {alias});
 		} catch (final ClassNotFoundException e1) {
 			throw new TypeDoesNotExistException(type);			
 		} catch (final Exception e1) {
