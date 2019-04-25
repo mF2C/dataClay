@@ -1,0 +1,19 @@
+{
+    "id": "email/email",
+    "name": "Email Name",
+    "description": "Email Description",
+    "resourceURI": "EmailTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+     },
+     "address": "a@a.com",
+     "validated": true
+ }

@@ -1,0 +1,32 @@
+
+  {
+    "id": "service/service",
+    "name": "hello-world",
+    "description": "Hello World Service",
+    "resourceURI": "serviceTypeURI",
+    "created": "201804181524",
+    "updated": "201804181524",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+    "exec": "hello-world",
+    "exec_type": "docker",
+    "exec_ports": [8080, 8181],
+    "agent_type": "normal",
+    "num_agents": 2,
+    "cpu_arch": "arm",
+    "os": "linux",
+    "memory_min": 1024,
+    "storage_min": 512,
+    "disk": 2048,
+    "req_resource": ["resource1", "resource2"],
+    "opt_resource": ["resource3"],
+    "category": 1, 
+    "sla_templates": [ { "href": "sla-template/sla-template" } ]
+  }

@@ -4,6 +4,7 @@ TOOLSBASE="$SCRIPTDIR/../tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
 SRCPATH="$SCRIPTDIR/model/src/CIMI"
+DATACLAY_TAG="2.0.dev4"
 NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
@@ -189,6 +190,14 @@ export DATACLAYCLIENTCONFIG=$TMPDIR/client.properties
 
 # Build and start dataClay
 pushd $SCRIPTDIR/dockers
+
+echo " ==== Set dataClay version $DATACLAY_TAG in docker-compose.yml ==== " 
+if [ -f docker-compose.yml.orig ]; then
+	mv docker-compose.yml.orig docker-compose.yml # sanity check if script was interrupted 
+fi
+cp docker-compose.yml docker-compose.yml.orig
+sed -i "s/trunk/$DATACLAY_TAG/g" docker-compose.yml
+
 echo " ===== Starting dataClay ===== "
 docker-compose down #sanity check
 docker-compose up -d
@@ -232,14 +241,16 @@ done
 echo " ===== Stopping dataClay ====="
 pushd $SCRIPTDIR/dockers
 docker-compose down
+mv docker-compose.yml.orig docker-compose.yml
+
 popd
 
 # Now we can build the docker images 
 echo " ===== Building docker mf2c/dataclay-dsjava:${PROXY_TAG} ====="
-docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileDSMf2c -t mf2c/dataclay-dsjava:${PROXY_TAG} .
+docker build --build-arg DATACLAY_TAG="${DATACLAY_TAG}" --build-arg DATACLAY_JDK="openjdk8" -f DockerfileDSMf2c -t mf2c/dataclay-dsjava:${PROXY_TAG} .
 
 echo " ===== Building docker mf2c/dataclay-logicmodule:${PROXY_TAG} ====="
-docker build --build-arg DATACLAY_JDK="openjdk8" -f DockerfileLMMf2c -t mf2c/dataclay-logicmodule:${PROXY_TAG} .
+docker build --build-arg DATACLAY_TAG="${DATACLAY_TAG}" --build-arg DATACLAY_JDK="openjdk8" -f DockerfileLMMf2c -t mf2c/dataclay-logicmodule:${PROXY_TAG} .
 
 echo " ===== Building docker mf2c/dataclay-logicmodule:latest  ====="
 docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:latest 

@@ -1,5 +1,6 @@
 ARG DATACLAY_JDK
-FROM bscdataclay/dsjava:trunk-${DATACLAY_JDK}
+ARG DATACLAY_TAG
+FROM bscdataclay/dsjava:${DATACLAY_TAG}-${DATACLAY_JDK}
 MAINTAINER dataClay team <support-dataclay@bsc.es>
 
 COPY ./execClasses execClasses

@@ -6,12 +6,34 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import dataclay.DataClayExecutionObject;
 import dataclay.DataClayObject;
 import dataclay.util.replication.Replication;
 
 @SuppressWarnings({ "unchecked", "serial" })
 public abstract class CIMIResource extends DataClayObject {
-
+	/** 
+	 * ==== READ THIS! ====
+	 * An attribute for each field in the CIMI resource spec, with the same name and type.
+	 * 
+	 * 1) If it contains nested info or its a href, it is implemented as a Map<String, Object>
+	 *  where String is the field name, and Object is the value
+	 *  
+	 * 2) If you want your class to be shared/visible in the Leader, please annotate the class 
+	 * 		with @ReplicateInLeader 
+	 *  
+	 * 3) if you want to synchronize your field with agent leaders: add following annotations to your field: 
+	 *		@Replication.InMaster and 
+	 * 		@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	 * 
+	 * 4) WARNING: All fields must be public or no modifier defined.
+	 * 
+	 * 5) All types defined must be Object types (Integer,, List...) and not primitive types (int,...) 
+	 *    WARNING!!: Use Double for floating point numbers due to JSON restrictions
+	 * 
+	 * 6) Once finished, please do a Pull request and after testing and verifications dataClay will publish 
+	 * a new docker image with your changes/new resource model. 
+	 **/
 	String id;
 	String name;
 	String description;
@@ -20,7 +42,6 @@ public abstract class CIMIResource extends DataClayObject {
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String updated;
-
 	Map<String, Object> acl;
 	// owner: Map
 	// principal: String
@@ -56,11 +77,15 @@ public abstract class CIMIResource extends DataClayObject {
 	 */
 	public Map<String, Object> getCIMIResourceData() {
 		final Map<String, Object> info = new HashMap<>();
-		for (final Field declaredField : this.getClass().getDeclaredFields()) { 
-			final String fieldName = declaredField.getName();
-			info.put(fieldName, getFieldValue(fieldName));
+		Class<?> currentClass = this.getClass(); 
+		while (!currentClass.equals(DataClayObject.class) 
+				&& !currentClass.equals(DataClayExecutionObject.class)) {
+			for (final Field declaredField : currentClass.getDeclaredFields()) { 
+				final String fieldName = declaredField.getName();
+				info.put(fieldName, getFieldValue(fieldName));
+			}
+			currentClass = currentClass.getSuperclass();
 		}
-
 		return info;
 	}
 
@@ -70,25 +95,24 @@ public abstract class CIMIResource extends DataClayObject {
 			final Object value = entry.getValue();
 			setFieldValue(key, value);
 		}
+		
 	}
 
 	/**
-	 * Cast parameter to float if needed
+	 * Cast parameter to double if needed
 	 * @param obj parameter to cast
-	 * @return Float type representation of parameter provided
+	 * @return double type representation of parameter provided
 	 */
-	public Float castToFloat(final Object obj) {
+	public Double castToDouble(final Object obj) {
 		if (obj == null) {
 			return null;
 		}
 		if (obj instanceof Integer) {
-			return ((Integer) obj).floatValue();
-		} else if (obj instanceof Double) {
-			return ((Double) obj).floatValue();
+			return ((Integer) obj).doubleValue();
 		} else if (obj instanceof Long) {
-			return ((Long) obj).floatValue();
+			return ((Long) obj).doubleValue();
 		} else {
-			return (Float) obj;
+			return (Double) obj;
 		}
 	}
 
@@ -102,13 +126,15 @@ public abstract class CIMIResource extends DataClayObject {
 		Object fieldValue = newvalue;
 		Class<?> currentClass = this.getClass(); 
 		boolean found = false;
-		while (!currentClass.equals(DataClayObject.class) && !found) {
+		Field declaredField = null;
+		while (!currentClass.equals(DataClayObject.class) 
+				&& !currentClass.equals(DataClayExecutionObject.class) && !found) {
 			try { 
-				final Field declaredField = currentClass.getDeclaredField(fieldName);
+				declaredField = currentClass.getDeclaredField(fieldName);
 				final boolean accessible = declaredField.isAccessible();
-				if (declaredField.getType().equals(Float.class)) { 
-					// Cast to Float since JSON have double or other types 
-					fieldValue = castToFloat(fieldValue);
+				if (declaredField.getType().equals(Double.class)) { 
+					// Cast to Double
+					fieldValue = castToDouble(fieldValue);
 				}
 				declaredField.setAccessible(true);
 				declaredField.set(this, fieldValue);
@@ -118,7 +144,10 @@ public abstract class CIMIResource extends DataClayObject {
 				currentClass = currentClass.getSuperclass();
 			} catch (final IllegalArgumentException e) {
 				throw new RuntimeException("Could not set field " + fieldName 
-						+ " for class " + this.getClass().getName() + ": type mismatch, check JSON provided or field type defined.");
+						+ " for class " + this.getClass().getName() + ": type mismatch, "
+								+ " check JSON provided or field type defined."
+								+ " Provided type: " + fieldValue.getClass().getName()
+								+ " and expected: " + declaredField.getType().getName());
 			} catch (final IllegalAccessException e) {
 				throw new RuntimeException("Could not set field " + fieldName 
 						+ " for class " + this.getClass().getName() + ": internal error.");
@@ -139,15 +168,16 @@ public abstract class CIMIResource extends DataClayObject {
 		Class<?> currentClass = this.getClass(); 
 		boolean found = false;
 		Object fieldValue = null;
-		while (!currentClass.equals(DataClayObject.class) && !found) {
+		while (!currentClass.equals(DataClayObject.class) 
+				&& !currentClass.equals(DataClayExecutionObject.class) && !found) {
 			try {
 				final Field declaredField = currentClass.getDeclaredField(fieldName);
 				final boolean accessible = declaredField.isAccessible();
 				declaredField.setAccessible(true);
 				fieldValue = declaredField.get(this);
-				if (declaredField.getType().equals(Float.class)) { 
-					// Cast to Float since JSON have double or other types 
-					fieldValue = castToFloat(fieldValue);
+				if (declaredField.getType().equals(Double.class)) { 
+					// Cast to Double
+					fieldValue = castToDouble(fieldValue);
 				}
 				declaredField.setAccessible(accessible);
 				found = true;

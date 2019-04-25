@@ -1,0 +1,19 @@
+{
+    "id": "device/1111",
+    "resourceURI": "DeviceTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+      "os": "Linux",
+      "arch": "ARM",
+      "hwloc": "re-updated hwloc",
+      "cpuinfo": "updated cpuinfo"
+ }

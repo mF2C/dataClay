@@ -1,8 +1,0 @@
-FROM postgres:9.5.12
-
-ENV POSTGRES_DB dataclay
-
-COPY psql_dump.sql /docker-entrypoint-initdb.d/
-
-# Overriding CMD in original postgresql Dockerfile in order to be compatible with docker2singularity
-ENTRYPOINT ["docker-entrypoint.sh", "postgres"] 

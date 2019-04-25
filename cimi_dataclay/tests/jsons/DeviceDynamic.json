@@ -1,0 +1,33 @@
+{
+    "id": "device-dynamic/device-dynamic",
+    "name":"DD Name",
+    "description": "DD Description",
+    "resourceURI": "DeviceDynamicTypeURI",
+    "created": "201804181533",
+    "updated": "201804181533",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+    "device": {"href" : "device/device"},
+    "ramFree": 0.4,
+    "ramFreePercent": 100.0,
+    "storageFree": 9001000.1,
+    "storageFreePercent": 50.2,
+    "cpuFreePercent": 25.0,
+    "powerRemainingStatus": "Power remaining status",
+    "powerRemainingStatusSeconds": "Power remaining status seconds",
+	"ethernetAddress": "Ethernet addr",
+	"wifiAddress": "[snic(family=<AddressFamily.AF_INET: 2>, address='10.192.167.20', netmask='255.255.0.0', broadcast='10.192.255.255', ptp=None), snic(family=<AddressFamily.AF_INET6: 10>, address='fe80::fe39:ed60:dff6:db85%wlp3s0', netmask='ffff:ffff:ffff:ffff::', broadcast=None, ptp=None), snic(family=<AddressFamily.AF_PACKET: 17>, address='d4:6a:6a:9a:6b:87', netmask=None, broadcast='ff:ff:ff:ff:ff:ff', ptp=None)]",
+	"ethernetThroughputInfo": ["Ethernet", "throughput", "info"],
+	"wifiThroughputInfo": ["Wifi throughput info"],
+	"powerPlugged": true, 
+	"actuatorInfo": "It has Ambulance, Firetruck, Sirene, Traffic light",
+	"sensors":  [{ "sensorType": "mytype", "sensorModel": "mymodel", "sensorConnection": "myconn"}]
+	
+ }

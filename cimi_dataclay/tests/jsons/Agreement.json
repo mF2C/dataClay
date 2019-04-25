@@ -1,0 +1,47 @@
+{
+    "id" : "agreement/agreement",
+    "name" : "Agreement 02",
+    "description": "Agreement Description",
+    "resourceURI": "AgreementTypeURI",
+    "created" : "2018-05-22T11:34:56.959Z",
+    "updated" : "2018-05-22T15:25:02.057Z",
+    "acl" : {
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
+      "rules" : [ {
+        "principal" : "USER",
+        "right" : "MODIFY",
+        "type" : "ROLE"
+      }, {
+        "principal" : "ADMIN",
+        "right" : "ALL",
+        "type" : "ROLE"
+      } ]
+    },
+    "state" : "started",
+    "details" : {
+      "id" : "a02",
+      "type" : "agreement",
+      "name" : "Agreement 02",
+      "provider" : {
+        "id" : "mf2c",
+        "name" : "mF2C Platform"
+      },
+      "client" : {
+        "id" : "c02",
+        "name" : "A client"
+      },
+      "creation" : "2018-01-16T17:09:45.01Z",
+      "expiration" : "2019-01-17T17:09:45.01Z",
+      "guarantees" : [ {
+        "name" : "dijkstra",
+        "constraint" : "execution_time < 100"
+      } ]
+    },
+    "assessment" : {
+      "last_execution" : "2018-05-22T15:25:02.021639933Z",
+      "first_execution" : "2018-05-22T11:52:02.024346026Z"
+    }
+}

@@ -1,5 +1,6 @@
 ARG DATACLAY_JDK
-FROM bscdataclay/logicmodule:trunk-${DATACLAY_JDK}
+ARG DATACLAY_TAG
+FROM bscdataclay/logicmodule:${DATACLAY_TAG}-${DATACLAY_JDK}
 MAINTAINER dataClay team <support-dataclay@bsc.es>
 
 COPY ./LM.sqlite /tmp/dataclay/dump.sql

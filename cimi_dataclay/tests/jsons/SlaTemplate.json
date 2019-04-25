@@ -1,0 +1,21 @@
+
+{
+    "id": "sla-violation/sla-violation",
+    "name": "sla-violation",
+    "resourceURI": "uri",
+    "description": "SlaViolation Description",
+    "created" : "2018-05-22T11:34:56.959Z",
+    "updated" : "2018-05-22T15:25:02.057Z",
+    "acl": {
+        "owner": { "principal": "ADMIN", "type": "ROLE" },
+        "rules": [ { "type": "ROLE", "principal": "USER", "right": "MODIFY" } ]
+    },
+ 
+    "agreement_id": { "href" : "agreement/880e82bf-32b7-4b7b-b89b-386d4c46310c" },
+    "guarantee": "gt01",
+    "datetime": "2018-01-16T17:09:45.001Z",
+    "constraint": "responsetime < 1000",
+    "values": {
+        "responsetime": 2000
+    }
+}

@@ -1,0 +1,26 @@
+
+  {
+    "id": "qos-model/qos-model",
+    "name": "qosresource",
+    "resourceURI": "uri",
+    "created": "201804181524",
+    "updated": "201804181524",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+    "service": { "href": "service/service" },
+    "agreement": { "href": "agreement/agreement" },
+    "agents": [ { "href": "agent/agent" } ],
+    "config": "qos config",
+    "num_service_instances": 2,
+    "num_service_failures": 3,
+    "current_state": [1.0, 3.5],
+    "next_state": [1.0]
+    
+  }
