@@ -17,8 +17,8 @@ export APP="demo.AgentTest"
 LEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule1_1`:1034
 BACKUP_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule4_1`:5034
 GRANDLEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule5_1`:6034
-CHILD1_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule2_1`:6034
-CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:6034
+CHILD1_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule2_1`:2034
+CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:4034
 
 #################### SANITY ##########################
 if [ -f $JSONDIR/AgentLeader.json.orig ]; then

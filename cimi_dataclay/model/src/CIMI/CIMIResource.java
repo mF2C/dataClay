@@ -1,6 +1,8 @@
 package CIMI;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,7 +13,7 @@ import dataclay.DataClayObject;
 import dataclay.util.replication.Replication;
 
 @SuppressWarnings({ "unchecked", "serial" })
-public abstract class CIMIResource extends DataClayObject {
+public class CIMIResource extends DataClayObject {
 	/** 
 	 * ==== READ THIS! ====
 	 * An attribute for each field in the CIMI resource spec, with the same name and type.
@@ -137,7 +139,13 @@ public abstract class CIMIResource extends DataClayObject {
 					fieldValue = castToDouble(fieldValue);
 				}
 				declaredField.setAccessible(true);
-				declaredField.set(this, fieldValue);
+				
+				try { 
+					Method setUpdate = currentClass.getDeclaredMethod("$$setUpdate$$" + fieldName, new Class<?>[] {declaredField.getType(), Boolean.class});
+					setUpdate.invoke(this, new Object[] {fieldValue, new Boolean(true)});
+				} catch (NoSuchMethodException em) {
+					declaredField.set(this, fieldValue);
+				}
 				declaredField.setAccessible(accessible);
 				found = true;
 			} catch (final NoSuchFieldException e) { 				
@@ -151,6 +159,12 @@ public abstract class CIMIResource extends DataClayObject {
 			} catch (final IllegalAccessException e) {
 				throw new RuntimeException("Could not set field " + fieldName 
 						+ " for class " + this.getClass().getName() + ": internal error.");
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (SecurityException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		if (!found) { 
@@ -224,10 +238,12 @@ public abstract class CIMIResource extends DataClayObject {
 		resources.put(this.id, this);
 
 		// PROPAGATE
-		final Agent agent = Agent.getByAlias("agent");
+		final Agent agent = Agent.getByAlias("agent/agent");
 
 		// to leader
-		propagate((String) agent.getFieldValue("leader_ip"));
+		// FIXME: Agent must call a function due to issues in dataClay (not included in accessed implementations so no
+		// renaming of signatures)
+		propagate(agent.getLeaderIP());
 
 	}
 

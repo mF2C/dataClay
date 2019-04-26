@@ -43,4 +43,12 @@ public class Agent extends CIMIResource {
 		super(objectData);
 	}	
 	
+	/**
+	 * Get leader IP.
+	 * @return leader IP
+	 */
+	public String getLeaderIP() { 
+		return leader_ip;
+	}
+	
 }
