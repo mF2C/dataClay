@@ -84,6 +84,9 @@ public class CIMIResource extends DataClayObject {
 				&& !currentClass.equals(DataClayExecutionObject.class)) {
 			for (final Field declaredField : currentClass.getDeclaredFields()) { 
 				final String fieldName = declaredField.getName();
+				if (fieldName.equals("permissions") || fieldName.equals("owner")) { 
+					continue; //ignore fields
+				}
 				info.put(fieldName, getFieldValue(fieldName));
 			}
 			currentClass = currentClass.getSuperclass();
@@ -141,9 +144,9 @@ public class CIMIResource extends DataClayObject {
 				declaredField.setAccessible(true);
 				
 				try { 
-					Method setUpdate = currentClass.getDeclaredMethod("$$setUpdate$$" + fieldName, new Class<?>[] {declaredField.getType(), Boolean.class});
+					final Method setUpdate = currentClass.getDeclaredMethod("$$setUpdate$$" + fieldName, new Class<?>[] {declaredField.getType(), Boolean.class});
 					setUpdate.invoke(this, new Object[] {fieldValue, new Boolean(true)});
-				} catch (NoSuchMethodException em) {
+				} catch (final NoSuchMethodException em) {
 					declaredField.set(this, fieldValue);
 				}
 				declaredField.setAccessible(accessible);
@@ -159,10 +162,10 @@ public class CIMIResource extends DataClayObject {
 			} catch (final IllegalAccessException e) {
 				throw new RuntimeException("Could not set field " + fieldName 
 						+ " for class " + this.getClass().getName() + ": internal error.");
-			} catch (InvocationTargetException e) {
+			} catch (final InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			} catch (SecurityException e) {
+			} catch (final SecurityException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}

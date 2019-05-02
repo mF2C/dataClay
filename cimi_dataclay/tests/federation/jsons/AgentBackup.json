@@ -22,7 +22,7 @@
     },
     "device_id" : "device/3333",
     "leader_id": "",
-    "leader_ip": "",
+    "leader_ip": "leader_ip_here",
     "backup_ip": "",
     "authenticated": true,
     "connected": true, 

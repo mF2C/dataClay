@@ -375,6 +375,7 @@ public class DataClayWrapper {
 	 */
 	public static String update(final String type, final String id, final String updatedData)
 			throws IllegalArgumentException, TypeDoesNotExistException, ObjectDoesNotExistException {
+
 		try {
 			if (type == null)
 				throw new IllegalArgumentException("Argument 'type' is empty");
@@ -382,7 +383,6 @@ public class DataClayWrapper {
 				throw new IllegalArgumentException("Argument 'id' is empty");
 			if (updatedData == null)
 				throw new IllegalArgumentException("Argument 'data' is empty");
-
 			final Map<String, Object> objectData = new JSONObject(updatedData).toMap();
 			if (type.equals("agent")) {
 				final Agent ag = Agent.getByAlias(AGENT_RESOURCE_ALIAS);

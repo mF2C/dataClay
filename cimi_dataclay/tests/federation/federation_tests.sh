@@ -50,6 +50,8 @@ sed -i -e "s/leader_ip_here/${GRANDLEADER_IP}/g" $JSONDIR/AgentLeader.json
 sed -i -e "s/backup_ip_here/${BACKUP_IP}/g" $JSONDIR/AgentLeader.json
 sed -i -e "s/leader_ip_here/${LEADER_IP}/g" $JSONDIR/AgentChild1.json
 sed -i -e "s/leader_ip_here/${LEADER_IP}/g" $JSONDIR/AgentChild2.json
+sed -i -e "s/leader_ip_here/${GRANDLEADER_IP}/g" $JSONDIR/AgentBackup.json
+
 sed -i -e "s/my_ip_here/${LEADER_IP}/g" $JSONDIR/AgentLeader.json
 sed -i -e "s/my_ip_here/${CHILD1_IP}/g" $JSONDIR/AgentChild1.json
 sed -i -e "s/my_ip_here/${CHILD2_IP}/g" $JSONDIR/AgentChild2.json
