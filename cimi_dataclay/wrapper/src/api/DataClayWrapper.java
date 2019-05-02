@@ -375,7 +375,6 @@ public class DataClayWrapper {
 	 */
 	public static String update(final String type, final String id, final String updatedData)
 			throws IllegalArgumentException, TypeDoesNotExistException, ObjectDoesNotExistException {
-
 		try {
 			if (type == null)
 				throw new IllegalArgumentException("Argument 'type' is empty");

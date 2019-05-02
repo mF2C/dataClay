@@ -160,8 +160,7 @@ public class CIMIResource extends DataClayObject {
 								+ " Provided type: " + fieldValue.getClass().getName()
 								+ " and expected: " + declaredField.getType().getName());
 			} catch (final IllegalAccessException e) {
-				throw new RuntimeException("Could not set field " + fieldName 
-						+ " for class " + this.getClass().getName() + ": internal error.");
+				e.printStackTrace();
 			} catch (final InvocationTargetException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -171,7 +170,7 @@ public class CIMIResource extends DataClayObject {
 			}
 		}
 		if (!found) { 
-			throw new RuntimeException("Could not set field " + fieldName 
+			System.err.println("Could not set field " + fieldName 
 					+ " for class " + this.getClass().getName() + ". Check if defined.");
 		}
 	}
@@ -201,15 +200,13 @@ public class CIMIResource extends DataClayObject {
 			} catch (final NoSuchFieldException e) { 				
 				currentClass = currentClass.getSuperclass();
 			} catch (final IllegalArgumentException e) {
-				throw new RuntimeException("Could not set field " + fieldName 
-						+ " for class " + this.getClass().getName() + ": type mismatch, check JSON provided or field type defined.");
+				e.printStackTrace();
 			} catch (final IllegalAccessException e) {
-				throw new RuntimeException("Could not set field " + fieldName 
-						+ " for class " + this.getClass().getName() + ": internal error.");
+				e.printStackTrace();
 			}
 		}
 		if (!found) {				
-			throw new RuntimeException("Could not get field " + fieldName 
+			System.err.println("Could not get field " + fieldName 
 					+ " for class " + this.getClass().getName() + ". Check if defined.");
 		}
 		return fieldValue;
