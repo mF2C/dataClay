@@ -34,9 +34,11 @@ public class Service extends CIMIResource {
 	Integer num_agents;
 	String cpu_arch; //arm or x86-64 (enum checked by CIMI)
 	String os; //linux, mac, windows, ios, android (enum checked by CIMI)
-	Integer memory_min;
-	Integer storage_min;
+	Integer cpu;
+	Integer memory;
 	Integer disk;
+	Integer network;
+	Integer storage_min;
 	ArrayList<String> req_resource; 
 	ArrayList<String> opt_resource; 
 	Integer category;
