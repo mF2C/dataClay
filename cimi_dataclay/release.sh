@@ -38,8 +38,6 @@ function docker-push-mf2c {
 	docker push mf2c/dataclay-dsjava:${TAG}
 	docker push mf2c/dataclay-logicmodule:latest
 	docker push mf2c/dataclay-dsjava:latest
-	docker push bscdataclay/logicmodule:mf2c
-	docker push bscdataclay/dsjava:mf2c
 	
 }  
 
@@ -295,6 +293,7 @@ popd
 if [ "$PUSH" = true ] ; then
 	echo " ===== Pushing  dataclay proxy in DockerHub ====="
 	docker push mf2c/dataclay-proxy:${PROXY_TAG}
+	docker push mf2c/dataclay-proxy:latest
 else 
 	echo " ===== NOT Pushing dataclay-proxy ====="
 fi
