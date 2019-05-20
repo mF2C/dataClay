@@ -1,0 +1,25 @@
+
+  {
+    "id": "service-container-metrics/service-container-metrics",
+    "name": "hello-world",
+    "description": "Hello World Service",
+    "resourceURI": "serviceTypeURI",
+    "created": "201804181524",
+    "updated": "201804181524",
+    "acl": {
+      "owner": {
+        "principal": "User1",
+        "type": "USER"},
+      "rules": [{
+        "principal": "ADMIN",
+        "type": "ROLE",
+        "right": "MODIFY"}]
+      },
+    "device_id": { 
+    	"href": ""
+    },
+    "container_id": "id",
+    "start_time": "start_time",
+    "stop_time": "stop_time"
+    
+  }
