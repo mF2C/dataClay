@@ -1,6 +1,6 @@
 
   {
-    "id": "service-container-metrics/service-container-metrics",
+    "id": "service-container-metric/service-container-metric",
     "name": "hello-world",
     "description": "Hello World Service",
     "resourceURI": "serviceTypeURI",

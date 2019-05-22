@@ -112,6 +112,7 @@ function maven_install_wrapper {
 	
 		pushd $SCRIPTDIR/wrapper
 		echo "Building dataclay mf2c wrapper local repository $LOCALREPOSITORY"
+		mvn clean
 		mvn package javadoc:jar
 		popd
 		
@@ -214,6 +215,7 @@ $TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPDIR java
 rm -Rf $TMPDIR
 
 echo " ===== Get stubs into $STUBSPATH  ====="
+rm -rf $STUBSPATH
 mkdir -p $STUBSPATH
 $TOOLSPATH GetStubs $USER $PASS $NAMESPACE $STUBSPATH
 
