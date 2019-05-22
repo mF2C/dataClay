@@ -4,7 +4,7 @@ import java.util.Map;
 
 @ReplicateInLeader
 @SuppressWarnings("serial")
-public class ServiceContainerMetrics extends CIMIResource {
+public class ServiceContainerMetric extends CIMIResource {
 	/** 
 	 * ==== READ THIS! ====
 	 * An attribute for each field in the CIMI resource spec, with the same name and type.
@@ -33,7 +33,7 @@ public class ServiceContainerMetrics extends CIMIResource {
 	String stop_time;
 
 	// Constructor
-	public ServiceContainerMetrics(final Map<String, Object> objectData) {
+	public ServiceContainerMetric(final Map<String, Object> objectData) {
 		super(objectData);
 	}
 
