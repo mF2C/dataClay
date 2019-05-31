@@ -1,6 +1,6 @@
 {
     "id" : "event/event",
-    "name" : "Event 01",
+    "name" : "resourcename",
     "description": "Event Description",
     "resourceURI": "EventTypeURI",
     "created" : "2018-05-22T11:34:56.959Z",

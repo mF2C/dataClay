@@ -1,6 +1,6 @@
 {
     "id" : "agent/agent",
-    "name" : "Leader",
+    "name" : "resourcename",
     "description": "This is the leader agent for the federation test",
     "resourceURI": "AgentTypeURI",
     "created" : "2018-05-22T11:34:56.959Z",

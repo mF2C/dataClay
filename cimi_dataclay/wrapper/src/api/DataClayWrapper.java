@@ -1,6 +1,7 @@
 package api;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -13,11 +14,13 @@ import CIMI.CIMIResource;
 import CIMI.CloudEntryPoint;
 import CIMI.ReplicateInLeader;
 import CIMI.ResourceCollection;
+import CIMI.UnfederateNotification;
 import api.exceptions.DataClayFederationException;
 import api.exceptions.ObjectAlreadyExistsException;
 import api.exceptions.ObjectDoesNotExistException;
 import api.exceptions.ResourceCollectionDoesNotExistException;
 import api.exceptions.TypeDoesNotExistException;
+import dataclay.api.DataClay;
 import dataclay.commonruntime.ClientManagementLib;
 import dataclay.exceptions.metadataservice.ObjectNotRegisteredException;
 import dataclay.util.ids.DataClayInstanceID;
@@ -38,7 +41,10 @@ public class DataClayWrapper {
 
 	/** All instances of following types must be federated to leader. */
 	private static Set<Class<?>> typesToFederate;
-	
+
+	/** All classes in Resource model. */
+	private static Set<Class<? extends CIMIResource>> allClasses;
+
 	/** Agent resource alias. */
 	private static final String AGENT_RESOURCE_ALIAS = "agent/agent";
 
@@ -82,8 +88,7 @@ public class DataClayWrapper {
 
 		// get all types in CIMI package
 		final Reflections reflections = new Reflections("CIMI");
-		final Set<Class<? extends CIMIResource>> allClasses = 
-				reflections.getSubTypesOf(CIMIResource.class);
+		allClasses = reflections.getSubTypesOf(CIMIResource.class);
 		typesToFederate = reflections.getTypesAnnotatedWith(ReplicateInLeader.class);
 
 		System.out.println("-- Found subtypes: " + allClasses.size());
@@ -147,8 +152,8 @@ public class DataClayWrapper {
 			Class<?> resourceType = null;
 			if (type.equals("agent")) {
 				obj = new Agent(objectData);
-				store(obj, type, id);
-
+				System.out.println("Storing " + AGENT_RESOURCE_ALIAS);
+				obj.makePersistent(AGENT_RESOURCE_ALIAS); // type+id is the alias
 				// Check current IP 
 				final String currentDataClayIP = (String) objectData.get("device_ip");
 				if (currentDataClayIP != null && !currentDataClayIP.isEmpty()) {
@@ -167,7 +172,7 @@ public class DataClayWrapper {
 					backupDC = connectToExternalDataClay(backupAddr);
 					System.out.println("-- My dataClay backup is: " + backupDC);
 				}
-				
+
 
 			} else { 
 				try { 
@@ -226,6 +231,21 @@ public class DataClayWrapper {
 		}
 		return id;
 	}
+	
+	private static DataClayInstanceID getExternalDataClayID(final String theip) throws DataClayFederationException {
+		String ip = theip;
+		int port = LOGICMODULE_PORT;
+		if (theip.contains(":")) { 
+			final String[] addr = theip.split(":");
+			ip = addr[0];
+			port = Integer.valueOf(addr[1]);
+		} 
+		final DataClayInstanceID id = ClientManagementLib.getExternalDataClayID(ip, port);
+		if (id == null) {
+			throw new DataClayFederationException("Could not connect to the external dataClay with IP " + theip);
+		}
+		return id;
+	}
 
 	/**
 	 * Configure dataclay to give provided address in case external dataClays require to know how
@@ -245,6 +265,14 @@ public class DataClayWrapper {
 		ClientManagementLib.publishAddress(ip, port);
 	}
 
+	/**
+	 * Store and federate object
+	 * @param obj Object to store and federate
+	 * @param type Type of the object
+	 * @param id ID of the obejct
+	 * @throws ObjectAlreadyExistsException indicates object already exists
+	 * @throws DataClayFederationException indicates object could not be federated
+	 */
 	private static void storeAndFederate(final CIMIResource obj, final String type, final String id) 
 			throws ObjectAlreadyExistsException, DataClayFederationException {
 		store(obj, type, id); 
@@ -301,8 +329,12 @@ public class DataClayWrapper {
 			throw new IllegalArgumentException("Argument 'type' is empty");
 		if (id == null)
 			throw new IllegalArgumentException("Argument 'id' is empty");
-
-		final CIMIResource obj = getResource(type, id);			
+		CIMIResource obj = null;
+		if (type.equals("agent")) {
+			obj = Agent.getByAlias(AGENT_RESOURCE_ALIAS);
+		} else {
+			obj = getResource(type, id);			
+		}
 		final Map<String, Object> info = obj.getCIMIResourceData();
 		final JSONObject json = new JSONObject(info);
 		return json.toString();
@@ -332,9 +364,17 @@ public class DataClayWrapper {
 			throw new IllegalArgumentException("Argument 'id' is empty");
 		if (type.equals("agent"))
 			throw new IllegalArgumentException("Resources of type 'agent' cannot be deleted");
-
+		// ===== REMOVE FROM COLLECTION ===== 
 		try {
-
+			final String colAlias = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
+			final ResourceCollection resources = ResourceCollection.getByAlias(colAlias);
+			resources.delete(id);
+		} catch (final Exception e) {
+			throw new ResourceCollectionDoesNotExistException(type);
+		}
+		
+		// ===== UNFEDERATE OBJECT IF BELONGS TO CURRENT DATACLAY ===== 
+		try {
 			final String alias = type + "/" + id;
 			final Class<?> resourceType = Class.forName("CIMI." + javaize(type));
 			resourceType.getDeclaredMethod("deleteAlias", new Class<?>[] {String.class})
@@ -345,14 +385,6 @@ public class DataClayWrapper {
 		} catch (final Exception e1) {
 			e1.printStackTrace();
 			throw new ObjectDoesNotExistException(type, id);
-		}
-
-		try {
-			final String colAlias = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
-			final ResourceCollection resources = ResourceCollection.getByAlias(colAlias);
-			resources.delete(id);
-		} catch (final Exception e) {
-			throw new ResourceCollectionDoesNotExistException(type);
 		}
 	}
 
@@ -365,16 +397,11 @@ public class DataClayWrapper {
 	 *          id of the object
 	 * @param updatedData
 	 *          JSON string representing values to update
-	 * @throws IllegalArgumentException
-	 *          if some argument is empty
-	 * @throws TypeDoesNotExistException
-	 * 			if argument 'type' is not a known resource type
-	 * @throws ObjectDoesNotExistException
-	 * 			if the object to be updated cannot be found
 	 * @return JSON representation of dataClay object modified
+	 * @throws Exception if federation during update of leader failed.
 	 */
 	public static String update(final String type, final String id, final String updatedData)
-			throws IllegalArgumentException, TypeDoesNotExistException, ObjectDoesNotExistException {
+			throws Exception {
 		try {
 			if (type == null)
 				throw new IllegalArgumentException("Argument 'type' is empty");
@@ -383,16 +410,91 @@ public class DataClayWrapper {
 			if (updatedData == null)
 				throw new IllegalArgumentException("Argument 'data' is empty");
 			final Map<String, Object> objectData = new JSONObject(updatedData).toMap();
+			
+			System.out.println("++++++++++++++ received update type " + type);
+			
 			if (type.equals("agent")) {
 				final Agent ag = Agent.getByAlias(AGENT_RESOURCE_ALIAS);
+				final String currentIP =  (String) objectData.get("device_ip");
+				final String currentLeaderIP = ag.getLeaderIP();
+				final String currentBackupIP = (String) objectData.get("backup_ip");
+				final DataClayInstanceID currentBackupID = backupDC;
+				final DataClayInstanceID currentLeaderID = leaderDC;
+				
+				
+				final ArrayList<String> currentChildren = (ArrayList<String>) objectData.get("childrenIPs");
 				ag.updateAllData(objectData);
-				final String updatedLeader = (String) objectData.get("leaderIP");
-				if (updatedLeader !=null && !updatedLeader.isEmpty()) {
-					//TODO whatever we need to do, i.e 
-					//register new dC, federate all other resources?, unfederate previous??
-					//TODO how/when to re-join and sync the data that has been updated while disconnected 
-					//with the new leader?
+				// Check current IP 
+				final String updatedIP = (String) objectData.get("device_ip");
+				final String updatedLeaderIP = (String) objectData.get("leader_ip");
+				final String updatedBackupIP = (String) objectData.get("backup_ip");
+				final ArrayList<String> updatedChildrenIPs = (ArrayList<String>) objectData.get("childrenIPs");
+
+				/** Use cases
+					 1 - Leader changed.
+					 		Unfederate all objects with ANY dataClay and federate all of them to new leader.
+					 		Corner cases:
+
+					 			- Objects already unfederated in leader side: ok - continue, this could happen 
+					 			if current agent lost internet connection and leader got notification to remove a child.
+
+					 			- Objects already federated in leader side: ok - continue, this can happen if 
+					 			current agent lost connection and then connected to same leader before the leader gets
+					 			lost child notification. !!! - discovery should watch that no changed leader notification happen
+					 			before leader was notified it lost a child. !!!!
+
+					 2 - Lost children 
+							Unfederate all objects with lost children and create a notification to leader to 
+							make them unfederate it also. 
+							Corner cases: 
+
+								- Objects already unfederated. This could happen in normal exit of children. Continue. 
+
+					3 - New backup 
+							Unfederate all my objects with previous backup and federate them with new backup
+				 **/ 		
+				
+				// UPDATE IP
+				if (currentIP != null && !currentIP.isEmpty() && !currentIP.equals(updatedIP)) {
+					publishMyIP(updatedIP);
+					System.out.println("-- Updated IP is: " + updatedIP);
 				}
+				
+				// UPDATE LEADER
+				if (updatedLeaderIP != null && !updatedLeaderIP.isEmpty() && !currentLeaderIP.equals(updatedLeaderIP)) { 
+					leaderDC = connectToExternalDataClay(updatedLeaderIP);
+					System.out.println("-- Updated dataClay leader is: " + leaderDC);
+					DataClay.migrateFederatedObjects(currentLeaderID, leaderDC);
+				}
+				// UPDATE BACKUP
+				if (updatedBackupIP != null && !updatedBackupIP.isEmpty() && !currentBackupIP.equals(updatedBackupIP)) { 
+					backupDC = connectToExternalDataClay(updatedBackupIP);
+					System.out.println("-- Updated dataClay backup is: " + backupDC);
+					DataClay.migrateFederatedObjects(currentBackupID, backupDC);
+
+				}
+				// UPDATE CHILDREN
+				if (updatedChildrenIPs != null && !updatedChildrenIPs.isEmpty() && !currentChildren.equals(updatedChildrenIPs)) { 
+					final ArrayList<String> lostChildren = new ArrayList<>();
+					for (final String child : currentChildren) { 
+						if (!updatedChildrenIPs.contains(child)) { 
+							lostChildren.add(child);
+						}
+					}										
+					for (final String lostChild : lostChildren) {
+						// 1 - unfederate all objects with lost children 
+						final DataClayInstanceID extDataClayID = getExternalDataClayID(lostChild);
+						DataClay.unfederateAllObjects(extDataClayID);
+						// 2 - notify leader
+						final Map<String, Object> notificationData = new HashMap<>();
+						notificationData.put("previousLeaderID", extDataClayID.toString());
+						final UnfederateNotification notification = new UnfederateNotification(notificationData);
+						notification.makePersistent(lostChild);
+						notification.federate(leaderDC);
+						notification.unfederateWithAllDCs(false);
+					}
+				}
+
 			} else { 
 				final CIMIResource resource = getResource(type, id);
 				resource.updateAllData(objectData);
@@ -400,6 +502,7 @@ public class DataClayWrapper {
 
 			return read(type, id);
 		} catch (final ObjectNotRegisteredException e) {
+			e.printStackTrace();
 			throw new ObjectDoesNotExistException(type, id);
 		} catch (final Exception e) { 
 			e.printStackTrace();

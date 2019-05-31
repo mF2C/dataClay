@@ -1,6 +1,6 @@
 {
     "id": "service-operation-report/service-operation-report",
-    "name": "Service-operation-report Name",
+    "name": "resourcename",
     "description": "Service-operation-report Description",
     "resourceURI": "Service-operation-report TypeURI",
     "created": "201804181533",

@@ -1,6 +1,6 @@
 {
     "id": "device/device",
-    "name": "Device Name",
+    "name": "resourcename",
     "description": "Device Description",
     "resourceURI": "DeviceTypeURI",
     "created": "201804181533",

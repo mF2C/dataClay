@@ -1,6 +1,6 @@
 {
     "id": "fog-area/fog-area",
-    "name": "Fog Area Name",
+    "name": "resourcename",
     "description": "Fog Area Description",
     "resourceURI": "FogAreaTypeURI",
     "created": "201804181533",

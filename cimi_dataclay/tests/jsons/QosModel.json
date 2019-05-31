@@ -1,7 +1,7 @@
 
   {
     "id": "qos-model/qos-model",
-    "name": "qosresource",
+    "name": "resourcename",
     "resourceURI": "uri",
     "created": "201804181524",
     "updated": "201804181524",

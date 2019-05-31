@@ -1,6 +1,6 @@
 {
     "id" : "agreement/agreement",
-    "name" : "Agreement 02",
+    "name" : "resourcename",
     "description": "Agreement Description",
     "resourceURI": "AgreementTypeURI",
     "created" : "2018-05-22T11:34:56.959Z",

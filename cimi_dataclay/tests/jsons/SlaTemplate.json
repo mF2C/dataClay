@@ -1,7 +1,7 @@
 
 {
     "id": "sla-violation/sla-violation",
-    "name": "sla-violation",
+    "name": "resourcename",
     "resourceURI": "uri",
     "description": "SlaViolation Description",
     "created" : "2018-05-22T11:34:56.959Z",

@@ -1,6 +1,6 @@
 {
     "id": "callback/callback",
-    "name": "Callback Name",
+    "name": "resourcename",
     "description": "Callback Description",
     "resourceURI": "CallbackTypeURI",
     "created": "201804181533",

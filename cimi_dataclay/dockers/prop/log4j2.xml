@@ -17,7 +17,7 @@
         <Logger name="DataClayObject" level="off" /> <!--  This is very verbose! -->
         
         <!--  Data service -->
-        <Logger name="DataService" level="off"/>
+        <Logger name="DataService" level="debug"/>
         
         <!--  Lockers -->
         <Logger name="dataclay.util.classloaders.SyncClass" level="off"/>
@@ -29,7 +29,7 @@
         <Logger name="heap.HeapManager" level="off"/>
         
         <!--  Logic module -->
-        <Logger name="LogicModule" level="off"/>
+        <Logger name="LogicModule" level="debug"/>
         <Logger name="LMDB" level="off"/>
         <Logger name="managers.ClassManager.DB" level="off" />
         <Logger name="MetaDataService.db" level="off" />
@@ -54,7 +54,7 @@
         <Logger name="CfgDataService" level="info"/>
         
         <!--  ROOT LOGGER -->
-    <Root level="off">
+    <Root level="debug">
       <AppenderRef ref="ConsoleAppender" />
     </Root>
   </Loggers>

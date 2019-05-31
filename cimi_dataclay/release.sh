@@ -3,8 +3,8 @@ SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 TOOLSBASE="$SCRIPTDIR/../tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
-SRCPATH="$SCRIPTDIR/model/src/CIMI"
-DATACLAY_TAG="2.0.dev4"
+MODELPATH="$SCRIPTDIR/model/"
+DATACLAY_TAG="2.0.dev8"
 NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
@@ -82,7 +82,7 @@ function maven_install_wrapper {
 	
 		pushd $SCRIPTDIR/wrapper
 		echo "Building dataclay mf2c wrapper local repository"
-		mvn package javadoc:jar
+		mvn clean package javadoc:jar
 		popd
 		
 		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
@@ -112,8 +112,7 @@ function maven_install_wrapper {
 	
 		pushd $SCRIPTDIR/wrapper
 		echo "Building dataclay mf2c wrapper local repository $LOCALREPOSITORY"
-		mvn clean
-		mvn package javadoc:jar
+		mvn clean package javadoc:jar
 		popd
 		
 		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
@@ -190,13 +189,6 @@ export DATACLAYCLIENTCONFIG=$TMPDIR/client.properties
 # Build and start dataClay
 pushd $SCRIPTDIR/dockers
 
-echo " ==== Set dataClay version $DATACLAY_TAG in docker-compose.yml ==== " 
-if [ -f docker-compose.yml.orig ]; then
-	mv docker-compose.yml.orig docker-compose.yml # sanity check if script was interrupted 
-fi
-cp docker-compose.yml docker-compose.yml.orig
-sed -i "s/trunk/$DATACLAY_TAG/g" docker-compose.yml
-
 echo " ===== Starting dataClay ===== "
 docker-compose down #sanity check
 docker-compose up -d
@@ -208,11 +200,11 @@ $TOOLSPATH NewAccount $USER $PASS
 echo " ===== Create dataset $DATASET and grant access to it ====="
 $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
-echo " ===== Register model in $SRCPATH  ====="
-TMPDIR=`mktemp -d`
-javac -cp $DCLIB $SRCPATH/*.java -d $TMPDIR
-$TOOLSPATH NewModel $USER $PASS $NAMESPACE $TMPDIR java
-rm -Rf $TMPDIR
+echo " ===== Register model in $MODELPATH  ====="
+pushd $MODELPATH
+mvn clean compile -U
+$TOOLSPATH NewModel $USER $PASS $NAMESPACE $MODELPATH/target/classes/ java
+popd 
 
 echo " ===== Get stubs into $STUBSPATH  ====="
 rm -rf $STUBSPATH
@@ -241,8 +233,6 @@ done
 echo " ===== Stopping dataClay ====="
 pushd $SCRIPTDIR/dockers
 docker-compose down
-mv docker-compose.yml.orig docker-compose.yml
-
 popd
 
 # Now we can build the docker images 

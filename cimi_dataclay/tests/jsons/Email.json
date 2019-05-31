@@ -1,6 +1,6 @@
 {
     "id": "email/email",
-    "name": "Email Name",
+    "name": "resourcename",
     "description": "Email Description",
     "resourceURI": "EmailTypeURI",
     "created": "201804181533",

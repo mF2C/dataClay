@@ -1,5 +1,6 @@
 {
     "id": "service-instance/service-instance",
+    "name": "resourcename",
     "resourceURI": "ServiceInstanceTypeURI",
     "created": "201804181541",
     "updated": "201804181541",

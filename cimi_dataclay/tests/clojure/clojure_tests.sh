@@ -28,7 +28,15 @@ for filename in $JSONDIR/*.json; do
 	echo "$output"
 	id=$(echo $output | sed -n -e 's/^.*CREATED://p')
 	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id $filename 
-	bash $COMMONDIR/runApp.sh "AGENT" "update" $id $filename 
+	
+	# change the name 
+	tmpfilename=$(basename $filename)
+	cp $filename /tmp/$tmpfilename
+	sed -i "s/resourcename/$tmpfilename/g" /tmp/$tmpfilename
+	cat /tmp/$tmpfilename
+	bash $COMMONDIR/runApp.sh "AGENT" "update" $id /tmp/$tmpfilename
+	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id /tmp/$tmpfilename
+	
 done
 
 #TODO: Complex update and delete tests

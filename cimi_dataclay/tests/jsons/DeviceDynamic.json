@@ -1,6 +1,6 @@
 {
     "id": "device-dynamic/device-dynamic",
-    "name":"DD Name",
+    "name":"resourcename",
     "description": "DD Description",
     "resourceURI": "DeviceDynamicTypeURI",
     "created": "201804181533",

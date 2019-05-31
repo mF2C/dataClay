@@ -214,7 +214,7 @@ public class CIMIResource extends DataClayObject {
 
 	@Override
 	public void whenUnfederated() {
-		// when the object arrives to current dataClay, it is automatically added to the
+		// when the object arrives to current dataClay, it is automatically removed from the
 		// corresponding resource collection.
 
 		// first part of the class name, in execution runtime, is the namespace
@@ -247,7 +247,7 @@ public class CIMIResource extends DataClayObject {
 
 	}
 
-	private void propagate(final String ip) { 
+	protected void propagate(final String ip) { 
 		final String addr = ip;
 		if (addr != null && !addr.isEmpty()) {
 			System.out.println("Refederating to " + addr);
