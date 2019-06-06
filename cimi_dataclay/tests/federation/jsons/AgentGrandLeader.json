@@ -26,7 +26,7 @@
     "backup_ip": "",
     "authenticated": true,
     "connected": true, 
-    "device_ip" : "my_ip_here",
+    "device_ip" : "192.168.64.7:6034",
     "isLeader": true,
-    "childrenIPs": [ "" ]
+"childrenIPs":["192.168.64.2:1034", "192.168.64.5:5034"]
 }

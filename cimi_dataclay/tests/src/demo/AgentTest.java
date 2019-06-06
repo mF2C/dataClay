@@ -45,8 +45,11 @@ public class AgentTest {
 				break;
 			case "query": 
 				type = args[2];
-				final int expectedResult = Integer.valueOf(args[3]);
-				checkQuery(type, expectedResult);
+				final String expression = args[3];
+				final String user = args[4];
+				final String role = args[5];
+				final int expectedResult = Integer.valueOf(args[6]);
+				checkQuery(type, expression, user, role, expectedResult);
 				break;
 			case "update": 
 				type_and_id = args[2];
@@ -87,9 +90,25 @@ public class AgentTest {
 		final byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded);
 	}
-
-	private static void checkQuery(final String type, final int expectedSize) throws Exception {
-		final List<String> result = DataClayWrapper.query(type, null, null, null);
+	
+	private static void checkQuery(final String type, final String expression, 
+			final String user, final String role,
+			final int expectedSize) throws Exception { 
+		
+		final String thetype = type;
+		String theexpression = expression; 
+		if (theexpression.equals("null")) { 
+			theexpression = null;
+		}
+		String theuser = user; 
+		if (theuser.equals("null")) { 
+			theuser = null;
+		}
+		String therole = role; 
+		if (therole.equals("null")) { 
+			therole = null;
+		}
+		final List<String> result = DataClayWrapper.query(thetype, theexpression, theuser, therole);
 		System.out.println("All " + type + ":");
 		for (final String curResult : result) {
 			System.out.println(" -- " + curResult);
@@ -100,7 +119,6 @@ public class AgentTest {
 					+ " (" + result.size() + ") found do not match expected " + expectedSize);
 		}
 	}
-
 
 	private static void update(final String type_and_id,
 			final String updateRequestJson) throws Exception { 

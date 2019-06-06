@@ -1,7 +1,7 @@
 {
     "id" : "agent/agent",
-    "name" : "Child 2",
-    "description": "This is the Child2 for the federation test",
+    "name" : "Leader",
+    "description": "This is the Leader for the federation test",
     "resourceURI": "AgentTypeURI",
     "created" : "2018-05-22T11:34:56.959Z",
     "updated" : "2018-05-22T15:25:02.057Z",
@@ -20,13 +20,13 @@
         "type" : "ROLE"
       } ]
     },
-    "device_id" : "device/2222",
-    "leader_id": "my leader ID",
-    "leader_ip": "192.168.64.4:7034",
+    "device_id" : "device/3333",
+    "leader_id": "",
+    "leader_ip": "leader_ip_here",
     "backup_ip": "",
     "authenticated": true,
-    "connected": true,
-    "device_ip" : "192.168.64.4:7034",
+    "connected": true, 
+    "device_ip" : "my_ip_here",
     "isLeader": true,
-    "childrenIPs": [ ]
+    "childrenIPs": [  ]
 }

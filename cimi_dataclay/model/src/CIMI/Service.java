@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 @SuppressWarnings({"serial" })
+@ReplicateInLeader
 public class Service extends CIMIResource {
 	/** 
 	 * ==== READ THIS! ====

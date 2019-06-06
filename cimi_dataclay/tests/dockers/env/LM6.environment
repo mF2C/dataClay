@@ -5,8 +5,8 @@ DATACLAY_ADMIN_USER=admin
 DATACLAY_ADMIN_PASSWORD=admin
 
 # Needed both by LogicModule and DataService
-LOGICMODULE_PORT_TCP=1034
+LOGICMODULE_PORT_TCP=7034
 
 # Not required by LogicModule per se, but EnvLoader prefers to have it
-LOGICMODULE_HOST=logicmodule1
+LOGICMODULE_HOST=logicmodule6
 #LOGICMODULE_HOST=127.0.0.1

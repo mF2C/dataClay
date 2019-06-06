@@ -10,5 +10,3 @@ LOGICMODULE_PORT_TCP=2034
 # Not required by LogicModule per se, but EnvLoader prefers to have it
 LOGICMODULE_HOST=logicmodule2
 #LOGICMODULE_HOST=127.0.0.1
-
-DB_HANDLER_TYPE_FOR_LOGICMODULE=POSTGRES

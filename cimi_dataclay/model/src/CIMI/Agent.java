@@ -51,4 +51,11 @@ public class Agent extends CIMIResource {
 		return leader_ip;
 	}
 	
+	/**
+	 * Get children IPs.
+	 * @return children IPs
+	 */
+	public ArrayList<String> getChildrenIPs() { 
+		return childrenIPs;
+	}
 }

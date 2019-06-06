@@ -1,5 +1,5 @@
 {
-    "id": "device/1111",
+    "id": "device/leader2",
     "resourceURI": "DeviceTypeURI",
     "created": "201804181533",
     "updated": "201804181533",
@@ -14,6 +14,6 @@
       },
       "os": "Linux",
       "arch": "ARM",
-      "hwloc": "re-updated hwloc",
-      "cpuinfo": "updated cpuinfo"
+"hwloc":"updated to backup",
+     
  }

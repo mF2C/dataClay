@@ -31,7 +31,7 @@ else
 	echo ""	
 fi
 
-bash $DOCKERSDIR/stopDataClaysAndClean.sh
+#bash $DOCKERSDIR/stopDataClaysAndClean.sh
 
 
 

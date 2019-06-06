@@ -10,7 +10,7 @@
         <!--  Runtime -->
         <Logger name="ClientRuntime" level="off" />
         <Logger name="ClientManagementLib" level="off"/>
-        <Logger name="DataClayRuntime" level="off"/>
+        <Logger name="DataClayRuntime" level="debug"/>
         <Logger name="DataServiceRuntime" level="off"/>
         
         <Logger name="DataClayObjectLoader" level="off"/>
@@ -45,7 +45,7 @@
         <Logger name="NettyClientHandler" level="off"/>
         <Logger name="grpc.client" level="off"/>
         <Logger name="communication.LogicModule.service" level="off"/>
-        <Logger name="grpc.client.logicmodule" level="off"/>
+        <Logger name="grpc.client.logicmodule" level="debug"/>
         
         <!--  Databases -->
         <Logger name="dataclay.dbhandler" level="off"/>

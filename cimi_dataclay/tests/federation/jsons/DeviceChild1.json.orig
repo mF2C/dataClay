@@ -1,5 +1,5 @@
 {
-    "id": "device/1111",
+    "id": "device/child1",
     "resourceURI": "DeviceTypeURI",
     "created": "201804181533",
     "updated": "201804181533",
@@ -14,6 +14,6 @@
       },
       "os": "Linux",
       "arch": "ARM",
-      "hwloc": "updated hwloc",
-      "cpuinfo": "re-updated cpuinfo"
+	   "hwloc":"initial hw",
+      "cpuinfo": "initial cpuinfo"
  }
