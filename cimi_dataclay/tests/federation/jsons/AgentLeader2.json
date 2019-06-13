@@ -22,11 +22,11 @@
     },
     "device_id" : "device/5555",
     "leader_id": "",
-    "leader_ip": "",
-    "backup_ip": "",
+    "leader_ip": "leader_ip_here",
+    "backup_ip": "backup_ip_here",
     "authenticated": true,
     "connected": true, 
-    "device_ip" : "192.168.64.4:7034",
+    "device_ip" : "my_ip_here",
     "isLeader": true,
-"childrenIPs":["192.168.64.6:2034", "192.168.64.4:7034"]
+    "childrenIPs": [  ]
 }

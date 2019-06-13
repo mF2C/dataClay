@@ -34,11 +34,20 @@ public class AgentTest {
 			System.out.println();
 			System.out.println("---------------------------------");
 
+			if (operation.equals("init")) {
+				System.out.println("-- Waiting for dataClay to be ready...");
+			}
 			DataClay.init();
-			DataClayWrapper.init();
+			
+			if (!operation.equals("init")) {
+				DataClayWrapper.init();
+			}
 
 			String obj, type, type_and_id;
 			switch (operation) {
+			case "init":
+				System.out.println("-- dataClay " + DataClay.getDataClayID() + " is ready!");
+				break;
 			case "create":
 				obj = readFile(args[2]);
 				createObjects(obj);

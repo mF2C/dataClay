@@ -204,7 +204,7 @@ export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
 bash $COMMONDIR/runApp.sh "BACKUP" "query" "device"  "null" "null" "null" "1" #expected 1 device
 bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "0" #expected 0 device-dynamics
-bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
+#bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 
 ##################### UPDATES
 
@@ -333,10 +333,6 @@ bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic"  "null" "null" "null
 # Update children agents to use backup leader
 sed -i -e "s/${LEADER_IP2}/${BACKUP_IP}/g" $JSONDIR/AgentChild1.json
 sed -i -e "s/${LEADER_IP2}/${BACKUP_IP}/g" $JSONDIR/AgentChild2.json
-
-# backup has two children: child1, child2
-sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${CHILD1_IP}\", \"${CHILD2_IP}\"\]/g" $JSONDIR/AgentBackup.json
-
 # Child1 update agent 
 export DATACLAYCLIENTCONFIG=$CHILD1_CFGFILE
 export DATACLAYSESSIONCONFIG=$CHILD1_SESSIONFILE
@@ -345,6 +341,10 @@ bash $COMMONDIR/runApp.sh "CHILD1" "update" "agent/agent" $JSONDIR/AgentChild1.j
 export DATACLAYCLIENTCONFIG=$CHILD2_CFGFILE
 export DATACLAYSESSIONCONFIG=$CHILD2_SESSIONFILE
 bash $COMMONDIR/runApp.sh "CHILD2" "update" "agent/agent" $JSONDIR/AgentChild2.json 
+
+
+# backup has two children: child1, child2
+sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${CHILD1_IP}\", \"${CHILD2_IP}\"\]/g" $JSONDIR/AgentBackup.json
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
 bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.json 
@@ -368,13 +368,13 @@ export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
 sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${LEADER_IP}\", \"${BACKUP_IP}\"\]/g" $JSONDIR/AgentGrandLeader.json
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "update" "agent/agent" $JSONDIR/AgentGrandLeader.json 
 # grand Leader checks 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "4" #expected devices 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "2" #expected 2 device-dynamics
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "4" #expected devices 
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "2" #expected 2 device-dynamics
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered in backup but lost child!
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
 
 #bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
 
@@ -393,58 +393,85 @@ bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.j
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
 bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "null" "null" "2" #expected 3 devices 
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
-bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered in backup
-bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
+#bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
+#bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered in backup
+#bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 
 # check grandleader has only 3 devices and 1 device-dynamic
 export DATACLAYCLIENTCONFIG=$GRANDLEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "3" #expected devices 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
 
 #### TESTING LOOSING CHILDREN DUE TO MOVE
 pushd $DOCKERDIR
 docker-compose -f docker-compose-federation.yml up -d logicmodule6 logicmodule3 ds1java6 ds1java3 # leader 2 and children 2 is back
+sleep 30 # agent might be not down yet when init is called
 popd
+
+export DATACLAYCLIENTCONFIG=$CHILD2_CFGFILE
+export DATACLAYSESSIONCONFIG=$CHILD2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "CHILD2" "init" 
+export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
+export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "LEADER2" "init"
 
 NEW_CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:4034
 NEW_LEADER_IP2=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule6_1`:7034
 
 # update my ips 
 sed -i -e "s/${LEADER_IP2}/${NEW_LEADER_IP2}/g" $JSONDIR/AgentLeader2.json 
-sed -i -e "s/${CHILD2_IP}/${NEW_LEADER_IP2}/g" $JSONDIR/AgentChild2.json 
+sed -i -e "s/${CHILD2_IP}/${NEW_CHILD2_IP}/g" $JSONDIR/AgentChild2.json 
 LEADER_IP2=$NEW_LEADER_IP2
-CHILD2_IP=$NEW_LEADER_IP2
-
-# Update children agents to use backup leader
-sed -i -e "s/${BACKUP_IP}/${LEADER_IP2}/g" $JSONDIR/AgentChild1.json # connects to L2
-sed -i -e "s/${BACKUP_IP}/${LEADER_IP2}/g" $JSONDIR/AgentChild2.json # connects to L2
-# leader 1 connects to grand leader again (no updates)
-
-# backup has no children
-sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\]/g" $JSONDIR/AgentBackup.json
-# leader2 has two children now and no leader, no backup
-sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${CHILD1_IP}\", \"${CHILD2_IP}\"\]/g" $JSONDIR/AgentLeader2.json
-sed -i -e "s/${GRANDLEADER_IP}//g" $JSONDIR/AgentLeader2.json 
-sed -i -e "s/${BACKUP_IP}//g" $JSONDIR/AgentLeader2.json 
-
-# UPDATEs
+CHILD2_IP=$NEW_CHILD2_IP
+export DATACLAYCLIENTCONFIG=$CHILD2_CFGFILE
+export DATACLAYSESSIONCONFIG=$CHILD2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "CHILD2" "update" "agent/agent" $JSONDIR/AgentChild2.json 
 export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
 bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2.json 
+
+# backup has no children
+# backup detects lost children and grand leader are notified to unfederate all objects with c2 
+# c2 is notified to unfederate all objects with grand leader
+sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\]/g" $JSONDIR/AgentBackup.json
+export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
+export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
+bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.json 
+
+# Update children agents to use leader 2
+# children detect new leader and migrates objects to new leader which at the same time migrates
+# objects to grand leader since L2 has it associated
+sed -i -e "s/${BACKUP_IP}/${LEADER_IP2}/g" $JSONDIR/AgentChild1.json # connects to L2
+sed -i -e "s/${BACKUP_IP}/${LEADER_IP2}/g" $JSONDIR/AgentChild2.json # connects to L2
 export DATACLAYCLIENTCONFIG=$CHILD1_CFGFILE
 export DATACLAYSESSIONCONFIG=$CHILD1_SESSIONFILE
 bash $COMMONDIR/runApp.sh "CHILD1" "update" "agent/agent" $JSONDIR/AgentChild1.json 
 export DATACLAYCLIENTCONFIG=$CHILD2_CFGFILE
 export DATACLAYSESSIONCONFIG=$CHILD2_SESSIONFILE
 bash $COMMONDIR/runApp.sh "CHILD2" "update" "agent/agent" $JSONDIR/AgentChild2.json 
-export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
-export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.json 
+
+# new children 
+sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${CHILD1_IP}\", \"${CHILD2_IP}\"\]/g" $JSONDIR/AgentLeader2.json
+export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
+export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2.json 
+
+# leader2 has two children now and no leader, no backup
+# no leader, current children are notified to unfederate all its objects with grand leader
+sed -i -e "s/${GRANDLEADER_IP}//g" $JSONDIR/AgentLeader2.json 
+export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
+export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2.json 
+
+# lost backup
+sed -i -e "s/${BACKUP_IP}//g" $JSONDIR/AgentLeader2.json 
+export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
+export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
+bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2.json 
 
 # checks 
 # leader 2 can see child1, child2 and leader 2
@@ -480,6 +507,7 @@ bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSO
 ##################### LOST/MOVE PARENT #####################
 
 #### TESTING PROPAGETE TO CHILDREN NEW GRAND LEADER (children unfederates with grandleader)
+# grand leader has a new leader, all its objects are send to new leader and all its children also
 sed -i -e "s/.*leader_ip.*/\"leader_ip\":\"${LEADER_IP2}\",/g" $JSONDIR/AgentGrandLeader.json
 export DATACLAYCLIENTCONFIG=$GRANDLEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
@@ -508,7 +536,7 @@ export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
 bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "null" "null" "3" #expected devices 
 bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "null" "null" "2" #expected device-dynamics
-bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
+bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
 

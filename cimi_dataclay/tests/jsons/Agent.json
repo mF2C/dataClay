@@ -28,5 +28,5 @@
     "connected": true, 
     "device_ip" : "",
     "isLeader": true,
-    "childrenIPs": [ "" ]
+    "childrenIPs": [ ]
 }

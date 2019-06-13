@@ -222,6 +222,7 @@ public class CIMIResource extends DataClayObject {
 		final String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection
 				.getByAlias(className + "Collection");
+		System.out.println("REMOVING " + this.id);
 		resources.delete(this.id);
 	}
 
