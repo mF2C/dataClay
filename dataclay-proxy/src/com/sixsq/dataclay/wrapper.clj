@@ -79,9 +79,15 @@
 
 (defn query
   [collection-id filter user-name user-role]
-  (log/info "wrapper query arguments:" collection-id filter user-name user-role)
+  (log/info "wrapper query arguments:" collection-id (str "'" filter "'") user-name user-role)
   (try
-    (let [dc-collection-id (->kebab-case collection-id)
+    ;; Setting the user-name and user-role explicitly to nil is a hack to allow
+    ;; dataClay to return these resources for all queries. This can be removed when
+    ;; the ACL within the DataClayWrapper is corrected.
+    (let [user-name (if (.startsWith collection-id "Session") nil user-name)
+          user-role (if (.startsWith collection-id "Session") nil user-role)
+          dc-collection-id (->kebab-case collection-id)
+          _ (log/info "wrapper query modified arguments:" dc-collection-id (str "'" filter "'") user-name user-role)
           response (DataClayWrapper/query dc-collection-id filter user-name user-role)]
       (log/info "wrapper query response:" dc-collection-id response)
       response)
