@@ -64,7 +64,7 @@
    [camel-snake-kebab "0.4.0"]
    [ring]
    [http-kit "2.2.0"]
-   [dataclay.mf2c/wrapper "trunk"]
+   [dataclay.mf2c/wrapper "2.21"]
    [com.sixsq.slipstream/utils ~+slipstream-version+]]
 
   :main com.sixsq.dataclay.proxy

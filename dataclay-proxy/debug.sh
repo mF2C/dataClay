@@ -1,5 +1,6 @@
 #!/bin/bash -xe
 
-lein do clean, test, uberjar
+rm -f proxy.jar 
+lein do clean, uberjar
 cp ./target/proxy-trunk-standalone.jar proxy.jar
 docker build --tag mf2c/dataclay-proxy:test . 
