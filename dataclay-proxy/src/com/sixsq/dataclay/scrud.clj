@@ -82,7 +82,7 @@
         (utils/rethrow ex type id)))))
 
 
-(defn query [collection-id {{:keys [filter user-name user-roles]} :cimi-params}]
+(defn query [collection-id {{:keys [filter]} :cimi-params user-name :user-name user-roles :user-roles}]
   (log/info ":query function:" collection-id user-name user-roles filter)
   (try
 

@@ -27,18 +27,20 @@
 
 (defn create
   [type uuid data]
+  (log/info "wrapper create arguments:" type uuid data)
   (try
     (let [dc-type (->kebab-case type)
           response (DataClayWrapper/create dc-type uuid data)]
       (log/info "wrapper create response:" dc-type response)
       response)
     (catch Exception ex
-      (log/info "wrapper create exception:" (str ex))
+      (log/info "wrapper create exception:" type uuid data (str ex))
       (throw ex))))
 
 
 (defn read
   [type uuid]
+  (log/info "wrapper read arguments:" type uuid)
   (try
     (let [dc-type (->kebab-case type)
           response (DataClayWrapper/read dc-type uuid)]
@@ -51,6 +53,7 @@
 
 (defn delete
   [type uuid]
+  (log/info "wrapper delete arguments:" type uuid)
   (try
     (let [dc-type (->kebab-case type)
           response (DataClayWrapper/delete dc-type uuid)]
@@ -63,6 +66,7 @@
 
 (defn update
   [type uuid data]
+  (log/info "wrapper update arguments:" type uuid data)
   (try
     (let [dc-type (->kebab-case type)
           response (DataClayWrapper/update dc-type uuid data)]
@@ -75,6 +79,7 @@
 
 (defn query
   [collection-id filter user-name user-role]
+  (log/info "wrapper query arguments:" collection-id filter user-name user-role)
   (try
     (let [dc-collection-id (->kebab-case collection-id)
           response (DataClayWrapper/query dc-collection-id filter user-name user-role)]
