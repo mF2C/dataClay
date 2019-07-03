@@ -29,7 +29,7 @@ public class AgentTest {
 			System.out.println("---------------------------------");
 			System.out.print(" Agent " + agent + " running operation " + operation + " with arguments: ");
 			for (int i = 2; i < args.length; ++i) { 
-				System.out.print(args[i] + " ");
+				System.out.print("\"" + args[i] + "\" ");
 			}
 			System.out.println();
 			System.out.println("---------------------------------");

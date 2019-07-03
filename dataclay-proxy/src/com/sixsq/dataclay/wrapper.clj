@@ -74,10 +74,10 @@
 
 
 (defn query
-  [collection-id filter user-name user-role]
+  [collection-id filter user-name user-roles]
   (try
     (let [dc-collection-id (->kebab-case collection-id)
-          response (DataClayWrapper/query dc-collection-id filter user-name user-role)]
+          response (DataClayWrapper/query dc-collection-id filter user-name user-roles)]
       (log/info "wrapper query response:" dc-collection-id response)
       response)
     (catch Exception ex

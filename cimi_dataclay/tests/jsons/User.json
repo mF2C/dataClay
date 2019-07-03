@@ -1,0 +1,32 @@
+{
+	"activeSince" : "1970-01-01T00:00:00.000Z",
+    "lastExecute" : "1970-01-01T00:00:00.000Z",
+    "deleted" : false,
+    "password" : "FA585D89C851DD338A70DCF535AA2A92FEE7836DD6AFF1226583E88E0996293F16BC009C652826E0FC5C706695A03CDDCE372F139EFF4D13959DA6F1F5D3EABE",
+    "method" : "self-registration",
+    "updated" : "2019-06-14T18:07:15.090Z",
+    "emailAddress" : "lord.alexjandro@hotmail.com",
+    "username" : "alejandro1",
+    "created" : "2019-06-14T18:06:24.203Z",
+    "state" : "ACTIVE",
+    "lastOnline" : "1970-01-01T00:00:00.000Z",
+    "id" : "user/user",
+    "acl" : {
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
+      "rules" : [ {
+        "principal" : "ADMIN",
+        "right" : "ALL",
+        "type" : "ROLE"
+      }, {
+        "principal" : "alejandro1",
+        "right" : "MODIFY",
+        "type" : "USER"
+      } ]
+    },
+    "resourceURI" : "http://sixsq.com/slipstream/1/User",
+    "isSuperUser" : false,
+    "href" : "user/alejandro1"
+}

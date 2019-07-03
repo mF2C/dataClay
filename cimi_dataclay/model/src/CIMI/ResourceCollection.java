@@ -44,11 +44,35 @@ public class ResourceCollection extends DataClayObject implements Iterable<CIMIR
 		if (query == null || query.isEmpty()) {
 			queryResult.addAll(resources.values());
 		} else {
-			queryResult.addAll(filterByAST(ASTUtil.cimiToAST(query)));
+			queryResult.addAll(filterByAST(cimiToAST(query)));
 		}
 		for (final Object curElement : queryResult) {
 			result.add((CIMIResource) curElement);
 		}
+		return result;
+	}
+	
+	public List<Object> cimiToAST(final String cimiAST) {
+		System.out.println("[CIMItoAST] Received " + cimiAST);
+		final String jsonAST = cimiToJSON(cimiAST);
+		System.out.println("[CIMItoAST] Post processed " + jsonAST);
+		return ASTUtil.jsonToAST(jsonAST);
+	}
+
+	public String cimiToJSON(final String cimiAST) {
+		String result = cimiAST;
+		// nested attributes
+		result = result.replace("\" \"/\" \"", "/");
+		// Spaces are commas in JSON
+		result = result.replace(" ", ",");
+		// [:token => ["token"
+		result = result.replaceAll("\\[:([a-zA-Z]+)", "[\"$1\"");
+		// remove inner quote on strings
+		result = result.replace("\"\\\"", "\"");  // open double quote
+		result = result.replace("\\\"\"", "\"");  // close double quote
+		result = result.replace("\"'", "\"");  // open single quote
+		result = result.replace("'\"", "\"");  // close single quote
+		
 		return result;
 	}
 

@@ -1,0 +1,29 @@
+{
+    "description" : "Creates a new user through self-registration",
+    "instance" : "self-registration",
+    "password" : "password",
+    "method" : "self-registration",
+    "updated" : "2019-06-26T12:30:15.416Z",
+    "name" : "Self Registration",
+    "emailAddress" : "user@example.com",
+    "username" : "username",
+    "created" : "2019-06-26T12:30:15.416Z",
+    "passwordRepeat" : "password",
+    "id" : "user-template/self-registration",
+    "acl" : {
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
+      "rules" : [ {
+        "principal" : "ANON",
+        "type" : "ROLE",
+        "right" : "VIEW"
+      } ]
+    },
+    "operations" : [ {
+      "rel" : "http://sixsq.com/slipstream/1/action/describe",
+      "href" : "user-template/self-registration/describe"
+    } ],
+    "resourceURI" : "http://sixsq.com/slipstream/1/UserTemplate"
+  }

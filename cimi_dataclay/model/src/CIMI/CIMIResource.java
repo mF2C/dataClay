@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -53,24 +52,11 @@ public class CIMIResource extends DataClayObject {
 	// type: String
 	// right: String
 	// Aux fields to implement the filter more easily:
-	String owner;
-	String permissions;
 
 	public CIMIResource(final Map<String, Object> resourceData) {
 		// Set all fields
 		updateAllData(resourceData);
-		if (acl != null) {
-			final Map<String, Object> ownerValue = (Map<String, Object>) acl.get("owner");
-			this.owner = (String) ownerValue.get("principal");
-			final List<Map<String, Object>> rulesValue = (List<Map<String, Object>>) acl.get("rules");
-			// TODO For the moment we assume there is only one element
-			if (rulesValue != null) {
-				final Map<String, Object> permission = rulesValue.get(0);
-				this.permissions = (String) permission.get("principal");
-			} else {
-				this.permissions = this.owner;
-			}
-		}
+		
 	}
 
 	/**
@@ -84,9 +70,6 @@ public class CIMIResource extends DataClayObject {
 				&& !currentClass.equals(DataClayExecutionObject.class)) {
 			for (final Field declaredField : currentClass.getDeclaredFields()) { 
 				final String fieldName = declaredField.getName();
-				if (fieldName.equals("permissions") || fieldName.equals("owner")) { 
-					continue; //ignore fields
-				}
 				info.put(fieldName, getFieldValue(fieldName));
 			}
 			currentClass = currentClass.getSuperclass();

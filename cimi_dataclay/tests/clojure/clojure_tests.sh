@@ -39,28 +39,4 @@ for filename in $JSONDIR/*.json; do
 	
 done
 
-#TODO: Complex update and delete tests
-
-# Queries
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "User1" "USER" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "User1" "ADMIN" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "User2" "USER" "0"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "null" "1" # default?
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "ANON" "1" # error!
-
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "ADMIN" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "USER" "0"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "User1" "null" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "User2" "null" "0"
-
-EXPRESSION="[:Filter [:AndExpr [:Comp [:Attribute \"os\"] [:EqOp \"=\"] [:SingleQuoteString \"'Windows'\"]]]]"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" $EXPRESSION "null" "ADMIN" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" $EXPRESSION "null" "USER" "0"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" $EXPRESSION "User1" "null" "1"
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" $EXPRESSION "User2" "null" "0"
-
-# Query after delete
-#bash $COMMONDIR/runApp.sh "AGENT" "query" "device" $EXPRESSION "User1" "USER" "0"
-
-
 popd

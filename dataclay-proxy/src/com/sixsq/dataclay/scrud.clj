@@ -82,11 +82,11 @@
         (utils/rethrow ex type id)))))
 
 
-(defn query [collection-id {{:keys [filter user-name user-roles]} :cimi-params}]
+(defn query [collection-id {{:keys [filter]} :cimi-params user-name :user-name user-roles :user-roles}]
   (log/info ":query function:" collection-id user-name user-roles filter)
   (try
 
-    (let [results (wrapper/query collection-id (str filter) user-name (str (first user-roles)))
+    (let [results (wrapper/query collection-id (str filter) user-name (str user-roles))
           hits (map json/json->edn results)
           n (count hits)
           meta {:count n}]

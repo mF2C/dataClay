@@ -6,13 +6,19 @@
     "created": "201804181533",
     "updated": "201804181533",
     "acl": {
-      "owner": {
-        "principal": "User1",
-        "type": "USER"},
-      "rules": [{
-        "principal": "ADMIN",
-        "type": "ROLE",
-        "right": "MODIFY"}]
+	     "owner" : {
+	        "principal" : "OWNERROLE",
+	        "type" : "ROLE"
+	      },
+	      "rules" : [ {
+	        "principal" : "ADMIN",
+	        "right" : "ALL",
+	        "type" : "ROLE"
+	      }, {
+	        "principal" : "mf2c",
+	        "right" : "MODIFY",
+	        "type" : "USER"
+	      } ]
      },
      "deviceID": "myDeviceID",
      "isLeader": true,

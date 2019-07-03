@@ -1,6 +1,7 @@
 package api;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -48,6 +49,10 @@ public class DataClayWrapper {
 
 	/** Agent resource alias. */
 	private static final String AGENT_RESOURCE_ALIAS = "agent/agent";
+	
+	/** Allowed rights for queries. */
+	private static final List<String> QUERY_RIGHTS = Arrays.asList(
+			new String[] {"READ", "MODIFY", "ALL"});
 
 	/**
 	 * Simulates a discovery process if LEADER_DC=host:port environment variable is set. 
@@ -714,56 +719,37 @@ public class DataClayWrapper {
 	 *            which the user/role has access are returned
 	 * @param user
 	 *            user who executes the query. Can be empty.
-	 * @param role
-	 *            role of the user who executes the query. Simplification for IT-1:
-	 *            a user has a single role. Can be empty.
+	 * @param jsonRoles
+	 *            roles of the user who executes the query. 
 	 * @return list of JSON strings representing dataClay objects that match the
 	 *         query
 	 * @throws ResourceCollectionDoesNotExistException
 	 * 			if resource collection of 'type' is not found
 	 */
+	@SuppressWarnings("unchecked")
 	public static List<String> query(final String type, final String expression, final String user, 
-			final String role) throws ResourceCollectionDoesNotExistException{
+			final String jsonRoles) throws ResourceCollectionDoesNotExistException{
 		try {
-			final String aclCheck;
-			final String expressionWithAcl;
-			if (expression != null && !expression.isEmpty()) {
-				final String exprWithoutFilter = expression.substring(9); // Remove the "[:Filter " at the beginning
-				if (user != null && !user.isEmpty()) {
-					if (role != null && !role.isEmpty()) {
-						aclCheck = generateAclCheckComplete(user, role);
-					} else {
-						aclCheck = generateAclCheckSimple(user);
-					}
-					expressionWithAcl = aclCheck + " " + exprWithoutFilter + "]";
-				} else {
-					if (role != null && !role.isEmpty()) {
-						aclCheck = generateAclCheckSimple(role);
-						expressionWithAcl = aclCheck + " " + exprWithoutFilter + "]";
-					} else {
-						expressionWithAcl = expression;
-					}
-				}
-			} else {
-				if (user != null && !user.isEmpty()) {
-					if (role != null && !role.isEmpty()) {
-						aclCheck = generateAclCheckComplete(user, role);
-					} else {
-						aclCheck = generateAclCheckSimple(user);
-					}
-					expressionWithAcl = aclCheck + "]]";
-				} else {
-					if (role != null && !role.isEmpty()) {
-						aclCheck = generateAclCheckSimple(role);
-						expressionWithAcl = aclCheck + "]]";
-					} else {
-						expressionWithAcl = null;
-					}
-				}
-			}
+			
 			final String aliasOfCollection = javaize(type) + RESOURCE_COLLECTION_ALIAS_SUFFIX;
 			System.out.println("[Query] Collection alias: " + aliasOfCollection);
-			System.out.println("[Query] Expression: " + expressionWithAcl);
+			System.out.println("[Query] Expression: " + expression);
+			System.out.println("[Query] User: " + user);
+			
+			// Parse roles string ["ADMIN" "ANON"] 
+			System.out.println("[Query] Received roles: " + jsonRoles);
+			String[] roles = null;
+			if (jsonRoles != null && jsonRoles.startsWith("#")) {
+				final String cleanRoles = jsonRoles.replace("#", "").replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\"", "");
+				System.out.println("[Query] Processing roles: " + cleanRoles);
+				roles = cleanRoles.split(" ");
+				System.out.println("[Query] Roles: " + Arrays.toString(roles));
+			} else if (jsonRoles != null && jsonRoles.startsWith("[")) {
+				final String cleanRoles = jsonRoles.replaceAll("\\[", "").replaceAll("\\]", "").replaceAll("\"", "");
+				System.out.println("[Query] Processing roles: " + cleanRoles);
+				roles = cleanRoles.split(" ");
+				System.out.println("[Query] Roles: " + Arrays.toString(roles));
+			}
 			ResourceCollection collection = null;
 			try { 
 				collection = ResourceCollection.getByAlias(aliasOfCollection);
@@ -771,19 +757,27 @@ public class DataClayWrapper {
 				throw new ResourceCollectionDoesNotExistException(type);
 			}
 			final List<String> result = new ArrayList<>();
-			if (expressionWithAcl != null) {
-				final List<CIMIResource> resultSet = collection.filterResources(expressionWithAcl);
+			if (expression != null) {
+				final List<CIMIResource> resultSet = collection.filterResources(expression);
 				for (final CIMIResource obj : resultSet) {
+					
+										
 					final Map<String, Object> info = obj.getCIMIResourceData();
-					final JSONObject json = new JSONObject(info);
-					result.add(json.toString());
+					final Map<String, Object> acl = (Map<String, Object>) info.get("acl");
+					if (checkQueryRights(acl, user, roles)) { 
+						final JSONObject json = new JSONObject(info);
+						result.add(json.toString());
+					}
 				}
 			} else {
 				final Map<String, CIMIResource> resources = collection.getResources();
 				for (final CIMIResource obj : resources.values()) {
 					final Map<String, Object> info = obj.getCIMIResourceData();
-					final JSONObject json = new JSONObject(info);
-					result.add(json.toString());
+					final Map<String, Object> acl = (Map<String, Object>) info.get("acl");
+					if (checkQueryRights(acl, user, roles)) { 
+						final JSONObject json = new JSONObject(info);
+						result.add(json.toString());
+					}
 				}
 			}
 			return result;
@@ -832,21 +826,86 @@ public class DataClayWrapper {
 			throw e;
 		}
 	}
-
-	private static String generateAclCheckComplete(final String user, final String role) {
-		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
-				+ "[:SingleQuoteString \"'" + user + "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
-				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + user
-				+ "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] " + "[:EqOp \"=\"] [:SingleQuoteString \"'"
-				+ role + "'\"]]] [:Filter [:AndExpr [:Comp "
-				+ "[:Attribute \"permissions\"] [:EqOp \"=\"] [:SingleQuoteString \"'" + role + "'\"]]]]]]]]";
+	
+	/**
+	 * Check if for current object ACL and query user and roles the object is accessible
+	 * @param acl ACL of the object
+	 * @param user User querying the object (can be null) 
+	 * @param roles Roles querying the object (can be null)
+	 * @return TRUE if the object is accessible for user and roles provided.
+	 */
+	private static boolean checkQueryRights(final Map<String, Object> acl, final String user, 
+			final String[] roles) { 
+		if (user != null) {
+			// if owner is the user or there is some rule allowing the user, return true
+			if (checkRights(acl, user, QUERY_RIGHTS, "USER")) { 
+				return true;
+			}
+		} else { 
+			System.out.println("[ACL] ## Not checking user. User is null. ## ");
+		}
+		if (roles != null) {
+			System.out.println("[ACL] User not allowed or not provided. Checking roles... ");
+			// if owner is the role or there is some rule allowing the role, return true
+			for (final String role : roles) {
+				if (checkRights(acl, role, QUERY_RIGHTS, "ROLE")) { 
+					return true;
+				}
+			}
+		}  else { 
+			System.out.println("[ACL] ## Not checking roles. Roles are null. ## ");
+		}
+		return false;
 	}
-
-	private static String generateAclCheckSimple(final String userOrRole) {
-		return "[:Filter [:AndExpr [:Comp [:Filter [:AndExpr [:Comp [:Attribute \"owner\"] [:EqOp \"=\"] "
-				+ "[:SingleQuoteString \"'" + userOrRole
-				+ "'\"]]] [:Filter [:AndExpr [:Comp [:Attribute \"permissions\"] "
-				+ "[:EqOp \"=\"] [:SingleQuoteString \"'" + userOrRole + "'\"]]]]]]";
+	
+	/**
+	 * Check if the USER or ROLE and rights provided (read, modify...) are allowed in the specified ACL 
+	 * @param acl ACL to check
+	 * @param userOrRole User or role to verify
+	 * @param rights Rights of the user/role (future work: CURRENTLY NOT CHECKED)
+	 * @param type can be USER or ROLE
+	 * @return TRUE if if the user and rights provided (read, modify...) are allowed in the specified ACL 
+	 */
+	@SuppressWarnings("unchecked")
+	private static boolean checkRights(final Map<String, Object> acl, final String userOrRole, 
+			final List<String> rights, final String type) { 
+	
+		System.out.println("[ACL] ## Checking " + userOrRole + " is an allowed " + type + " ## ");
+		// 1 - Check the owner matches provided user/role 
+		final Map<String, Object> owner = (Map<String, Object>) acl.get("owner");
+		if (owner != null) {
+			System.out.println("[ACL] Checking owner " + owner);
+			final String ownerType = (String) owner.get("type");
+			if (ownerType.equals(type)) { 
+				final String ownerUserRole = (String) owner.get("principal");
+				System.out.println("[ACL] Object's owner has " + ownerType + " type and name " + ownerUserRole);
+				if (ownerUserRole.equals(userOrRole)) { 
+					System.out.println("[ACL] ## Owner user or role " + userOrRole + " ALLOWED ##");
+					return true;
+				}
+			} 
+		}
+		
+		// 2 - Check if some rule allows the user/role with rights provided 
+		final List<Map<String, Object>> rules = (List<Map<String, Object>>) acl.get("rules");
+		if (rules != null) {
+			for (final Map<String, Object> currentRule : rules) { 
+				System.out.println("[ACL] Checking rule " + currentRule);
+				final String ruleType = (String) currentRule.get("type");
+				if (ruleType.equals(type)) { 
+					final String name = (String) currentRule.get("principal");
+					System.out.println("[ACL] Object's rule has " + ruleType + " type and name " + name);
+					//String right = (String) currentRule.get("right");
+					if (name.equals(userOrRole)) { 
+						System.out.println("[ACL] ## Rule with user or role " + userOrRole + " ALLOWED ##");
+						return true;
+						
+					}
+				}
+			}
+		}
+		System.out.println("[ACL] ## " + userOrRole + " NOT allowed to read object ##");
+		return false;
 	}
 
 	private static String javaize(final String type) {
