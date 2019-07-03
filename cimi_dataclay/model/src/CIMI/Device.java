@@ -29,30 +29,55 @@ public class Device extends CIMIResource {
 	 * 6) Once finished, please do a Pull request and after testing and verifications dataClay will publish 
 	 * a new docker image with your changes/new resource model. 
 	 **/
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String deviceID;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Boolean isLeader;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String os;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String arch;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String cpuManufacturer;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Integer physicalCores;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Integer logicalCores;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String cpuClockSpeed;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Double memory;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	Double storage;
-	Boolean powerPlugged;
-	String agentType;
-	String actuatorInfo;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String networkingStandards;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	String agentType;
+
+	/*Boolean powerPlugged;
+	String actuatorInfo;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String ethernetAddress;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	String wifiAddress;
+	String wifiAddress;*/
+
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String hwloc;
-
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String cpuinfo;

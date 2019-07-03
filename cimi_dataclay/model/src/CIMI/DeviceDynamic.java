@@ -48,16 +48,19 @@ public class DeviceDynamic extends CIMIResource {
 	Double cpuFreePercent;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
+	String status;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String powerRemainingStatus;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String powerRemainingStatusSeconds;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	String ethernetAddress; // TODO: This is here and in Device. I guess it should only be in one place
+	String ethernetAddress;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
-	String wifiAddress; // TODO: This is here and in Device. I guess it should only be in one place
+	String wifiAddress;
 	@Replication.InMaster
 	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	List<String> ethernetThroughputInfo;
