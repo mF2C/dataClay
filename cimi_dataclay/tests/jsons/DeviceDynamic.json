@@ -15,6 +15,7 @@
         "right": "MODIFY"}]
       },
     "device": {"href" : "device/device"},
+    "status":"status",
     "ramFree": 0.4,
     "ramFreePercent": 100.0,
     "storageFree": 9001000.1,
