@@ -738,7 +738,7 @@ public class DataClayWrapper {
 			
 			// Parse roles string ["ADMIN" "ANON"] 
 			System.out.println("[Query] Received roles: " + jsonRoles);
-			/*String[] roles = null;
+			String[] roles = null;
 			if (jsonRoles != null && jsonRoles.startsWith("#")) {
 				final String cleanRoles = jsonRoles.replace("#", "").replaceAll("\\{", "").replaceAll("\\}", "").replaceAll("\"", "");
 				System.out.println("[Query] Processing roles: " + cleanRoles);
@@ -749,7 +749,7 @@ public class DataClayWrapper {
 				System.out.println("[Query] Processing roles: " + cleanRoles);
 				roles = cleanRoles.split(" ");
 				System.out.println("[Query] Roles: " + Arrays.toString(roles));
-			}*/
+			}
 			ResourceCollection collection = null;
 			try { 
 				collection = ResourceCollection.getByAlias(aliasOfCollection);
@@ -764,20 +764,20 @@ public class DataClayWrapper {
 										
 					final Map<String, Object> info = obj.getCIMIResourceData();
 					final Map<String, Object> acl = (Map<String, Object>) info.get("acl");
-					//if (checkQueryRights(acl, user, roles)) { 
+					if (checkQueryRights(acl, user, roles)) { 
 						final JSONObject json = new JSONObject(info);
 						result.add(json.toString());
-					//}
+					}
 				}
 			} else {
 				final Map<String, CIMIResource> resources = collection.getResources();
 				for (final CIMIResource obj : resources.values()) {
 					final Map<String, Object> info = obj.getCIMIResourceData();
 					final Map<String, Object> acl = (Map<String, Object>) info.get("acl");
-					//if (checkQueryRights(acl, user, roles)) { 
+					if (checkQueryRights(acl, user, roles)) { 
 						final JSONObject json = new JSONObject(info);
 						result.add(json.toString());
-					//}
+					}
 				}
 			}
 			return result;
