@@ -1,6 +1,6 @@
 #!/bin/bash
 SCRIPTDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-TOOLSBASE="$SCRIPTDIR/../tool"
+TOOLSBASE="$SCRIPTDIR/tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
 MODELPATH="$SCRIPTDIR/model/"

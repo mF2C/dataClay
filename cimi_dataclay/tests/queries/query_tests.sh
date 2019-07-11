@@ -43,7 +43,7 @@ bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "ANON" "null" "0" #not
 bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "#{OWNERROLE}" "1" #allowed role OWNER role
 bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "#{ADMIN}" "1" #allowed role admin
 bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "'#{OWNERROLE ADMIN}'" "1" #allowed role OWNER role
-bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "'{ADMIN ANON}'" "1" #allowed role admin
+bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "'[ADMIN ANON]'" "1" #allowed role admin
 bash $COMMONDIR/runApp.sh "AGENT" "query" "device" "null" "null" "#{mf2c}" "0" #not allowed role (is user type)
 
 # Query after delete
