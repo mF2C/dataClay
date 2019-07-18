@@ -248,12 +248,6 @@ docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:late
 echo " ===== Building docker mf2c/dataclay-dsjava:latest ====="
 docker tag mf2c/dataclay-dsjava:${PROXY_TAG} mf2c/dataclay-dsjava:latest 
 
-echo " ===== Building docker bscdataclay/logicmodule:mf2c   ====="
-docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} bscdataclay/logicmodule:mf2c 
-
-echo " ===== Building docker bscdataclay/dsjava:mf2c  ====="
-docker tag mf2c/dataclay-dsjava:${PROXY_TAG} bscdataclay/dsjava:mf2c 
-
 if [ "$PUSH" = true ] ; then
 	echo " ===== Pushing dockers dataclay mf2c dockers DockerHub ====="
 	docker-push-mf2c ${PROXY_TAG}
