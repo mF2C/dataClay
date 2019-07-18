@@ -1,4 +1,4 @@
-FROM bscdataclay/logicmodule:rpi-zulujdk
+FROM bscdataclay/logicmodule:2.0.dev9-arm
 MAINTAINER dataClay team <support-dataclay@bsc.es>
 
 COPY ./LM.sqlite /tmp/dataclay/LM

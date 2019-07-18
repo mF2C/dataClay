@@ -1,4 +1,4 @@
-FROM bscdataclay/dsjava:rpi-zulujdk
+FROM bscdataclay/dsjava:2.0.dev9-arm
 MAINTAINER dataClay team <support-dataclay@bsc.es>
 
 COPY ./execClasses execClasses
