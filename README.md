@@ -56,4 +56,4 @@ we will find specific code to translate CIMI requests to requests to dataClay dm
 
 # mF2c developers guide 
 
-https://github.com/mF2C/dataClay/wiki/Developers-guide-for-CIMI-dataClay-resources
+https://github.com/mF2C/dataClay/wiki/dataClay-Mf2c---a-developers-guide-for-modelling-CIMI-resources
