@@ -9,7 +9,7 @@ NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
 DATASET="mf2c"
-STUBSPATH="$SCRIPTDIR/wrapper/stubs"
+STUBSPATH="$SCRIPTDIR/dm_app/stubs"
 DATACLAY_MF2C_STUBS_JAR="dataClayMf2cStubs.jar"
 URL_DATACLAY_MF2C_MAVEN_REPO="https://github.com/bsc-ssrg/dataclay-maven-mf2c-wrapper.git"
 PROXY="$SCRIPTDIR/../dataclay-proxy"
@@ -44,12 +44,12 @@ function docker-push-mf2c {
 function maven_install_wrapper { 
 	JARPATH=$1
 	VERSION=$2
-	rm -rf $SCRIPTDIR/wrapper/target
-	if [ -f $SCRIPTDIR/wrapper/pom.xml.orig ]; then
-		mv $SCRIPTDIR/wrapper/pom.xml.orig $SCRIPTDIR/wrapper/pom.xml #sanity check
+	rm -rf $SCRIPTDIR/dm_app/target
+	if [ -f $SCRIPTDIR/dm_app/pom.xml.orig ]; then
+		mv $SCRIPTDIR/dm_app/pom.xml.orig $SCRIPTDIR/dm_app/pom.xml #sanity check
 	fi
-	cp $SCRIPTDIR/wrapper/pom.xml $SCRIPTDIR/wrapper/pom.xml.orig
-	sed -i "s/trunk/$VERSION/g" $SCRIPTDIR/wrapper/pom.xml
+	cp $SCRIPTDIR/dm_app/pom.xml $SCRIPTDIR/dm_app/pom.xml.orig
+	sed -i "s/trunk/$VERSION/g" $SCRIPTDIR/dm_app/pom.xml
 	sed -i '/<dependency>/ {
 		:start
 		N
@@ -57,7 +57,7 @@ function maven_install_wrapper {
 		/<artifactId>dataclay<\/artifactId>/ {
 		s/\(<version>\)'"$VERSION"'\(<\/version>\)/\1trunk\2/
 		}
-	}' $SCRIPTDIR/wrapper/pom.xml
+	}' $SCRIPTDIR/dm_app/pom.xml
 	
 	echo "Installing dataclay mf2c stubs in m2 repository "
 	mvn install:install-file \
@@ -80,12 +80,12 @@ function maven_install_wrapper {
 		   -DpomFile=$SCRIPTDIR/pom-stubs-wrapper.xml \
 		   -DcreateChecksum=true
 	
-		pushd $SCRIPTDIR/wrapper
+		pushd $SCRIPTDIR/dm_app
 		echo "Building dataclay mf2c wrapper local repository"
 		mvn clean package javadoc:jar
 		popd
 		
-		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
+		JARPATH=$SCRIPTDIR/dm_app/target/wrapper-${PROXY_TAG}.jar
 		echo "Installing dataclay mf2c wrapper local repository"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
@@ -93,8 +93,8 @@ function maven_install_wrapper {
 		   -DartifactId=wrapper \
 		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
-		   -DpomFile=$SCRIPTDIR/wrapper/pom.xml \
-		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}-javadoc.jar \
+		   -DpomFile=$SCRIPTDIR/dm_app/pom.xml \
+		   -Djavadoc=$SCRIPTDIR/dm_app/target/wrapper-${PROXY_TAG}-javadoc.jar \
 		   -DcreateChecksum=true
 		   
 	elif [ $# -eq 3 ]; then
@@ -110,12 +110,12 @@ function maven_install_wrapper {
 		   -DpomFile=$SCRIPTDIR/pom-stubs-wrapper.xml \
 		   -DcreateChecksum=true
 	
-		pushd $SCRIPTDIR/wrapper
+		pushd $SCRIPTDIR/dm_app
 		echo "Building dataclay mf2c wrapper local repository $LOCALREPOSITORY"
 		mvn clean package javadoc:jar
 		popd
 		
-		JARPATH=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}.jar
+		JARPATH=$SCRIPTDIR/dm_app/target/wrapper-${PROXY_TAG}.jar
 		echo "Installing dataclay mf2c wrapper local repository $LOCALREPOSITORY"
 		mvn install:install-file \
 		   -Dfile=$JARPATH \
@@ -124,12 +124,12 @@ function maven_install_wrapper {
 		   -Dversion=$VERSION \
 		   -Dpackaging=jar \
 		   -DlocalRepositoryPath=$LOCALREPOSITORY \
-		   -DpomFile=$SCRIPTDIR/wrapper/pom.xml \
-		   -Djavadoc=$SCRIPTDIR/wrapper/target/wrapper-${PROXY_TAG}-javadoc.jar \
+		   -DpomFile=$SCRIPTDIR/dm_app/pom.xml \
+		   -Djavadoc=$SCRIPTDIR/dm_app/target/wrapper-${PROXY_TAG}-javadoc.jar \
 		   -DcreateChecksum=true
 	fi
 	
-	mv $SCRIPTDIR/wrapper/pom.xml.orig $SCRIPTDIR/wrapper/pom.xml
+	mv $SCRIPTDIR/dm_app/pom.xml.orig $SCRIPTDIR/dm_app/pom.xml
 	
 }
 

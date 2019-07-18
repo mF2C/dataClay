@@ -44,12 +44,12 @@ At this point, you can follow specific README files included in the different de
 ## data management module 
 
 This module contains the mf2C implementation for dataClay. Here we will find the mF2C model (classes 
-that represents mF2C resources) and the mF2c wrapper responsible to react to any CIMI request. For 
-instance, when a CIMI get arrives, the wrapper performs it using dataClay objects.  
+that represents mF2C resources) and the mF2c dm_app responsible to react to any CIMI request. For 
+instance, when a CIMI get arrives, the dm_app performs it using dataClay objects.  
 ((documentation of section in progress...))
 
 ## dataclay proxy module
 
 This module contains necessary code to integrate dataClay with mF2C components. In particular, here
-we will find specific code to translate CIMI requests to requests to dataClay wrapper. 
+we will find specific code to translate CIMI requests to requests to dataClay dm_app. 
 ((documentation of section in progress...))
