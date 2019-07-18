@@ -53,3 +53,7 @@ instance, when a CIMI get arrives, the dm_app performs it using dataClay objects
 This module contains necessary code to integrate dataClay with mF2C components. In particular, here
 we will find specific code to translate CIMI requests to requests to dataClay dm_app. 
 ((documentation of section in progress...))
+
+# mF2c developers guide 
+
+https://github.com/mF2C/dataClay/wiki/dataClay-Mf2c--a-developers-guide-for-CIMI-resources
