@@ -4,7 +4,7 @@ TOOLSBASE="$SCRIPTDIR/tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
 MODELPATH="$SCRIPTDIR/model/"
-DATACLAY_TAG="2.0.dev10"
+DATACLAY_TAG="2.0.dev11"
 NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
@@ -139,6 +139,7 @@ echo "		- Build new docker images for mf2c with already registered model, contra
 echo "		- If push option selected: Publish dataClay version mf2c dockers in DockerHub "
 echo "		- Install in maven (local or remote repository) mf2c stubs for CIMI model "
 echo "		- Install in maven (local or remote repository) mf2c wrapper "
+echo " WARNING: Every time new dataclay version is published modify pom.xml in dm_app, model and docker composes in docker "
 
 if [ "$#" -ne 1 ] && [ "$#" -ne 3 ]; then
 	usage

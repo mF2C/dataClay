@@ -19,7 +19,7 @@ services:
   #  LOGIC MODULE ON DC 1            #
   ####################################
   logicmodule1:
-    image: bscdataclay/logicmodule:2.0.dev10
+    image: bscdataclay/logicmodule:2.0.dev11
     depends_on:
       - proxy
     env_file:
@@ -48,7 +48,7 @@ services:
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
   ds1java1:
-    image: bscdataclay/dsjava:2.0.dev10
+    image: bscdataclay/dsjava:2.0.dev11
     depends_on:
       - logicmodule1
       - proxy
@@ -73,7 +73,7 @@ services:
   # Python ExecutionEnvironment (which, by default, are unused)
   # See initDC.sh shell script for more information on initialization
   ds1pythonee1:
-    image: "bscdataclay/dspython:2.0.dev10-py2.7"
+    image: "bscdataclay/dspython:2.0.dev11-py2.7"
     depends_on:
       - logicmodule1
       - ds1java1
