@@ -544,7 +544,7 @@ bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/Devi
 #### TESTING PROPAGETE TO CHILDREN LOOSING PARENT connection
 
 
-### if LEADER COMES BACK FROM ERROR AND UNFEDERATE ALL OBJECTS WITH CHILDREN AND LEADER (updates of Agent)
+### LEADER COMES BACK FROM ERROR AND UNFEDERATE ALL OBJECTS WITH CHILDREN AND LEADER (updates of Agent)
 
 ## garbage collector enabled? + restart
 

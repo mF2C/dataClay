@@ -4,7 +4,7 @@ TOOLSBASE="$SCRIPTDIR/tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
 MODELPATH="$SCRIPTDIR/model/"
-DATACLAY_TAG="2.0.dev9"
+DATACLAY_TAG="2.0.dev10"
 NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
@@ -152,7 +152,6 @@ DATACLAY_MF2C_MAVEN_REPO=""
 PROXY_TAG=$1
 
 echo " ===== Cleaning ====="
-rm -f psql_dump.sql
 rm -f $DATACLAY_MF2C_STUBS_JAR
 rm -rf $SCRIPTDIR/execClasses
 rm -f $SCRIPTDIR/LM.sqlite

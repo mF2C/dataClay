@@ -1,0 +1,24 @@
+debug = false
+logLevel = "INFO"
+
+defaultEntryPoints = ["http", "https"]
+
+[entryPoints]
+    [entryPoints.http]
+    address = ":80"
+        [entryPoints.http.redirect]
+        entryPoint = "https"
+
+   [entryPoints.https]
+     address = ":443"
+   [entryPoints.https.tls]
+
+     [entryPoints.https.tls.clientCA]
+     files = ["/ssl/client-ca/client-ca.crt"]
+     optional = false
+
+     # For secure connection on frontend.local
+     [[entryPoints.https.tls.certificates]]
+     certFile = "/ssl/server/server.crt"
+     keyFile  = "/ssl/server/server.pem"
+#[api]

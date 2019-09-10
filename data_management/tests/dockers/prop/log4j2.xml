@@ -10,14 +10,14 @@
         <!--  Runtime -->
         <Logger name="ClientRuntime" level="off" />
         <Logger name="ClientManagementLib" level="off"/>
-        <Logger name="DataClayRuntime" level="debug"/>
+        <Logger name="DataClayRuntime" level="off"/>
         <Logger name="DataServiceRuntime" level="off"/>
         
         <Logger name="DataClayObjectLoader" level="off"/>
         <Logger name="DataClayObject" level="off" /> <!--  This is very verbose! -->
         
         <!--  Data service -->
-        <Logger name="DataService" level="debug"/>
+        <Logger name="DataService" level="off"/>
         <Logger name="ExecutionEnvironmentSrv" level="off"/>
         
         <!--  Lockers -->
@@ -63,7 +63,7 @@
         <Logger name="Paraver" level="off"/>        
         
         <!--  ROOT LOGGER -->
-    <Root level="debug">
+    <Root level="info">
       <AppenderRef ref="ConsoleAppender" />
     </Root>
   </Loggers>
