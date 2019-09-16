@@ -14,17 +14,22 @@ COMMONDIR=$SCRIPTDIR/../common
 DOCKERDIR=$SCRIPTDIR/../dockers
 export APP="demo.AgentTest"
 
-CFGFILE=$PROJECT_PATH/cfgfiles/client.properties
-SESSIONFILE=$PROJECT_PATH/cfgfiles/session.properties
+CFGFILE=$PROJECT_PATH/cfgfiles/client.secure.properties
+SESSIONFILE=$PROJECT_PATH/cfgfiles/session.secure.properties
+GLOBALFILE=$PROJECT_PATH/cfgfiles/global.secure.properties
 pushd $PROJECT_PATH
 ###################### TESTS ############################## 
 
 # Initialize
 export DATACLAYCLIENTCONFIG=$CFGFILE
 export DATACLAYSESSIONCONFIG=$SESSIONFILE
+export DATACLAYGLOBALCONFIG=$GLOBALFILE
 
 for filename in $JSONDIR/*.json; do
-	output=$(bash $COMMONDIR/runApp.sh "AGENT" "create" $filename 2> /dev/null)
+
+	echo " ***** PROCESSING $filename ****** "
+
+	output=$(bash $COMMONDIR/runApp.sh "AGENT" "create" $filename)
 	echo "$output"
 	id=$(echo $output | sed -n -e 's/^.*CREATED://p')
 	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id $filename 
@@ -36,6 +41,8 @@ for filename in $JSONDIR/*.json; do
 	cat /tmp/$tmpfilename
 	bash $COMMONDIR/runApp.sh "AGENT" "update" $id /tmp/$tmpfilename
 	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id /tmp/$tmpfilename
+	
+	echo " *********** "
 	
 done
 

@@ -19,7 +19,7 @@
   	<dependency>
   		<groupId>dataclay</groupId>
   		<artifactId>dataclay</artifactId>
-  		<version>trunk</version>
+  		<version>dataclay-version</version>
   	</dependency>
   </dependencies>
 </project>

@@ -4,9 +4,10 @@
     "created": "201804181533",
     "updated": "201804181533",
     "acl": {
-      "owner": {
-        "principal": "User1",
-        "type": "USER"},
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
       "rules": [{
         "principal": "ADMIN",
         "type": "ROLE",

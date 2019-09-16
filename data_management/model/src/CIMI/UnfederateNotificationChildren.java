@@ -56,7 +56,7 @@ public class UnfederateNotificationChildren extends CIMIResource {
 		}
 		
 		// propagate notification to children
-		final Agent agent = Agent.getByAlias("agent/agent");
+		final Agent agent = Agent.getByAliasExt("agent/agent");
 		
 		for (final String child : agent.getChildrenIPs()) {
 			//propagate(child);

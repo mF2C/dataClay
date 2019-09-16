@@ -1,47 +1,66 @@
-version: '2'
+version: '3'
 
 services:
+
+  proxy:
+    image: traefik
+    restart: unless-stopped
+    command: --api --docker --docker.exposedByDefault=false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/traefik.toml:/traefik.toml
+      - ../certs:/ssl:ro
+    ports:
+      - "80:80"
+      - "8080:8080"
+      - "443:443"
+
   ####################################
   #  LOGIC MODULE ON DC 1            #
   ####################################
   logicmodule1:
     image: mf2c/dataclay-logicmodule:latest
-    ports:
-      - "1034:1034"
-      # Debugging port
-      - 18000:8000
+    depends_on:
+      - proxy
     env_file:
-      - ./env/PG.environment
       - ./env/LM.environment
     environment:
       - DATACLAY_ADMIN_USER=admin
       - DATACLAY_ADMIN_PASSWORD=admin
-      - POSTGRES_HOST=lmpostgres1
     volumes:
-      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/global.secure.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+      - ../certs:/ssl/:ro
+
     command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
               "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n",
               "dataclay.logic.server.LogicModuleSrv"]
+    labels:
+      - "traefik.enable=true"
+      - "traefik.backend=logicmodule1"
+      - "traefik.frontend.rule=Headers: service-alias,logicmodule1"
+      - "traefik.port=1034"
+      - "traefik.protocol=h2c"
+
+
   ####################################
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
   ds1java1:
     image: mf2c/dataclay-dsjava:latest
-    ports:
-      # Debugging port
-      - "2127:2127"
+    depends_on:
+      - logicmodule1
+      - proxy
     env_file:
-      - ./env/PG.environment
       - ./env/DS.environment
-      - ./env/LM.environment
+      - ./env/LM_DS.environment
     environment:
       - DATASERVICE_NAME=DS1
-      - POSTGRES_HOST=ds1postgres1
     volumes:
-      - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
+      - ./prop/global.secure.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
-
+      - ../certs:/ssl/:ro
     command: ["-Xdebug", "-Dlog4j.configurationFile=/usr/src/dataclay/log4j2.xml",
               "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n",
               "dataclay.dataservice.server.DataServiceSrv"]
+

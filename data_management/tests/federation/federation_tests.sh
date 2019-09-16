@@ -164,7 +164,7 @@ bash $COMMONDIR/runApp.sh "CHILD1" "create" $JSONDIR/DeviceDynamicsChild1.json 2
 # Leader checks device of child is present 
 export DATACLAYCLIENTCONFIG=$LEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device" "null" "null" "null" "2" #expected 2 devices 
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device" "null" "ADMIN" "#{ADMIN}" "2" #expected 2 devices 
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device-dynamic/child1" $JSONDIR/DeviceDynamicsChild1.json 
@@ -178,8 +178,8 @@ bash $COMMONDIR/runApp.sh "CHILD2" "create" $JSONDIR/DeviceDynamicsChild2.json 2
 # Leader checks device of child is present 
 export DATACLAYCLIENTCONFIG=$LEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device"  "null" "null" "null" "3" #expected 3 devices 
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic"  "null" "null" "null" "2" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device"  "null" "ADMIN" "#{ADMIN}" "3" #expected 3 devices 
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic"  "null" "ADMIN" "#{ADMIN}" "2" #expected 2 device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -189,8 +189,8 @@ bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device-dynamic/child2" $JSOND
 # GRAND Leader checks device of child is present 
 export DATACLAYCLIENTCONFIG=$GRANDLEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device"  "null" "null" "null" "5" #expected devices 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic"  "null" "null" "null" "2" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device"  "null" "ADMIN" "#{ADMIN}" "5" #expected devices 
+bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic"  "null" "ADMIN" "#{ADMIN}" "2" #expected 2 device-dynamics
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -202,8 +202,8 @@ bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device-dynamic/child2" $
 # Backup checks have only Leader 2 stuff
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device"  "null" "null" "null" "1" #expected 1 device
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "0" #expected 0 device-dynamics
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device"  "null" "ADMIN" "#{ADMIN}" "1" #expected 1 device
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "0" #expected 0 device-dynamics
 #bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 
 ##################### UPDATES
@@ -292,8 +292,8 @@ bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2
 # CHecks new leader has everything except Leader 1 objects
 export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device"  "null" "null" "null" "3" #expected 3 devices 
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic"  "null" "null" "null" "2" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device"  "null" "ADMIN" "#{ADMIN}" "3" #expected 3 devices 
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic"  "null" "ADMIN" "#{ADMIN}" "2" #expected 2 device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -303,8 +303,8 @@ bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device-dynamic/child2" $JSON
 # CHecks Leader 1 has only its objects
 export DATACLAYCLIENTCONFIG=$LEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device"  "null" "null" "null" "1" #expected 1 device
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic"  "null" "null" "null" "0" #expected 0 device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device"  "null" "ADMIN" "#{ADMIN}" "1" #expected 1 device
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic"  "null" "ADMIN" "#{ADMIN}" "0" #expected 0 device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 
 ###################################################
@@ -327,8 +327,8 @@ echo " #################################### "
 # Backup checks have the same than elader
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device"  "null" "null" "null" "1" #expected only leader 2 device
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic"  "null" "null" "null" "0"  
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device"  "null" "ADMIN" "#{ADMIN}" "1" #expected only leader 2 device
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic"  "null" "ADMIN" "#{ADMIN}" "0"  
 
 # Update children agents to use backup leader
 sed -i -e "s/${LEADER_IP2}/${BACKUP_IP}/g" $JSONDIR/AgentChild1.json
@@ -352,8 +352,8 @@ bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.j
 # Backup checks if can see now all children objects
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "null" "null" "3" #expected 3 devices 
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "2" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "ADMIN" "#{ADMIN}" "3" #expected 3 devices 
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "2" #expected 2 device-dynamics
 bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered from backup
 bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -368,8 +368,8 @@ export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
 sed -i -e "s/.*childrenIPs.*/\"childrenIPs\":\[\"${LEADER_IP}\", \"${BACKUP_IP}\"\]/g" $JSONDIR/AgentGrandLeader.json
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "update" "agent/agent" $JSONDIR/AgentGrandLeader.json 
 # grand Leader checks 
-#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "4" #expected devices 
-#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "2" #expected 2 device-dynamics
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "ADMIN" "#{ADMIN}" "4" #expected devices 
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "2" #expected 2 device-dynamics
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered in backup but lost child!
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
@@ -392,16 +392,16 @@ bash $COMMONDIR/runApp.sh "BACKUP" "update" "agent/agent" $JSONDIR/AgentBackup.j
 # check backup has only 1 device-dynamic of child 1 + 2 devices
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "null" "null" "2" #expected 3 devices 
-#bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "ADMIN" "#{ADMIN}" "2" #expected 3 devices 
+#bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "1" #expected 2 device-dynamics
 #bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json #recovered in backup
 #bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 
 # check grandleader has only 3 devices and 1 device-dynamic
 export DATACLAYCLIENTCONFIG=$GRANDLEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "3" #expected devices 
-#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "1" #expected 2 device-dynamics
+bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "ADMIN" "#{ADMIN}" "3" #expected devices 
+#bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "1" #expected 2 device-dynamics
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 #bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
@@ -477,8 +477,8 @@ bash $COMMONDIR/runApp.sh "LEADER2" "update" "agent/agent" $JSONDIR/AgentLeader2
 # leader 2 can see child1, child2 and leader 2
 export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "null" "null" "3" #expected devices 
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "null" "null" "2" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "ADMIN" "#{ADMIN}" "3" #expected devices 
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "2" #expected device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -486,21 +486,21 @@ bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/Devi
 # BACKUP cannot see anything
 export DATACLAYCLIENTCONFIG=$BACKUP_CFGFILE
 export DATACLAYSESSIONCONFIG=$BACKUP_SESSIONFILE
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "null" "null" "0" #expected devices 
-bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "null" "null" "0" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device" "null" "ADMIN" "#{ADMIN}" "0" #expected devices 
+bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "0" #expected device-dynamics
 
 # leader 1 can only see its device
 export DATACLAYCLIENTCONFIG=$LEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device" "null" "null" "null" "1" #expected devices 
-bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic" "null" "null" "null" "0" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device" "null" "ADMIN" "#{ADMIN}" "1" #expected devices 
+bash $COMMONDIR/runApp.sh "LEADER" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "0" #expected device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 
 # grandleader can only see leader 1 and its device
 export DATACLAYCLIENTCONFIG=$GRANDLEADER_CFGFILE
 export DATACLAYSESSIONCONFIG=$GRANDLEADER_SESSIONFILE
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "null" "null" "2" #expected devices 
-bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "null" "null" "0" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device" "null" "ADMIN" "#{ADMIN}" "2" #expected devices 
+bash $COMMONDIR/runApp.sh "GRANDLEADER" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "0" #expected device-dynamics
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 bash $COMMONDIR/runApp.sh "GRANDLEADER" "check-equals" "device/grandleader" $JSONDIR/DeviceGrandLeader.json
 
@@ -516,8 +516,8 @@ bash $COMMONDIR/runApp.sh "GRANDLEADER" "update" "agent/agent" $JSONDIR/AgentGra
 # check that now L2 can see: devices of child1, child2, grand leader, leader 2 and leader 1 (backup has no device)
 export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "null" "null" "5" #expected devices 
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "null" "null" "2" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "ADMIN" "#{ADMIN}" "5" #expected devices 
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "2" #expected device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader" $JSONDIR/DeviceLeader.json 
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json
@@ -534,8 +534,8 @@ bash $COMMONDIR/runApp.sh "GRANDLEADER" "update" "agent/agent" $JSONDIR/AgentGra
 # check leader2 can see only leader2, child1 and child2
 export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "null" "null" "3" #expected devices 
-bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "null" "null" "2" #expected device-dynamics
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device" "null" "ADMIN" "#{ADMIN}" "3" #expected devices 
+bash $COMMONDIR/runApp.sh "LEADER2" "query" "device-dynamic" "null" "ADMIN" "#{ADMIN}" "2" #expected device-dynamics
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child1" $JSONDIR/DeviceChild1.json
 bash $COMMONDIR/runApp.sh "LEADER2" "check-equals" "device/child2" $JSONDIR/DeviceChild2.json

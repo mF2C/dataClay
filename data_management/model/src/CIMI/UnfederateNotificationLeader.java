@@ -26,7 +26,7 @@ public class UnfederateNotificationLeader extends CIMIResource {
 			DataClayObject.getLib().unfederateAllObjects(prevDataClayID);
 			
 			// propagate notification to leader
-			final Agent agent = Agent.getByAlias("agent/agent");
+			final Agent agent = Agent.getByAliasExt("agent/agent");
 			propagate(agent.getLeaderIP());
 		}
 	}

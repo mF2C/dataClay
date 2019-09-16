@@ -2,8 +2,8 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>CIMImodel</groupId>
-	<artifactId>CIMImodel</artifactId>
+	<groupId>CIMIjson</groupId>
+	<artifactId>CIMIjson</artifactId>
 	<version>1</version>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -20,18 +20,25 @@
 	</build>
 	<repositories>
 		<repository>
-			<id>DataClay repository</id>
-			<url>https://raw.github.com/bsc-ssrg/dataclay-maven/repository/</url>
-			<snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+			<id>DataClay Mf2c Wrapper repository</id>
+			<url>https://raw.github.com/bsc-ssrg/dataclay-maven-mf2c-wrapper/repository/</url>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
-			<groupId>dataclay</groupId>
-			<artifactId>dataclay</artifactId>
-			<version>dataclay-version</version>
+			<groupId>org.json</groupId>
+			<artifactId>json</artifactId>
+			<version>20170516</version>
+		</dependency>
+		<dependency>
+			<groupId>dataclay.mf2c</groupId>
+			<artifactId>wrapper</artifactId>
+			<version>mf2c-version</version>
+		</dependency>
+		<dependency>
+			<groupId>dataclay.mf2c</groupId>
+			<artifactId>stubs</artifactId>
+			<version>mf2c-version</version>
 		</dependency>
 	</dependencies>
 </project>

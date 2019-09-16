@@ -20,7 +20,11 @@
 (defproject com.sixsq.dataclay/proxy "trunk"
   :description "dataclay proxy service"
   :url "https://github.com/SixSq/dataClay"
+;  :jvm-opts ["--add-modules" "java.xml.bind"]
+  :javac-options ["-target" "11" "-source" "11" "-Xlint:-options" "-g" "--add-modules" "java.xml.bind"]
 
+  :min-lein-version "2.7.1"
+  
   :license {:name         "Apache 2.0"
             :url          "http://www.apache.org/licenses/LICENSE-2.0.txt"
             :distribution :repo}
@@ -65,7 +69,8 @@
    [ring]
    [http-kit "2.2.0"]
    [dataclay.mf2c/wrapper "trunk"]
-   [com.sixsq.slipstream/utils ~+slipstream-version+]]
+   [com.sixsq.slipstream/utils ~+slipstream-version+]
+   [javax.xml.bind/jaxb-api "2.4.0-b180830.0359"]]
 
   :main com.sixsq.dataclay.proxy
 

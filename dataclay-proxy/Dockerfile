@@ -1,4 +1,4 @@
-FROM openjdk:8-jdk
+FROM openjdk:11-jdk
 ADD cfgfiles /root/dataclay/cfgfiles
 ADD src /root/dataclay/src
 ADD proxy.jar /root/dataclay/proxy.jar

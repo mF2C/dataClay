@@ -204,7 +204,7 @@ public class CIMIResource extends DataClayObject {
 		final String completeClassName = this.getClass().getName();
 		final String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection
-				.getByAlias(className + "Collection");
+				.getByAliasExt(className + "Collection");
 		System.out.println("REMOVING " + this.id);
 		resources.delete(this.id);
 	}
@@ -218,11 +218,11 @@ public class CIMIResource extends DataClayObject {
 		final String completeClassName = this.getClass().getName();
 		final String className = completeClassName.substring(this.getClass().getName().lastIndexOf('.') + 1);
 		final ResourceCollection resources = (ResourceCollection) ResourceCollection
-				.getByAlias(className + "Collection");
+				.getByAliasExt(className + "Collection");
 		resources.put(this.id, this);
 
 		// PROPAGATE
-		final Agent agent = Agent.getByAlias("agent/agent");
+		final Agent agent = Agent.getByAliasExt("agent/agent");
 
 		// to leader
 		// FIXME: Agent must call a function due to issues in dataClay (not included in accessed implementations so no

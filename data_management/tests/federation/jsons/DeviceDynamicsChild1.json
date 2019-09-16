@@ -6,9 +6,10 @@
     "ramFree": 0.4,
     "storageFree": 900.1,
     "acl": {
-      "owner": {
-        "principal": "User1",
-        "type": "USER"},
+      "owner" : {
+        "principal" : "ADMIN",
+        "type" : "ROLE"
+      },
       "rules": [{
         "principal": "ADMIN",
         "type": "ROLE",
