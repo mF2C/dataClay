@@ -14,12 +14,12 @@ COMMONDIR=$SCRIPTDIR/../common
 DOCKERDIR=$SCRIPTDIR/../dockers
 export APP="demo.AgentTest"
 
-LEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule1_1`:1034
-BACKUP_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule4_1`:5034
-GRANDLEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule5_1`:6034
-CHILD1_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule2_1`:2034
-CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:4034
-LEADER_IP2=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule6_1`:7034
+LEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule1_1`:11034
+BACKUP_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule4_1`:15034
+GRANDLEADER_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule5_1`:16034
+CHILD1_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule2_1`:12034
+CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:14034
+LEADER_IP2=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule6_1`:17034
 
 #################### SANITY ##########################
 if [ -f $JSONDIR/AgentLeader.json.orig ]; then
@@ -419,8 +419,8 @@ export DATACLAYCLIENTCONFIG=$LEADER2_CFGFILE
 export DATACLAYSESSIONCONFIG=$LEADER2_SESSIONFILE
 bash $COMMONDIR/runApp.sh "LEADER2" "init"
 
-NEW_CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:4034
-NEW_LEADER_IP2=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule6_1`:7034
+NEW_CHILD2_IP=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule3_1`:14034
+NEW_LEADER_IP2=`docker inspect -f '{{.NetworkSettings.Networks.dockers_default.IPAddress}}' dockers_logicmodule6_1`:17034
 
 # update my ips 
 sed -i -e "s/${LEADER_IP2}/${NEW_LEADER_IP2}/g" $JSONDIR/AgentLeader2.json 

@@ -8,7 +8,7 @@ services:
   logicmodule1:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "1034:1034"
+      - "11034:11034"
       # Debugging port
       - 18000:8000
     env_file:
@@ -50,7 +50,7 @@ services:
   logicmodule2:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "2034:2034"
+      - "12034:12034"
     env_file:
       - ./env/LM2.environment
     environment:
@@ -88,7 +88,7 @@ services:
   logicmodule3:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "4034:4034"
+      - "14034:14034"
     env_file:
       - ./env/LM3.environment
     environment:
@@ -125,7 +125,7 @@ services:
   logicmodule4:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "5034:5034"
+      - "15034:15034"
     env_file:
       - ./env/LM4.environment
     environment:
@@ -162,7 +162,7 @@ services:
   logicmodule5:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "6034:6034"
+      - "16034:16034"
     env_file:
       - ./env/LM5.environment
     environment:
@@ -199,7 +199,7 @@ services:
   logicmodule6:
     image: mf2c/dataclay-logicmodule:latest
     ports:
-      - "7034:7034"
+      - "17034:17034"
     env_file:
       - ./env/LM6.environment
     environment:

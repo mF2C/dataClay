@@ -14,9 +14,9 @@ COMMONDIR=$SCRIPTDIR/../common
 DOCKERDIR=$SCRIPTDIR/../dockers
 export APP="demo.AgentTest"
 
-CFGFILE=$PROJECT_PATH/cfgfiles/client.properties
-SESSIONFILE=$PROJECT_PATH/cfgfiles/session.properties
-GLOBALFILE=$PROJECT_PATH/cfgfiles/global.properties
+CFGFILE=$PROJECT_PATH/cfgfiles/client.secure.properties
+SESSIONFILE=$PROJECT_PATH/cfgfiles/session.secure.properties
+GLOBALFILE=$PROJECT_PATH/cfgfiles/global.secure.properties
 pushd $PROJECT_PATH
 ###################### TESTS ############################## 
 
@@ -25,25 +25,23 @@ export DATACLAYCLIENTCONFIG=$CFGFILE
 export DATACLAYSESSIONCONFIG=$SESSIONFILE
 export DATACLAYGLOBALCONFIG=$GLOBALFILE
 
-for filename in $JSONDIR/*.json; do
+filename=$JSONDIR/Device.json
 
-	echo " ***** PROCESSING $filename ****** "
+echo " ***** PROCESSING $filename ****** "
 
-	output=$(bash $COMMONDIR/runApp.sh "AGENT" "create" $filename)
-	echo "$output"
-	id=$(echo $output | sed -n -e 's/^.*CREATED://p')
-	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id $filename 
+output=$(bash $COMMONDIR/runApp.sh "AGENT" "create" $filename)
+echo "$output"
+id=$(echo $output | sed -n -e 's/^.*CREATED://p')
+bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id $filename 
 	
-	# change the name 
-	tmpfilename=$(basename $filename)
-	cp $filename /tmp/$tmpfilename
-	sed -i "s/resourcename/$tmpfilename/g" /tmp/$tmpfilename
-	cat /tmp/$tmpfilename
-	bash $COMMONDIR/runApp.sh "AGENT" "update" $id /tmp/$tmpfilename
-	bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id /tmp/$tmpfilename
+# change the name 
+tmpfilename=$(basename $filename)
+cp $filename /tmp/$tmpfilename
+sed -i "s/resourcename/$tmpfilename/g" /tmp/$tmpfilename
+cat /tmp/$tmpfilename
+bash $COMMONDIR/runApp.sh "AGENT" "update" $id /tmp/$tmpfilename
+bash $COMMONDIR/runApp.sh "AGENT" "check-equals" $id /tmp/$tmpfilename
 	
-	echo " *********** "
-	
-done
+echo " *********** "
 
 popd

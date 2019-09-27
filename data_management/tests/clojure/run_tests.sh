@@ -37,3 +37,4 @@ else
 fi
 
 bash $DOCKERSDIR/stopDataClaysAndClean.sh
+exit $retVal

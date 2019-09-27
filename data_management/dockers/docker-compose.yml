@@ -1,4 +1,4 @@
-version: '2'
+version: '3.4'
 
 services:
 
@@ -7,7 +7,7 @@ services:
   ####################################
 
   logicmodule1:
-    image: "bscdataclay/logicmodule:${DATACLAY_VERSION}"
+    image: "bscdataclay/logicmodule:${DATACLAY_CONTAINER_VERSION}"
     ports:
       - "1034:1034"
     env_file:
@@ -18,13 +18,17 @@ services:
     volumes:
       - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
-
+    healthcheck:
+       interval: 5s
+       retries: 10
+       test: ["CMD-SHELL", "health_check/logicmodule_health_check.sh"]
+       
   ####################################
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
 
   ds1java1:
-    image: "bscdataclay/dsjava:${DATACLAY_VERSION}"
+    image: "bscdataclay/dsjava:${DATACLAY_CONTAINER_VERSION}"
     depends_on:
       - logicmodule1
     ports:
@@ -37,3 +41,7 @@ services:
     volumes:
       - ./prop/global.properties:/usr/src/dataclay/cfgfiles/global.properties:ro
       - ./prop/log4j2.xml:/usr/src/dataclay/log4j2.xml:ro
+    healthcheck:
+       interval: 5s
+       retries: 10
+       test: ["CMD-SHELL", "health_check/dataservice_health_check.sh"]

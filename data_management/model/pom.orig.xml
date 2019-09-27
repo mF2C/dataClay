@@ -2,15 +2,14 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>dataclay.mf2c</groupId>
-	<artifactId>wrapper</artifactId>
-	<version>2.24</version>
-	<packaging>jar</packaging>
+	<groupId>CIMImodel</groupId>
+	<artifactId>CIMImodel</artifactId>
+	<version>1</version>
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.target>8</maven.compiler.target>
 		<maven.compiler.source>8</maven.compiler.source>
 		<maven.compiler.release>8</maven.compiler.release>
+		
 	</properties>
 	<build>
 		<sourceDirectory>src</sourceDirectory>
@@ -25,43 +24,16 @@
 		<repository>
 			<id>DataClay repository</id>
 			<url>https://raw.github.com/bsc-ssrg/dataclay-maven/repository/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
 		</repository>
 	</repositories>
 	<dependencies>
 		<dependency>
 			<groupId>dataclay</groupId>
 			<artifactId>dataclay</artifactId>
-			<version>2.0.8-beta-14</version>
+			<version>dataclay-version</version>
 		</dependency>
-		<dependency>
-			<groupId>dataclay.mf2c</groupId>
-			<artifactId>stubs</artifactId>
-			<version>2.24</version>
-		</dependency>
-		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
-			<version>20170516</version>
-		</dependency>
-		<dependency>
-			<groupId>org.reflections</groupId>
-			<artifactId>reflections</artifactId>
-			<version>0.9.11</version>
-		</dependency>
-
 	</dependencies>
-	<reporting>
-		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.1.1</version>
-				<configuration>
-			        <source>1.8</source>
-			        <target>1.8</target>
-				</configuration>
-			</plugin>
-		</plugins>
-
-	</reporting>
 </project>

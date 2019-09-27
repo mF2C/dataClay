@@ -1,5 +1,8 @@
 package api;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -60,8 +63,9 @@ public class DataClayWrapper {
 	 * 
 	 * @throws DataClayFederationException
 	 *             Error while connecting to the dataClay in the leader
+	 * @throws IOException if cannot write state.txt
 	 */
-	public static void init() throws DataClayFederationException {
+	public static void init() throws DataClayFederationException, IOException {
 		String leaderAddr = System.getenv("LEADER_DC");
 		if (leaderAddr != null && !leaderAddr.isEmpty()) {
 			// No discovery in this case, environment variable indicates leader for testing
@@ -97,6 +101,9 @@ public class DataClayWrapper {
 			//ignore, agent not defined yet
 		}
 		createLocalResourceCollections();
+		
+		String content = "READY";
+		Files.write(Paths.get("state.txt"), content.getBytes());
 	}
 
 	/**

@@ -4,7 +4,9 @@ TOOLSBASE="$SCRIPTDIR/tool"
 TOOLSPATH="$TOOLSBASE/dClayTool.sh"
 DCLIB="$TOOLSBASE/dataclayclient.jar"
 MODELPATH="$SCRIPTDIR/model/"
-DATACLAY_VERSION="2.0.dev12"
+DATACLAY_CONTAINER_VERSION="2.0.jdk8.dev14"
+DATACLAY_MAVEN_VERSION="2.0.8-beta-14"
+PLATFORMS=linux/amd64,linux/arm/v7
 NAMESPACE="CimiNS"
 USER="mf2c"
 PASS="p4ssw0rd"
@@ -30,50 +32,19 @@ function usage {
 	echo "		--push Indicates to push to DockerHub and Maven "
 	echo "			Remember to clone in local repository folder:  $URL_DATACLAY_MF2C_MAVEN_REPO  "
 	echo ""
-}
-
-function docker-push-mf2c {
-	TAG=$1
-	docker push mf2c/dataclay-logicmodule:${TAG}
-	docker push mf2c/dataclay-dsjava:${TAG}
-	docker push mf2c/dataclay-logicmodule:latest
-	docker push mf2c/dataclay-dsjava:latest
-	
-}  
+} 
 
 function maven_install_wrapper { 
 	JARPATH=$1
 	VERSION=$2
-	DATACLAY_VERSION=$3
+	DATACLAY_MAVEN_VERSION=$3
 	rm -rf $SCRIPTDIR/dm_app/target
-	if [ -f $SCRIPTDIR/dm_app/pom.xml.orig ]; then
-		mv $SCRIPTDIR/dm_app/pom.xml.orig $SCRIPTDIR/dm_app/pom.xml #sanity check
-	fi
-	if [ -f $SCRIPTDIR/pom-stubs-wrapper.xml.orig ]; then
-		mv $SCRIPTDIR/pom-stubs-wrapper.xml.orig $SCRIPTDIR/pom-stubs-wrapper.xml #sanity check
-	fi
-	cp $SCRIPTDIR/dm_app/pom.xml $SCRIPTDIR/dm_app/pom.xml.orig
-	cp $SCRIPTDIR/pom-stubs-wrapper.xml $SCRIPTDIR/pom-stubs-wrapper.xml.orig
-	
-	sed -i "s/dataclay-version/$DATACLAY_VERSION/g" $SCRIPTDIR/pom-stubs-wrapper.xml
+	cp $SCRIPTDIR/dm_app/pom.orig.xml $SCRIPTDIR/dm_app/pom.xml #sanity check
+	cp $SCRIPTDIR/pom-stubs-wrapper.orig.xml $SCRIPTDIR/pom-stubs-wrapper.xml #sanity check	
+
+	sed -i "s/dataclay-version/$DATACLAY_MAVEN_VERSION/g" $SCRIPTDIR/pom-stubs-wrapper.xml
 	sed -i "s/trunk/$VERSION/g" $SCRIPTDIR/dm_app/pom.xml
-	sed -i "s/dataclay-version/$DATACLAY_VERSION/g" $SCRIPTDIR/dm_app/pom.xml
-
-	echo "=================== WRAPPER STUBS POM.XML ======================== "
-	cat $SCRIPTDIR/pom-stubs-wrapper.xml
-	echo "=========================================================== "
-	echo "=================== WRAPPER POM.XML ======================== "
-	cat $SCRIPTDIR/dm_app/pom.xml
-	echo "=========================================================== "
-
-	#	sed -i '/<dependency>/ {
-	#	:start
-	#	N
-	#	/<\/dependency>$/!b start
-	#	/<artifactId>dataclay<\/artifactId>/ {
-	#	s/\(<version>\)'"$VERSION"'\(<\/version>\)/\1trunk\2/
-	#	}
-	# }' $SCRIPTDIR/dm_app/pom.xml
+	sed -i "s/dataclay-version/$DATACLAY_MAVEN_VERSION/g" $SCRIPTDIR/dm_app/pom.xml
 	
 	echo "Installing dataclay mf2c stubs in m2 repository "
 	mvn install:install-file \
@@ -145,8 +116,6 @@ function maven_install_wrapper {
 		   -DcreateChecksum=true
 	fi
 	
-	mv $SCRIPTDIR/dm_app/pom.xml.orig $SCRIPTDIR/dm_app/pom.xml
-	mv $SCRIPTDIR/pom-stubs-wrapper.xml.orig $SCRIPTDIR/pom-stubs-wrapper.xml
 
 }
 
@@ -197,6 +166,9 @@ if [ "$#" -eq 3 ]; then
 	popd
 fi
 
+# Use dataclaybuilder
+docker buildx use dataclaybuilder
+
 # Prepare client.properties
 TMPDIR=`mktemp -d`
 printf "HOST=127.0.0.1\nTCPPORT=1034" > $TMPDIR/client.properties
@@ -205,9 +177,10 @@ export DATACLAYCLIENTCONFIG=$TMPDIR/client.properties
 # Build and start dataClay
 pushd $SCRIPTDIR/dockers
 
-export DATACLAY_VERSION=$DATACLAY_VERSION
+export DATACLAY_CONTAINER_VERSION=$DATACLAY_CONTAINER_VERSION
 
 echo " ===== Starting dataClay ===== "
+docker-compose pull
 docker-compose down #sanity check
 docker-compose up -d
 popd 
@@ -220,14 +193,10 @@ $TOOLSPATH NewDataContract $USER $PASS $DATASET $USER
 
 echo " ===== Register model in $MODELPATH  ====="
 pushd $MODELPATH
-if [ -f $MODELPATH/pom.xml.orig ]; then
-	mv $MODELPATH/pom.xml.orig $MODELPATH/pom.xml #sanity check
-fi
-cp $MODELPATH/pom.xml $MODELPATH/pom.xml.orig
-sed -i "s/dataclay-version/$DATACLAY_VERSION/g" $MODELPATH/pom.xml
+cp $MODELPATH/pom.orig.xml $MODELPATH/pom.xml #sanity check
+sed -i "s/dataclay-version/$DATACLAY_MAVEN_VERSION/g" $MODELPATH/pom.xml
 mvn clean compile -U
 $TOOLSPATH NewModel $USER $PASS $NAMESPACE $MODELPATH/target/classes/ java
-mv $MODELPATH/pom.xml.orig $MODELPATH/pom.xml 
 popd 
 
 echo " ===== Get stubs into $STUBSPATH  ====="
@@ -254,34 +223,29 @@ do
 	docker exec -t dockers_logicmodule1_1 sqlite3 "//tmp/dataclay/LM" ".dump $table" >> $SCRIPTDIR/LM.sqlite
 done
 
+
 echo " ===== Stopping dataClay ====="
 pushd $SCRIPTDIR/dockers
 docker-compose down
 popd
 
-# Now we can build the docker images 
-echo " ===== Building docker mf2c/dataclay-dsjava:${PROXY_TAG} ====="
-docker build --build-arg DATACLAY_TAG="${DATACLAY_VERSION}" -f DockerfileDSMf2c -t mf2c/dataclay-dsjava:${PROXY_TAG} .
-
-echo " ===== Building docker mf2c/dataclay-logicmodule:${PROXY_TAG} ====="
-docker build --build-arg DATACLAY_TAG="${DATACLAY_VERSION}" -f DockerfileLMMf2c -t mf2c/dataclay-logicmodule:${PROXY_TAG} .
-
-echo " ===== Building docker mf2c/dataclay-logicmodule:latest  ====="
-docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:latest 
-
-echo " ===== Building docker mf2c/dataclay-dsjava:latest ====="
-docker tag mf2c/dataclay-dsjava:${PROXY_TAG} mf2c/dataclay-dsjava:latest 
-
+BUILD_PARAMS="--load ."
 if [ "$PUSH" = true ] ; then
-	echo " ===== Pushing dockers dataclay mf2c dockers DockerHub ====="
-	docker-push-mf2c ${PROXY_TAG}
+	BUILD_PARAMS="--push --platform $PLATFORMS ."
 else 
 	echo " ===== NOT Pushing any docker into DockerHub ====="
 fi
 
+# Now we can build the docker images 
+echo " ===== Building docker mf2c/dataclay-dsjava:${PROXY_TAG} ====="
+docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.DS.Dockerfile -t mf2c/dataclay-dsjava:${PROXY_TAG} $BUILD_PARAMS
+
+echo " ===== Building docker mf2c/dataclay-logicmodule:${PROXY_TAG} ====="
+docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.LM.Dockerfile -t mf2c/dataclay-logicmodule:${PROXY_TAG} $BUILD_PARAMS
+
 if [ "$PUSH" = true ] ; then
 	echo " ===== Installing dataClay mf2c wrapper $PROXY_TAG ====="
-	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG $DATACLAY_VERSION $DATACLAY_MF2C_MAVEN_REPO 
+	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG $DATACLAY_MAVEN_VERSION $DATACLAY_MF2C_MAVEN_REPO 
 
 	echo " ===== Pushing  dataClay maven mf2c wrapper into GitHub ====="
 	pushd $DATACLAY_MF2C_MAVEN_REPO
@@ -291,21 +255,24 @@ if [ "$PUSH" = true ] ; then
 	popd
 else 
 	echo " ===== Installing dataClay mf2c wrapper $PROXY_TAG ====="
-	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG $DATACLAY_VERSION
+	maven_install_wrapper $DATACLAY_MF2C_STUBS_JAR $PROXY_TAG $DATACLAY_MAVEN_VERSION
 	echo " ===== NOT Pushing  dataClay maven mf2c wrapper into GitHub ====="
 fi
 
 echo " ===== Installing dataclay-proxy with tag $PROXY_TAG ====="
 pushd $PROXY
-bash release.sh $PROXY_TAG
+bash release.sh dataclaybuilder $PROXY_TAG $PLATFORMS $PUSH
 popd
 
+
 if [ "$PUSH" = true ] ; then
-	echo " ===== Pushing  dataclay proxy in DockerHub ====="
-	docker push mf2c/dataclay-proxy:${PROXY_TAG}
-	docker push mf2c/dataclay-proxy:latest
+	# this automatically pushes in DockerHub a new tag
+	docker buildx imagetools create mf2c/dataclay-logicmodule:${PROXY_TAG} -t mf2c/dataclay-logicmodule:latest
+	docker buildx imagetools create mf2c/dataclay-dsjava:${PROXY_TAG} -t mf2c/dataclay-dsjava:latest
 else 
-	echo " ===== NOT Pushing dataclay-proxy ====="
+	docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:latest
+	docker tag mf2c/dataclay-dsjava:${PROXY_TAG} mf2c/dataclay-dsjava:latest
+	docker tag mf2c/dataclay-proxy:${PROXY_TAG} mf2c/dataclay-proxy:latest
 fi
 
 cp $SCRIPTDIR/tests/pom.orig.xml $SCRIPTDIR/tests/pom.xml

@@ -14,29 +14,45 @@
 #  implied.  See the License for the specific language governing
 #  permissions and limitations under the License.
 #
-if [[ $# -eq 0 ]] ; then
-    echo 'Please pass the Docker image tag version as an argument'
-    exit 0
-fi
+BUILDX_BUILDER=$1
+TAG=$2
+PLATFORMS=$3
+PUSH=$4
+
+# =========== Building jar ===========
+
 # update project.clj versioning
 if [ -f project.clj.orig ]; then
 	mv project.clj.orig project.clj #sanity check
 fi
 cp project.clj project.clj.orig
-sed -i "s/dataclay.mf2c\/wrapper \"trunk\"/dataclay.mf2c\/wrapper \"${1}\"/g" project.clj
-sed -i "s/def +version+ \"trunk\"/def +version+ \"${1}\"/g" project.clj
-sed -i "s/defproject com.sixsq.dataclay\/proxy \"trunk\"/defproject com.sixsq.dataclay\/proxy \"${1}\"/g" project.clj
+sed -i "s/dataclay.mf2c\/wrapper \"trunk\"/dataclay.mf2c\/wrapper \"${TAG}\"/g" project.clj
+sed -i "s/def +version+ \"trunk\"/def +version+ \"${TAG}\"/g" project.clj
+sed -i "s/defproject com.sixsq.dataclay\/proxy \"trunk\"/defproject com.sixsq.dataclay\/proxy \"${TAG}\"/g" project.clj
 
-lein do clean, test, uberjar
+eval "lein do clean, test, uberjar"
 # copy to proxy.jar so Docker build can find it 
-cp target/proxy-${1}-standalone.jar proxy.jar
+cp target/proxy-${TAG}-standalone.jar proxy.jar
 
-docker build -t mf2c/dataclay-proxy:${1} .
-docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:latest
-docker tag mf2c/dataclay-proxy:${1} mf2c/dataclay-proxy:trunk
-lein do clean
+# =========== Building docker ===========
+# Use buildx builder
+docker buildx use $BUILDX_BUILDER
+BUILD_PARAMS="--load ."
+if [ "$PUSH" = true ] ; then
+	BUILD_PARAMS="--push --platform $PLATFORMS ."
+fi
 
-# Cleaning
+docker buildx build -t mf2c/dataclay-proxy:${TAG} $BUILD_PARAMS
+
+if [ "$PUSH" = true ] ; then
+	# this automatically pushes the image 
+	docker buildx imagetools create mf2c/dataclay-proxy:${TAG} -t mf2c/dataclay-proxy:latest 
+else 
+	docker tag mf2c/dataclay-proxy:${TAG} mf2c/dataclay-proxy:latest
+fi 
+
+# =========== Cleaning ===========
+eval "lein do clean"
 mv project.clj.orig project.clj
 rm proxy.jar
 
