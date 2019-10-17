@@ -24,11 +24,13 @@ pushd $PROJECT_PATH
 export DATACLAYCLIENTCONFIG=$CFGFILE
 export DATACLAYSESSIONCONFIG=$SESSIONFILE
 export DATACLAYGLOBALCONFIG=$GLOBALFILE
+export LOGICMODULE_PORT=443 
 
 filename=$JSONDIR/Device.json
 
 echo " ***** PROCESSING $filename ****** "
 
+bash $COMMONDIR/runApp.sh "AGENT" "create" $filename
 output=$(bash $COMMONDIR/runApp.sh "AGENT" "create" $filename)
 echo "$output"
 id=$(echo $output | sed -n -e 's/^.*CREATED://p')

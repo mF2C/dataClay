@@ -42,7 +42,7 @@ public class DataClayWrapper {
 	private static final String RESOURCE_COLLECTION_ALIAS_SUFFIX = "Collection";
 
 	/** LogicModule port. */
-	private static final int LOGICMODULE_PORT = 1034;
+	private static final int LOGICMODULE_PORT;
 
 	/** All instances of following types must be federated to leader. */
 	private static Set<Class<?>> typesToFederate;
@@ -57,6 +57,15 @@ public class DataClayWrapper {
 	private static final List<String> QUERY_RIGHTS = Arrays.asList(
 			new String[] {"READ", "MODIFY", "ALL"});
 
+	static { 
+		String portDefined = System.getenv("LOGICMODULE_PORT");
+		if (portDefined == null) { 
+			LOGICMODULE_PORT = 1034;
+		} else { 
+			LOGICMODULE_PORT = Integer.parseInt(portDefined);
+		}
+	}
+	
 	/**
 	 * Simulates a discovery process if LEADER_DC=host:port environment variable is set. 
 	 * In any case, it creates the required resource collections in the agent.
@@ -100,10 +109,15 @@ public class DataClayWrapper {
 		} catch (final Exception e) { 
 			//ignore, agent not defined yet
 		}
-		createLocalResourceCollections();
-		
-		String content = "READY";
-		Files.write(Paths.get("state.txt"), content.getBytes());
+		try { 
+			createLocalResourceCollections();
+			String content = "READY";
+			Files.write(Paths.get("state.txt"), content.getBytes());
+		} catch (final Exception e) { 
+			e.printStackTrace();
+			throw e;
+		}
+
 	}
 
 	/**
@@ -256,7 +270,7 @@ public class DataClayWrapper {
 		} 
 		final DataClayInstanceID id = ClientManagementLib.registerExternalDataClay(ip, port);
 		if (id == null) {
-			throw new DataClayFederationException("Could not connect to the leader dataClay");
+			throw new DataClayFederationException("Could not connect to the leader dataClay address: " + ip + ":" + port);
 		}
 		return id;
 	}
