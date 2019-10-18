@@ -31,6 +31,8 @@ public class ServiceOperationReport extends CIMIResource {
 	String compute_node_id;
 	Map<String, Object> requesting_application_id;
 	String operation_name;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String operation_id;
 	String start_time;
 	@Replication.InMaster
