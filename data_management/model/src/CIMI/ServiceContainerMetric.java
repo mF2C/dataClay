@@ -30,6 +30,8 @@ public class ServiceContainerMetric extends CIMIResource {
 	Map<String, Object> device_id;
 	String container_id;
 	String start_time;
+	@Replication.InMaster
+	@Replication.AfterUpdate(method = "replicateToDataClaysObjectIsFederatedWith", clazz = "dataclay.util.replication.SequentialConsistency")
 	String stop_time;
 
 	// Constructor
