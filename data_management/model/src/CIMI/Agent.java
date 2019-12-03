@@ -35,6 +35,7 @@ public class Agent extends CIMIResource {
 	String leader_id;
 	String leader_ip;
 	String backup_ip;
+	String backup_id;
 	Boolean authenticated;
 	Boolean connected;
 	Boolean isLeader;

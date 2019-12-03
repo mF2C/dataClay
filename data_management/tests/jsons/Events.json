@@ -4,7 +4,7 @@
     "description": "Event Description",
     "resourceURI": "EventTypeURI",
     "created" : "2018-05-22T11:34:56.959Z",
-    "updated" : "2018-05-22T15:25:02.057Z",
+    "updated" : "updatetime",
     "acl" : {
       "owner" : {
         "principal" : "ADMIN",

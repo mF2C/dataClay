@@ -4,7 +4,7 @@
     "description": "Fog Area Description",
     "resourceURI": "FogAreaTypeURI",
     "created": "201804181533",
-    "updated": "201804181533",
+    "updated" : "updatetime",
     "acl": {
       "owner": {
         "principal": "User1",

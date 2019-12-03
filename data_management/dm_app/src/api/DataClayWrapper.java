@@ -28,7 +28,11 @@ import api.exceptions.TypeDoesNotExistException;
 import dataclay.api.DataClay;
 import dataclay.commonruntime.ClientManagementLib;
 import dataclay.exceptions.metadataservice.ObjectNotRegisteredException;
+import dataclay.tool.Util;
+import dataclay.tool.Util.ERRCODE;
+import dataclay.util.ids.AccountID;
 import dataclay.util.ids.DataClayInstanceID;
+import dataclay.util.management.accountmgr.PasswordCredential;
 
 public class DataClayWrapper {
 
@@ -53,6 +57,9 @@ public class DataClayWrapper {
 	/** Agent resource alias. */
 	private static final String AGENT_RESOURCE_ALIAS = "agent/agent";
 	
+	/** Authority for remote connections. */
+	private static final String EXTERNAL_AUTHORITY = "proxy";
+	
 	/** Allowed rights for queries. */
 	private static final List<String> QUERY_RIGHTS = Arrays.asList(
 			new String[] {"READ", "MODIFY", "ALL"});
@@ -75,12 +82,7 @@ public class DataClayWrapper {
 	 * @throws IOException if cannot write state.txt
 	 */
 	public static void init() throws DataClayFederationException, IOException {
-		String leaderAddr = System.getenv("LEADER_DC");
-		if (leaderAddr != null && !leaderAddr.isEmpty()) {
-			// No discovery in this case, environment variable indicates leader for testing
-			leaderDC = connectToExternalDataClay(leaderAddr);
-			System.out.println("-- My dataClay leader is: " + leaderDC);
-		}
+
 
 		// get my IP 
 		System.out.println("-- My ID is " + ClientManagementLib.getDataClayID());
@@ -88,14 +90,17 @@ public class DataClayWrapper {
 		// check that there is an agent with leader defined 
 		try {
 			final Agent curAgent = Agent.getByAlias(AGENT_RESOURCE_ALIAS);
-			leaderAddr = (String) curAgent.getFieldValue("leader_ip");
+			String leaderAddr = (String) curAgent.getFieldValue("leader_ip");
+			String leaderID = (String) curAgent.getFieldValue("leader_id");
+
 			if (leaderAddr != null && !leaderAddr.isEmpty()) {
-				leaderDC = connectToExternalDataClay(leaderAddr); 
+				leaderDC = connectToExternalDataClay(leaderAddr, leaderID); 
 				System.out.println("-- My dataClay leader is: " + leaderDC + " at " + leaderAddr);
 			}
 			final String backupAddr = (String) curAgent.getFieldValue("backup_ip");
+			final String backupID = (String) curAgent.getFieldValue("backup_id");
 			if (backupAddr != null && !backupAddr.isEmpty()) {
-				backupDC = connectToExternalDataClay(backupAddr); 
+				backupDC = connectToExternalDataClay(backupAddr, backupID); 
 				System.out.println("-- My dataClay backup is: " + backupDC + " at " + backupAddr);
 			}
 
@@ -201,15 +206,17 @@ public class DataClayWrapper {
 					System.out.println("-- My IP is: " + currentDataClayIP);
 				}
 				final String leaderAddr = (String) objectData.get("leader_ip");
+				final String leaderID = (String) objectData.get("leader_id");
 				// Agent resource must be the first one created in the tests!!
 				if (leaderAddr != null && !leaderAddr.isEmpty()) {
-					leaderDC = connectToExternalDataClay(leaderAddr);
+					leaderDC = connectToExternalDataClay(leaderAddr, leaderID);
 					System.out.println("-- My dataClay leader is: " + leaderDC);
 				}
 				final String backupAddr = (String) objectData.get("backup_ip");
+				final String backupID = (String) objectData.get("backup_id");
 				// Agent resource must be the first one created in the tests!!
 				if (backupAddr != null && !backupAddr.isEmpty()) {
-					backupDC = connectToExternalDataClay(backupAddr);
+					backupDC = connectToExternalDataClay(backupAddr, backupID);
 					System.out.println("-- My dataClay backup is: " + backupDC);
 				}
 				obj = new Agent(objectData);
@@ -257,8 +264,16 @@ public class DataClayWrapper {
 		}
 	}
 
-	private static DataClayInstanceID connectToExternalDataClay(final String theip) throws DataClayFederationException {
+	private static DataClayInstanceID connectToExternalDataClay(final String theip, 
+			final String authority) throws DataClayFederationException {
 
+		String theauthority = authority;
+		if (authority == null || authority.isEmpty()) { 
+			theauthority = EXTERNAL_AUTHORITY;
+		} else { 
+			// get first 64 chars 
+			theauthority = theauthority.substring(0, 63);
+		}
 
 		// Register the dataClay instance of my leader
 		String ip = theip;
@@ -268,7 +283,17 @@ public class DataClayWrapper {
 			ip = addr[0];
 			port = Integer.valueOf(addr[1]);
 		} 
-		final DataClayInstanceID id = ClientManagementLib.registerExternalDataClay(ip, port);
+		// Get accounts info
+		final AccountID adminID = ClientManagementLib.getAccountID("admin");
+		if (adminID == null) {
+			throw new DataClayFederationException("Could not get admin acount ID to register external dataclay");
+		}
+		final PasswordCredential adminCredential = new PasswordCredential("admin");
+
+		System.out.println("Registering external dataclay instance " + ip + ":" + port + " with authority " + theauthority);
+
+		final DataClayInstanceID id = ClientManagementLib.registerExternalDataClayOverrideAuthority(adminID, 
+				adminCredential, ip, port, theauthority);
 		if (id == null) {
 			throw new DataClayFederationException("Could not connect to the leader dataClay address: " + ip + ":" + port);
 		}
@@ -502,20 +527,17 @@ public class DataClayWrapper {
 				if (currentChildren == null)  {
 					currentChildren = new ArrayList<>();
 				}
+				
 				// update ips 
 				final String updatedIP = (String) objectData.get("device_ip");
 				String updatedLeaderIP = (String) objectData.get("leader_ip");
-				if (updatedLeaderIP == null) { 
-					updatedLeaderIP = ""; //for easy checks
-				}
+				String updatedLeaderID = (String) objectData.get("leader_id");
+
 				String updatedBackupIP = (String) objectData.get("backup_ip");
-				if (updatedBackupIP == null) { 
-					updatedBackupIP = ""; //for easy checks
-				}
+				String updatedBackupID = (String) objectData.get("backup_id");
+
 				ArrayList<String> updatedChildrenIPs = (ArrayList<String>) objectData.get("childrenIPs");
-				if (updatedChildrenIPs == null)  {
-					updatedChildrenIPs = new ArrayList<>();
-				}
+
 				// check new ips
 				checkAgentIPs(objectData);
 				/** Use cases
@@ -552,14 +574,14 @@ public class DataClayWrapper {
 
 				// FEDERATE, MIGRATE, UNFEDERATE, PROPAGATE USE CASES
 				final DataClayInstanceID currentLeaderID = leaderDC;
-				if (updatedLeaderIP.isEmpty() && leaderDC != null) {
+				if (updatedLeaderIP != null && updatedLeaderIP.isEmpty() && leaderDC != null) {
 					System.out.println("-- New Leader is undefined, unfederating all objects with previous leader");
 					DataClay.unfederateAllObjects(leaderDC);
 					leaderDC = null;
 					
 
-				} else if (!currentLeaderIP.equals(updatedLeaderIP)) { 
-					leaderDC = connectToExternalDataClay(updatedLeaderIP);
+				} else if (updatedLeaderIP != null && !currentLeaderIP.equals(updatedLeaderIP)) { 
+					leaderDC = connectToExternalDataClay(updatedLeaderIP, updatedLeaderID);
 					System.out.println("-- Updated dataClay leader is: " + leaderDC + " at " + updatedLeaderIP);
 
 					// if there is previous leader, migrate
@@ -576,7 +598,7 @@ public class DataClayWrapper {
 					
 				}
 				
-				if (!currentLeaderIP.equals(updatedLeaderIP)
+				if (updatedLeaderIP != null && !currentLeaderIP.equals(updatedLeaderIP)
 						&& (currentLeaderID != null || leaderDC != null)) { 
 					// NOTIFY UNFEDERATION TO CHILDREN before update of children fields
 					// lost or new added children do not need to be notified from changing its grandleader
@@ -589,38 +611,46 @@ public class DataClayWrapper {
 						System.out.println("---- [New GrandLeader Notification] Notifying children ");
 						for (final String child : childrenToNotify) { 
 							if (child != null) { 
-								final DataClayInstanceID extDataClayID = getExternalDataClayID(child);
-								final Map<String, Object> notificationData = new HashMap<>();
-								if (currentLeaderID != null) {
-									String ip = currentLeaderIP;
-									int port = LOGICMODULE_PORT;
-									if (currentLeaderIP.contains(":")) { 
-										final String[] addr = currentLeaderIP.split(":");
-										ip = addr[0];
-										port = Integer.valueOf(addr[1]);
-									} 
-									notificationData.put("previousIP", ip);
-									notificationData.put("previousPort", port);
+								
+								try {
+	
+									final DataClayInstanceID extDataClayID = getExternalDataClayID(child);
+																	
+									final Map<String, Object> notificationData = new HashMap<>();
+									if (currentLeaderID != null) {
+										String ip = currentLeaderIP;
+										int port = LOGICMODULE_PORT;
+										if (currentLeaderIP.contains(":")) { 
+											final String[] addr = currentLeaderIP.split(":");
+											ip = addr[0];
+											port = Integer.valueOf(addr[1]);
+										} 
+										notificationData.put("previousIP", ip);
+										notificationData.put("previousPort", port);
+									}
+									if (leaderDC != null) {
+										String ip = updatedLeaderIP;
+										int port = LOGICMODULE_PORT;
+										if (updatedLeaderIP.contains(":")) { 
+											final String[] addr = updatedLeaderIP.split(":");
+											ip = addr[0];
+											port = Integer.valueOf(addr[1]);
+										} 
+										notificationData.put("newIP", ip);
+										notificationData.put("newPort", port);
+									}
+									System.out.println("---- [New GrandLeader Notification] Notify child about grandleader: " + child 
+											+ " from " + currentLeaderID + " to " + leaderDC);
+	
+									final UnfederateNotificationChildren notification = new UnfederateNotificationChildren(notificationData);
+									notification.makePersistent();
+									notification.federate(extDataClayID);
+									notification.unfederateWithAllDCs(false);
+									notification.disableNotification();
+									
+								} catch (Exception e) { 
+									System.out.println("WARNING: Caught exception while notifying " + child + " about new grand-leader. Ignoring");
 								}
-								if (leaderDC != null) {
-									String ip = updatedLeaderIP;
-									int port = LOGICMODULE_PORT;
-									if (updatedLeaderIP.contains(":")) { 
-										final String[] addr = updatedLeaderIP.split(":");
-										ip = addr[0];
-										port = Integer.valueOf(addr[1]);
-									} 
-									notificationData.put("newIP", ip);
-									notificationData.put("newPort", port);
-								}
-								System.out.println("---- [New GrandLeader Notification] Notify child about grandleader: " + child 
-										+ " from " + currentLeaderID + " to " + leaderDC);
-
-								final UnfederateNotificationChildren notification = new UnfederateNotificationChildren(notificationData);
-								notification.makePersistent();
-								notification.federate(extDataClayID);
-								notification.unfederateWithAllDCs(false);
-								notification.disableNotification();
 
 							}
 						}
@@ -631,13 +661,13 @@ public class DataClayWrapper {
 				// UPDATE BACKUP
 				// FEDERATE, MIGRATE, UNFEDERATE (NO PROPAGATION FOR BACKUP) USE CASES
 				final DataClayInstanceID currentBackupID = backupDC;
-				if (updatedBackupIP.isEmpty() && backupDC != null) {
+				if (updatedBackupIP != null && updatedBackupIP.isEmpty() && backupDC != null) {
 					System.out.println("-- New Backup is undefined, unfederating all objects with previous backup");
 					DataClay.unfederateAllObjects(backupDC);
 					backupDC = null;
 
-				} else if (!currentBackupIP.equals(updatedBackupIP)) { 
-					backupDC = connectToExternalDataClay(updatedBackupIP);
+				} else if (updatedBackupIP != null && !currentBackupIP.equals(updatedBackupIP)) { 
+					backupDC = connectToExternalDataClay(updatedBackupIP, updatedBackupID);
 					System.out.println("-- Updated dataClay backup is: " + backupDC + " at " + updatedBackupIP);
 					if (!currentBackupIP.isEmpty()) {
 						System.out.println("-- Migrating fed.objects from previous backup dataClay " + currentBackupID
@@ -654,18 +684,27 @@ public class DataClayWrapper {
 				// UPDATE CHILDREN
 				// UNFEDERATE, PROPAGATE USE CASES
 				final ArrayList<DataClayInstanceID> newChildrenIDs = new ArrayList<>();
-				for (final String updatedChild : updatedChildrenIPs) { 
-					final DataClayInstanceID extDataClayID = getExternalDataClayID(updatedChild);
-					newChildrenIDs.add(extDataClayID);
+				if (updatedChildrenIPs != null)  {
+					for (final String updatedChild : updatedChildrenIPs) { 
+						try {
+							final DataClayInstanceID extDataClayID = getExternalDataClayID(updatedChild);
+							newChildrenIDs.add(extDataClayID);
+						} catch (Exception e) { 
+							System.out.println("WARNING: Caught exception while checking new child " + updatedChild + " Ignoring");
+						}
+					}
 				}
 				final ArrayList<DataClayInstanceID> lostChildren = new ArrayList<>();
 				for (final String child : currentChildren) { 
-					final DataClayInstanceID prevChildID = getExternalDataClayID(child);
-					if (!newChildrenIDs.contains(prevChildID)) { 
-						System.out.println("---- [Lost Children] Found lost child " + prevChildID);
-						lostChildren.add(prevChildID);
-
-					} 
+					try {
+						final DataClayInstanceID prevChildID = getExternalDataClayID(child);
+						if (!newChildrenIDs.contains(prevChildID)) { 
+							System.out.println("---- [Lost Children] Found lost child " + prevChildID);
+							lostChildren.add(prevChildID);
+						} 
+					} catch (Exception e) { 
+						System.out.println("WARNING: Caught exception while checking child " + child + " Ignoring");
+					}
 				}										
 				for (final DataClayInstanceID lostChild : lostChildren) {
 					if (lostChild != null) { 						

@@ -207,8 +207,10 @@ bash $COMMONDIR/runApp.sh "BACKUP" "query" "device-dynamic" "null" "ADMIN" "#{AD
 #bash $COMMONDIR/runApp.sh "BACKUP" "check-equals" "device/leader2" $JSONDIR/DeviceLeader2.json 
 
 ##################### UPDATES
-
+echo " *********************** synchronization *************************** "
+current_date=$(date)
 sed -i -e "s/.*hwloc.*/\"hwloc\":\"updated\",/g" $JSONDIR/DeviceChild1.json
+sed -i -e "s/updatetime/$current_date/g" $JSONDIR/DeviceChild1.json
 
 # Child1 update device 
 export DATACLAYCLIENTCONFIG=$CHILD1_CFGFILE

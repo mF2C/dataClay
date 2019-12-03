@@ -3,7 +3,7 @@
     "name": "resourcename",
     "resourceURI": "ServiceInstanceTypeURI",
     "created": "201804181541",
-    "updated": "201804181541",
+    "updated" : "updatetime",
     "acl": {
       "owner": {
         "principal": "User1",

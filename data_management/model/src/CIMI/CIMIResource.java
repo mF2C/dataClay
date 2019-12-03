@@ -131,7 +131,11 @@ public class CIMIResource extends DataClayObject {
 					setUpdate.invoke(this, new Object[] {fieldValue, new Boolean(true)});
 				} catch (final NoSuchMethodException em) {
 					declaredField.set(this, fieldValue);
+				} catch (final InvocationTargetException e) {
+					System.out.println("Ignoring exception during setter propagation of field " + fieldName + " but setting value anyway.");
+					declaredField.set(this, fieldValue);
 				}
+				
 				declaredField.setAccessible(accessible);
 				found = true;
 			} catch (final NoSuchFieldException e) { 				
@@ -143,9 +147,6 @@ public class CIMIResource extends DataClayObject {
 								+ " Provided type: " + fieldValue.getClass().getName()
 								+ " and expected: " + declaredField.getType().getName());
 			} catch (final IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (final InvocationTargetException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			} catch (final SecurityException e) {
 				// TODO Auto-generated catch block

@@ -237,11 +237,11 @@ else
 fi
 
 # Now we can build the docker images 
-echo " ===== Building docker mf2c/dataclay-dsjava:${PROXY_TAG} ====="
-docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.DS.Dockerfile -t mf2c/dataclay-dsjava:${PROXY_TAG} $BUILD_PARAMS
+echo " ===== Building docker mf2c/trunk:dataclay-dsjava-${PROXY_TAG} ====="
+docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.DS.Dockerfile -t mf2c/trunk:dataclay-dsjava-${PROXY_TAG} $BUILD_PARAMS
 
-echo " ===== Building docker mf2c/dataclay-logicmodule:${PROXY_TAG} ====="
-docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.LM.Dockerfile -t mf2c/dataclay-logicmodule:${PROXY_TAG} $BUILD_PARAMS
+echo " ===== Building docker mf2c/trunk:dataclay-logicmodule-${PROXY_TAG} ====="
+docker buildx build --build-arg DATACLAY_TAG="${DATACLAY_CONTAINER_VERSION}" -f mf2c.LM.Dockerfile -t mf2c/trunk:dataclay-logicmodule-${PROXY_TAG} $BUILD_PARAMS
 
 if [ "$PUSH" = true ] ; then
 	echo " ===== Installing dataClay mf2c wrapper $PROXY_TAG ====="
@@ -261,18 +261,18 @@ fi
 
 echo " ===== Installing dataclay-proxy with tag $PROXY_TAG ====="
 pushd $PROXY
-bash release.sh dataclaybuilder $PROXY_TAG $PLATFORMS $PUSH
+bash release_trunk.sh dataclaybuilder $PROXY_TAG $PLATFORMS $PUSH
 popd
 
 
 if [ "$PUSH" = true ] ; then
 	# this automatically pushes in DockerHub a new tag
-	docker buildx imagetools create mf2c/dataclay-logicmodule:${PROXY_TAG} -t mf2c/dataclay-logicmodule:latest
-	docker buildx imagetools create mf2c/dataclay-dsjava:${PROXY_TAG} -t mf2c/dataclay-dsjava:latest
+	docker buildx imagetools create mf2c/trunk:dataclay-logicmodule-${PROXY_TAG} -t mf2c/trunk:dataclay-logicmodule-latest
+	docker buildx imagetools create mf2c/trunk:dataclay-dsjava-${PROXY_TAG} -t mf2c/trunk:dataclay-dsjava-latest
 else 
-	docker tag mf2c/dataclay-logicmodule:${PROXY_TAG} mf2c/dataclay-logicmodule:latest
-	docker tag mf2c/dataclay-dsjava:${PROXY_TAG} mf2c/dataclay-dsjava:latest
-	docker tag mf2c/dataclay-proxy:${PROXY_TAG} mf2c/dataclay-proxy:latest
+	docker tag mf2c/trunk:dataclay-logicmodule-${PROXY_TAG} mf2c/trunk:dataclay-logicmodule-latest
+	docker tag mf2c/trunk:dataclay-dsjava-${PROXY_TAG} mf2c/trunk:dataclay-dsjava-latest
+	docker tag mf2c/trunk:dataclay-proxy-${PROXY_TAG} mf2c/trunk:dataclay-proxy-latest
 fi
 
 cp $SCRIPTDIR/tests/pom.orig.xml $SCRIPTDIR/tests/pom.xml

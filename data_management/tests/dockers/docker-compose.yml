@@ -6,7 +6,7 @@ services:
   #  LOGIC MODULE ON DC 1            #
   ####################################
   logicmodule1:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "11034:11034"
     env_file:
@@ -27,7 +27,7 @@ services:
   #  JAVA DATA SERVICES ON DC 1      #
   ####################################
   ds1java1:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     ports:
       - "2127:2127"
     depends_on:

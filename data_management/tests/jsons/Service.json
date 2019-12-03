@@ -5,7 +5,7 @@
     "description": "Hello World Service",
     "resourceURI": "serviceTypeURI",
     "created": "201804181524",
-    "updated": "201804181524",
+    "updated" : "updatetime",
     "acl": {
       "owner": {
         "principal": "User1",

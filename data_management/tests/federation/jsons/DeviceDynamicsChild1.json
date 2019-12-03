@@ -2,7 +2,7 @@
     "id": "device-dynamic/child1",
     "resourceURI": "DeviceDynamicTypeURI",
     "created": "201804181533",
-    "updated": "201804181533",
+    "updated": "updatetime",
     "ramFree": 0.4,
     "storageFree": 900.1,
     "acl": {

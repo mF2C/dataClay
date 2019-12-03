@@ -6,7 +6,7 @@ services:
   ####################################
 
   logicmodule1:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "11034:11034"
       # Debugging port
@@ -24,7 +24,7 @@ services:
               "-agentlib:jdwp=transport=dt_socket,address=8000,server=y,suspend=n",
               "dataclay.logic.server.LogicModuleSrv"]
   ds1java1:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     ports:
       # Debugging port
       - 28000:8000
@@ -48,7 +48,7 @@ services:
   #############################################
 
   logicmodule2:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "12034:12034"
     env_file:
@@ -64,7 +64,7 @@ services:
               "dataclay.logic.server.LogicModuleSrv"]
 
   ds1java2:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     depends_on:
       - "logicmodule2"
     env_file:
@@ -86,7 +86,7 @@ services:
   ####################################
 
   logicmodule3:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "14034:14034"
     env_file:
@@ -102,7 +102,7 @@ services:
               "dataclay.logic.server.LogicModuleSrv"]
 
   ds1java3:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     depends_on:
       - "logicmodule3"
     env_file:
@@ -123,7 +123,7 @@ services:
   ####################################
 
   logicmodule4:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "15034:15034"
     env_file:
@@ -139,7 +139,7 @@ services:
               "dataclay.logic.server.LogicModuleSrv"]
 
   ds1java4:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     depends_on:
       - "logicmodule4"
     env_file:
@@ -160,7 +160,7 @@ services:
   ####################################
 
   logicmodule5:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "16034:16034"
     env_file:
@@ -176,7 +176,7 @@ services:
               "dataclay.logic.server.LogicModuleSrv"]
 
   ds1java5:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     depends_on:
       - "logicmodule5"
     env_file:
@@ -197,7 +197,7 @@ services:
   ####################################
 
   logicmodule6:
-    image: mf2c/dataclay-logicmodule:latest
+    image: mf2c/trunk:dataclay-logicmodule-2.28
     ports:
       - "17034:17034"
     env_file:
@@ -213,7 +213,7 @@ services:
               "dataclay.logic.server.LogicModuleSrv"]
 
   ds1java6:
-    image: mf2c/dataclay-dsjava:latest
+    image: mf2c/trunk:dataclay-dsjava-2.28
     depends_on:
       - "logicmodule6"
     env_file:

@@ -21,7 +21,7 @@
       } ]
     },
     "device_id" : "device/1111",
-    "leader_id": "my leader ID",
+    "leader_id": "",
     "leader_ip": "leader_ip_here",
     "backup_ip": "",
     "authenticated": true,

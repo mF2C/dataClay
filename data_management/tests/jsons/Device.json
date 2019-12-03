@@ -4,7 +4,7 @@
     "description": "Device Description",
     "resourceURI": "DeviceTypeURI",
     "created": "201804181533",
-    "updated": "201804181533",
+    "updated" : "updatetime",
     "acl": {
 	     "owner" : {
 	        "principal" : "OWNERROLE",
